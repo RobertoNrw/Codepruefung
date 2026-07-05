@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Diakonie Management-Dashboard Mai 2026 für Frau Monika Rickert auf Basis des April-Mai-Cockpits" />
+  <title>Diakonie Management-Dashboard Mai 2026 · Monika Rickert</title>
+  <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+  <style>
+    :root{
+      --violet:#5a2590;--violet2:#6d35a0;--cyan:#009bdc;--ink:#24163a;--muted:#6f6384;
+      --line:#ece6f3;--line2:#dccdec;--ok:#2f8f61;--okbg:#e6f4ed;--warn:#c27a00;--warnbg:#fff4dd;
+      --crit:#c7443e;--critbg:#fde8e7;--neutral:#7a7490;--neutralbg:#f0edf6;
+      --shadow:0 10px 30px rgba(90,37,144,.06);--shadow-sm:0 1px 3px rgba(36,22,58,.04);
+      --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Helvetica,Arial,sans-serif;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:var(--font);background:linear-gradient(180deg,#f6f3fa 0,#fbf9fd 100%);color:var(--ink);font-size:14px;line-height:1.5}
+    .header{position:relative;display:grid;grid-template-columns:1.2fr .8fr;grid-template-rows:86px 78px;overflow:hidden;min-height:164px}
+    .q1{background:var(--violet)} .q2{background:var(--violet2)} .q3{background:var(--cyan)} .q4{background:#fff}
+    .header-inner{position:absolute;inset:0;display:flex;justify-content:space-between;align-items:flex-start;gap:18px;padding:18px 34px 14px}
+    .brand-name{font-size:24px;line-height:1.05;font-weight:700;letter-spacing:-.02em;color:#fff;max-width:900px}
+    .brand-sub{margin-top:8px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.82);line-height:1.45;max-width:900px}
+    .chip{background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.22);padding:10px 14px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;border-radius:999px;font-weight:700;white-space:nowrap}
+    .nav{position:sticky;top:0;z-index:20;display:flex;gap:10px;align-items:center;padding:12px 34px;background:rgba(255,255,255,.78);backdrop-filter:blur(16px) saturate(1.4);border-bottom:1px solid var(--line)}
+    .tab{padding:10px 18px;border-radius:999px;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);cursor:pointer}
+    .tab.active{color:var(--violet);background:rgba(90,37,144,.09);box-shadow:inset 0 0 0 1px rgba(90,37,144,.12)}
+    .panel{display:none} .panel.active{display:block}
+    .main{max-width:1480px;margin:0 auto;padding:26px 34px 40px}
+    .sec-head{display:flex;align-items:center;gap:14px;margin:30px 0 16px} .sec-bar{width:4px;height:24px;border-radius:999px;box-shadow:0 0 0 5px rgba(90,37,144,.06)}
+    .sec-head h2{font-size:17px;font-weight:600;letter-spacing:-.01em} .badge-top{margin-left:auto;font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;border-radius:999px;padding:7px 14px}
+    .src-tag{font-size:11px;color:var(--muted);letter-spacing:.04em;margin:-8px 0 14px}
+    .g4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px} .bento{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:14px}
+    .s12{grid-column:span 12} .s6{grid-column:span 6} .s4{grid-column:span 4}
+    .kpi{background:linear-gradient(180deg,#fff 0,#fcfbfe 100%);border:1px solid var(--line);border-top:3px solid var(--line2);border-radius:16px;padding:18px 18px 14px;box-shadow:var(--shadow-sm)}
+    .kpi.ok{border-top-color:var(--ok)} .kpi.warn{border-top-color:var(--warn)} .kpi.crit{border-top-color:var(--crit)} .kpi.neutral{border-top-color:var(--neutral)}
+    .label{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:8px}
+    .value{font-size:29px;line-height:1;font-weight:600;letter-spacing:-.02em;margin-bottom:8px}
+    .note{color:var(--muted);font-size:12px;margin-bottom:6px}
+    .delta{display:inline-block;font-size:11px;font-weight:700;border-radius:999px;padding:4px 9px;letter-spacing:.02em} .dpos{background:var(--okbg);color:var(--ok)} .dneg{background:var(--critbg);color:var(--crit)} .dneu{background:var(--neutralbg);color:var(--neutral)}
+    .card{position:relative;background:linear-gradient(180deg,#fff 0,#fbf9fd 100%);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow-sm);padding:22px;overflow:hidden}
+    .card::before{content:"";position:absolute;inset:0 0 auto 0;height:2px;background:linear-gradient(90deg,var(--violet),var(--cyan));opacity:.55}
+    .card h3{font-size:15px;font-weight:700;margin-bottom:4px} .meta{font-size:12px;color:var(--muted);margin-bottom:14px} .intro{font-size:13px;color:var(--muted);line-height:1.6;margin:2px 0 12px}
+    .insight-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:12px 0 8px} .insight{background:linear-gradient(180deg,#fff 0,#fbfaff 100%);border:1px solid var(--line);border-radius:14px;padding:13px 15px;box-shadow:var(--shadow-sm)}
+    .insight .k{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:6px} .insight .v{font-size:15px;font-weight:700;line-height:1.35}
+    .tbl{display:flex;flex-direction:column;gap:8px} .trow{display:grid;grid-template-columns:1fr 160px 92px;gap:10px;align-items:center;padding:13px 16px;border:1px solid var(--line);border-left:3px solid var(--line2);border-radius:14px;background:#fff;box-shadow:var(--shadow-sm)}
+    .tok{border-left-color:var(--ok)} .twrn{border-left-color:var(--warn)} .tcrt{border-left-color:var(--crit)} .tneu{border-left-color:var(--neutral)}
+    .tname{font-size:13px;font-weight:600} .tval{font-size:13px;font-weight:700;text-align:right} .bdg{padding:5px 9px;border-radius:999px;text-align:center;font-size:9.5px;font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+    .bg{background:var(--okbg);color:var(--ok)} .by{background:var(--warnbg);color:var(--warn)} .br{background:var(--critbg);color:var(--crit)} .bn{background:var(--neutralbg);color:var(--neutral)}
+    .ov-table{width:100%;border-collapse:separate;border-spacing:0;font-size:13px} .ov-table th{font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);text-align:right;padding:10px 12px;border-bottom:1px solid var(--line2)} .ov-table th:first-child{text-align:left}
+    .ov-table td{padding:11px 12px;text-align:right;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums;vertical-align:top} .ov-table td:first-child{text-align:left;font-weight:600}
+    .ov-table tr:last-child td{border-bottom:none} .ov-dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:8px;vertical-align:1px} .ov-sub{display:block;font-size:10.5px;color:var(--muted);font-weight:400} .tddelta{font-size:11px;font-weight:700} .up{color:var(--ok)} .down{color:var(--crit)} .flat{color:var(--neutral)}
+    .footer{margin-top:30px;padding:20px 34px 28px;display:flex;flex-direction:column;align-items:center;gap:12px;border-top:1px solid var(--line);background:rgba(255,255,255,.5)} .footer-text{font-size:11px;color:var(--muted);text-align:center;max-width:1100px;line-height:1.7}
+    @media (max-width:1180px){.g4{grid-template-columns:repeat(2,minmax(0,1fr))} .s6,.s4{grid-column:span 12} .insight-grid{grid-template-columns:1fr 1fr}}
+    @media (max-width:760px){.header{grid-template-columns:1fr;grid-template-rows:86px 78px 78px 54px;min-height:296px} .header-inner{padding:16px;flex-direction:column;gap:10px} .brand-name{font-size:22px} .nav{padding:10px 16px;overflow-x:auto} .main{padding:18px 16px 30px} .g4,.insight-grid{grid-template-columns:1fr} .trow{grid-template-columns:1fr 92px 74px} .footer{padding:18px 16px 24px}}
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="q1"></div><div class="q2"></div><div class="q3"></div><div class="q4"></div>
+    <div class="header-inner">
+      <div>
+        <div class="brand-name">Diakonie Management-Dashboard</div>
+        <div class="brand-sub">Fassung für Frau Monika Rickert · Geschäftsbereichsleitung · Mai 2026 auf Basis des April-Mai-Cockpits</div>
+      </div>
+      <div class="chip">Managementversion · Monika Rickert · © Roberto Bonavita</div>
+    </div>
+  </header>
+  <nav class="nav" role="tablist" aria-label="Ansichten">
+    <div class="tab active" data-tab="uebersicht">Übersicht</div>
+    <div class="tab" data-tab="hontrop">Höntrop</div>
+    <div class="tab" data-tab="linden">Linden</div>
+    <div class="tab" data-tab="gerthe">Gerthe</div>
+    <div class="tab" data-tab="hattingen">Hattingen</div>
+    <div class="tab" data-tab="mitte">PT Mitte <span style="opacity:.55;font-weight:500">· Vivendi</span></div>
+    <div class="tab" data-tab="suedwest">Süd/West <span style="opacity:.55;font-weight:500">· Vivendi</span></div>
+    <div class="tab" data-tab="sued">PT Süd <span style="opacity:.55;font-weight:500">· Vivendi</span></div>
+    <div class="tab" data-tab="ost">PT Ost <span style="opacity:.55;font-weight:500">· Vivendi</span></div>
+  </nav>
+  <main>
+    <div class="panel active" id="panel-uebersicht"></div>
+    <div class="panel" id="panel-hontrop"></div>
+    <div class="panel" id="panel-linden"></div>
+    <div class="panel" id="panel-gerthe"></div>
+    <div class="panel" id="panel-hattingen"></div>
+    <div class="panel" id="panel-mitte"></div>
+    <div class="panel" id="panel-suedwest"></div>
+    <div class="panel" id="panel-sued"></div>
+    <div class="panel" id="panel-ost"></div>
+  </main>
+  <footer class="footer">
+    <div class="footer-text">Managementversion für Frau Monika Rickert, Geschäftsbereichsleitung. © Roberto Bonavita. Grundlage ist das Blatt April-Mai_cockpit. Die sichtbare Oberfläche ist bewusst reduziert und priorisiert Führungsklarheit vor Datenfülle.</div>
+  </footer>
+<script>
+const DATA = {"serviceOrder": ["hontrop", "linden", "gerthe", "hattingen"], "serviceNames": {"hontrop": "Höntrop", "linden": "Linden", "gerthe": "Gerthe", "hattingen": "Hattingen"}, "sourceNames": {"hontrop": "Höntrop", "linden": "BO-Linden", "gerthe": "BO-Nord-Ost", "hattingen": "Hattingen"}, "serviceColors": {"hontrop": "#5a2590", "linden": "#009bdc", "gerthe": "#2aa8a1", "hattingen": "#8b5cf6"}, "records": {"hontrop": {"SPX": {"apr": 144.0, "mai": 178.0, "delta": 23.6}, "Umsatzanteil SGBV": {"apr": 72.3, "mai": 71.3, "delta": -1.3}, "Umsatzanteil SGBXI": {"apr": 27.2, "mai": 28.1, "delta": 3.2}, "Erlöse pro Arbeitsstunde": {"apr": 33.86, "mai": 48.3, "delta": 42.6}, "SGBXI Auslastung": {"apr": 46.1, "mai": 42.3, "delta": -8.2}, "Monatsumsatz pro Patient": {"apr": 631.0, "mai": 680.0, "delta": 7.8}, "Erlöse pro Anwesenheitsstunde": {"apr": 54.34, "mai": 75.2, "delta": 38.4}, "Anzahl Klienten": {"apr": 152.0, "mai": 171.0, "delta": 12.5}, "Anzahl von Beratungsbesuchen §37.3": {"apr": 25.0, "mai": 50.0, "delta": 100.0}, "Durchschn. Betreuungsdauer": {"apr": 27.0, "mai": 28.0, "delta": 2.7}, "Klienten - Anteil der Abgänge": {"apr": 17.8, "mai": 9.9, "delta": -44.0}, "Veränderung der Klientenzahl": {"apr": -5.3, "mai": -2.3, "delta": -55.5}, "Anteil der Pflegezeit": {"apr": 42.2, "mai": 46.2, "delta": 9.4}, "Anteil der Wegezeit": {"apr": 25.6, "mai": 28.9, "delta": 12.5}, "Anzahl Betreuer pro Patient": {"apr": 5.0, "mai": 5.0, "delta": null}, "Pünktlichkeitsquote": {"apr": 37.4, "mai": 30.0, "delta": -20.0}, "Anzahl VZÄ": {"apr": 15.52, "mai": 14.75, "delta": -5.0}, "Krankheitsquote": {"apr": 4.63, "mai": 9.61, "delta": 107.6}, "Auslastung der MA": {"apr": 119.7, "mai": 120.5, "delta": 0.7}, "Mehrstundenquote": {"apr": 7.2, "mai": 7.2, "delta": -0.1}, "Personalflukt. (BDA)": {"apr": 4.3, "mai": null, "delta": -100.0}, "Punktzahl SGBXI-Auslastung": {"apr": 8.0, "mai": 7.0, "delta": -12.5}, "Anteil SGBXI-Auslastung": {"apr": 5.6, "mai": 3.9, "delta": -29.3}}, "linden": {"SPX": {"apr": 150.0, "mai": 157.0, "delta": 4.7}, "Umsatzanteil SGBV": {"apr": 66.2, "mai": 65.8, "delta": -0.6}, "Umsatzanteil SGBXI": {"apr": 33.6, "mai": 34.0, "delta": 1.3}, "Erlöse pro Arbeitsstunde": {"apr": 36.03, "mai": 39.59, "delta": 9.9}, "SGBXI Auslastung": {"apr": 29.8, "mai": 33.6, "delta": 12.7}, "Monatsumsatz pro Patient": {"apr": 557.0, "mai": 603.0, "delta": 8.3}, "Erlöse pro Anwesenheitsstunde": {"apr": 62.8, "mai": 64.36, "delta": 2.5}, "Anzahl Klienten": {"apr": 162.0, "mai": 150.0, "delta": -7.4}, "Anzahl von Beratungsbesuchen §37.3": {"apr": 51.0, "mai": 51.0, "delta": null}, "Durchschn. Betreuungsdauer": {"apr": 42.0, "mai": 41.0, "delta": -1.2}, "Klienten - Anteil der Abgänge": {"apr": 1.9, "mai": 5.3, "delta": 188.1}, "Veränderung der Klientenzahl": {"apr": 3.7, "mai": null, "delta": -100.0}, "Anteil der Pflegezeit": {"apr": 54.1, "mai": 56.9, "delta": 5.2}, "Anteil der Wegezeit": {"apr": 21.9, "mai": 23.6, "delta": 7.7}, "Anzahl Betreuer pro Patient": {"apr": 6.0, "mai": 5.0, "delta": -16.7}, "Pünktlichkeitsquote": {"apr": 35.2, "mai": 31.7, "delta": -9.8}, "Anzahl VZÄ": {"apr": 13.57, "mai": 12.73, "delta": -6.2}, "Krankheitsquote": {"apr": 6.48, "mai": 3.14, "delta": -51.5}, "Auslastung der MA": {"apr": 126.1, "mai": 135.2, "delta": 7.2}, "Mehrstundenquote": {"apr": 3.1, "mai": 19.0, "delta": 514.2}, "Personalflukt. (BDA)": {"apr": 11.5, "mai": 4.2, "delta": -63.9}, "Punktzahl SGBXI-Auslastung": {"apr": 5.0, "mai": 5.0, "delta": null}, "Anteil SGBXI-Auslastung": {"apr": 3.3, "mai": 3.2, "delta": -4.5}}, "gerthe": {"SPX": {"apr": 150.0, "mai": 156.0, "delta": 4.0}, "Umsatzanteil SGBV": {"apr": 65.9, "mai": 65.7, "delta": -0.2}, "Umsatzanteil SGBXI": {"apr": 33.3, "mai": 33.4, "delta": 0.3}, "Erlöse pro Arbeitsstunde": {"apr": 35.89, "mai": 38.1, "delta": 6.2}, "SGBXI Auslastung": {"apr": 33.2, "mai": 32.6, "delta": -1.9}, "Monatsumsatz pro Patient": {"apr": 642.0, "mai": 756.0, "delta": 17.7}, "Erlöse pro Anwesenheitsstunde": {"apr": 63.68, "mai": 61.9, "delta": -2.8}, "Anzahl Klienten": {"apr": 159.0, "mai": 133.0, "delta": -16.4}, "Anzahl von Beratungsbesuchen §37.3": {"apr": 51.0, "mai": 78.0, "delta": 52.9}, "Durchschn. Betreuungsdauer": {"apr": 29.0, "mai": 30.0, "delta": 4.5}, "Klienten - Anteil der Abgänge": {"apr": 5.0, "mai": 6.8, "delta": 34.6}, "Veränderung der Klientenzahl": {"apr": 1.9, "mai": -3.8, "delta": -298.9}, "Anteil der Pflegezeit": {"apr": 53.1, "mai": 52.1, "delta": -1.8}, "Anteil der Wegezeit": {"apr": 31.4, "mai": 32.2, "delta": 2.4}, "Anzahl Betreuer pro Patient": {"apr": 7.0, "mai": 8.0, "delta": 14.3}, "Pünktlichkeitsquote": {"apr": 52.3, "mai": 53.8, "delta": 2.7}, "Anzahl VZÄ": {"apr": 16.39, "mai": 15.62, "delta": -4.7}, "Krankheitsquote": {"apr": 10.27, "mai": 14.25, "delta": 38.8}, "Auslastung der MA": {"apr": 116.5, "mai": 128.8, "delta": 10.6}, "Mehrstundenquote": {"apr": -2.2, "mai": 9.9, "delta": -556.5}, "Personalflukt. (BDA)": {"apr": 3.3, "mai": null, "delta": -100.0}, "Punktzahl SGBXI-Auslastung": {"apr": 5.0, "mai": 5.0, "delta": null}, "Anteil SGBXI-Auslastung": {"apr": 3.3, "mai": 3.2, "delta": -3.6}}, "hattingen": {"SPX": {"apr": 145.0, "mai": 154.0, "delta": 6.2}, "Umsatzanteil SGBV": {"apr": 67.9, "mai": 72.8, "delta": 7.2}, "Umsatzanteil SGBXI": {"apr": 31.4, "mai": 26.4, "delta": -15.9}, "Erlöse pro Arbeitsstunde": {"apr": 33.11, "mai": 37.62, "delta": 13.6}, "SGBXI Auslastung": {"apr": 30.9, "mai": 33.0, "delta": 6.7}, "Monatsumsatz pro Patient": {"apr": 688.0, "mai": 784.0, "delta": 14.1}, "Erlöse pro Anwesenheitsstunde": {"apr": 57.02, "mai": 58.13, "delta": 1.9}, "Anzahl Klienten": {"apr": 93.0, "mai": 93.0, "delta": null}, "Anzahl von Beratungsbesuchen §37.3": {"apr": 21.0, "mai": 30.0, "delta": 42.9}, "Durchschn. Betreuungsdauer": {"apr": 39.0, "mai": 36.0, "delta": -7.5}, "Klienten - Anteil der Abgänge": {"apr": 8.6, "mai": 10.8, "delta": 25.0}, "Veränderung der Klientenzahl": {"apr": 4.3, "mai": 1.1, "delta": -74.9}, "Anteil der Pflegezeit": {"apr": 50.9, "mai": 48.8, "delta": -4.2}, "Anteil der Wegezeit": {"apr": 25.9, "mai": 27.3, "delta": 5.4}, "Anzahl Betreuer pro Patient": {"apr": 7.0, "mai": 6.0, "delta": -14.3}, "Pünktlichkeitsquote": {"apr": 52.0, "mai": 44.6, "delta": -14.2}, "Anzahl VZÄ": {"apr": 9.08, "mai": 9.52, "delta": 4.8}, "Krankheitsquote": {"apr": 12.83, "mai": 2.5, "delta": -80.5}, "Auslastung der MA": {"apr": 140.2, "mai": 149.6, "delta": 6.6}, "Mehrstundenquote": {"apr": 7.0, "mai": 18.3, "delta": 161.3}, "Personalflukt. (BDA)": {"apr": null, "mai": null, "delta": null}, "Punktzahl SGBXI-Auslastung": {"apr": 5.0, "mai": 5.0, "delta": null}, "Anteil SGBXI-Auslastung": {"apr": 3.5, "mai": 3.3, "delta": -5.8}}, "avg": {"SPX": {"apr": 124.0, "mai": 135.0, "delta": 8.4}, "Umsatzanteil SGBV": {"apr": 67.7, "mai": 68.6, "delta": 1.4}, "Umsatzanteil SGBXI": {"apr": 31.2, "mai": 30.5, "delta": -2.2}, "Erlöse pro Arbeitsstunde": {"apr": 34.06, "mai": 40.32, "delta": 18.4}, "SGBXI Auslastung": {"apr": 34.3, "mai": 35.2, "delta": 2.6}, "Monatsumsatz pro Patient": {"apr": 625.0, "mai": 695.0, "delta": 11.3}, "Erlöse pro Anwesenheitsstunde": {"apr": 59.81, "mai": 65.31, "delta": 9.2}, "Anzahl Klienten": {"apr": 95.0, "mai": 91.0, "delta": -3.4}, "Anzahl von Beratungsbesuchen §37.3": {"apr": 25.0, "mai": 35.0, "delta": 41.2}, "Durchschn. Betreuungsdauer": {"apr": 33.0, "mai": 33.0, "delta": 0.4}, "Klienten - Anteil der Abgänge": {"apr": 8.1, "mai": 8.0, "delta": -1.0}, "Veränderung der Klientenzahl": {"apr": 0.9, "mai": -1.5, "delta": -265.5}, "Anteil der Pflegezeit": {"apr": 49.7, "mai": 51.0, "delta": 2.6}, "Anteil der Wegezeit": {"apr": 26.4, "mai": 28.2, "delta": 7.0}, "Anzahl Betreuer pro Patient": {"apr": 4.0, "mai": 4.0, "delta": -4.0}, "Pünktlichkeitsquote": {"apr": 44.1, "mai": 40.5, "delta": -8.1}, "Anzahl VZÄ": {"apr": 9.26, "mai": 8.94, "delta": -3.5}, "Krankheitsquote": {"apr": 8.7, "mai": 9.33, "delta": 7.3}, "Auslastung der MA": {"apr": 125.0, "mai": 131.6, "delta": 5.3}, "Mehrstundenquote": {"apr": 2.8, "mai": 11.1, "delta": 292.9}, "Personalflukt. (BDA)": {"apr": 5.0, "mai": 2.1, "delta": -58.8}, "Punktzahl SGBXI-Auslastung": {"apr": 5.0, "mai": 5.0, "delta": -3.4}, "Anteil SGBXI-Auslastung": {"apr": 3.9, "mai": 3.5, "delta": -11.0}}}, "coreFields": ["SPX", "Erlöse pro Arbeitsstunde", "SGBXI Auslastung", "Pünktlichkeitsquote", "Krankheitsquote", "Mehrstundenquote", "Anzahl Klienten", "Auslastung der MA"], "gaugeFields": ["SPX", "Erlöse pro Arbeitsstunde", "SGBXI Auslastung", "Pünktlichkeitsquote", "Krankheitsquote", "Mehrstundenquote"], "fieldMeta": {"SPX": {"digits": 0, "suffix": "", "dir": "up", "short": "SPX"}, "Erlöse pro Arbeitsstunde": {"digits": 2, "suffix": " €", "dir": "up", "short": "Erlös/Std."}, "SGBXI Auslastung": {"digits": 1, "suffix": " %", "dir": "up", "short": "SGBXI-Ausl."}, "Pünktlichkeitsquote": {"digits": 1, "suffix": " %", "dir": "up", "short": "Pünktlichk."}, "Krankheitsquote": {"digits": 2, "suffix": " %", "dir": "down", "short": "Krankheit"}, "Mehrstundenquote": {"digits": 1, "suffix": " %", "dir": "down", "short": "Mehrstunden"}, "Anzahl Klienten": {"digits": 0, "suffix": "", "dir": "up", "short": "Klienten"}, "Auslastung der MA": {"digits": 1, "suffix": " %", "dir": "neutral", "short": "MA-Auslast."}, "Umsatzanteil SGBV": {"digits": 1, "suffix": " %", "dir": "neutral", "short": "SGBV-Anteil"}, "Umsatzanteil SGBXI": {"digits": 1, "suffix": " %", "dir": "neutral", "short": "SGBXI-Anteil"}, "Monatsumsatz pro Patient": {"digits": 0, "suffix": " €", "dir": "up", "short": "Monatsums./Pat."}, "Erlöse pro Anwesenheitsstunde": {"digits": 2, "suffix": " €", "dir": "up", "short": "Erlös Anw.-Std."}, "Anzahl von Beratungsbesuchen §37.3": {"digits": 0, "suffix": "", "dir": "neutral", "short": "§37.3"}, "Durchschn. Betreuungsdauer": {"digits": 1, "suffix": " Mon.", "dir": "neutral", "short": "Betreuungsdauer"}, "Klienten - Anteil der Abgänge": {"digits": 1, "suffix": " %", "dir": "down", "short": "Abgänge"}, "Veränderung der Klientenzahl": {"digits": 1, "suffix": " %", "dir": "up", "short": "Klienten Δ"}, "Anteil der Pflegezeit": {"digits": 1, "suffix": " %", "dir": "neutral", "short": "Pflegezeit"}, "Anteil der Wegezeit": {"digits": 1, "suffix": " %", "dir": "down", "short": "Wegezeit"}, "Anzahl Betreuer pro Patient": {"digits": 1, "suffix": "", "dir": "neutral", "short": "Betreuer/Pat."}, "Anzahl VZÄ": {"digits": 2, "suffix": "", "dir": "neutral", "short": "VZÄ"}, "Personalflukt. (BDA)": {"digits": 1, "suffix": " %", "dir": "down", "short": "Fluktuation"}, "Punktzahl SGBXI-Auslastung": {"digits": 0, "suffix": "", "dir": "up", "short": "Punkte SGBXI"}, "Anteil SGBXI-Auslastung": {"digits": 1, "suffix": " %", "dir": "up", "short": "Anteil SGBXI"}}, "structureCards": {"Erlös- und Mixstruktur": ["Umsatzanteil SGBV", "Umsatzanteil SGBXI", "Monatsumsatz pro Patient", "Erlöse pro Anwesenheitsstunde"], "Klientenstruktur": ["Anzahl Klienten", "Anzahl von Beratungsbesuchen §37.3", "Durchschn. Betreuungsdauer", "Klienten - Anteil der Abgänge", "Veränderung der Klientenzahl"], "Prozessstruktur": ["Anteil der Pflegezeit", "Anteil der Wegezeit", "Anzahl Betreuer pro Patient"], "Personalstruktur": ["Anzahl VZÄ", "Krankheitsquote", "Auslastung der MA", "Mehrstundenquote", "Personalflukt. (BDA)"], "SGBXI-Ergänzung": ["Punktzahl SGBXI-Auslastung", "Anteil SGBXI-Auslastung"]}, "priorityField": {"hontrop": "Pünktlichkeitsquote", "linden": "Mehrstundenquote", "gerthe": "SGBXI Auslastung", "hattingen": "SPX"}, "overview": {"weightedSpx": 162.81170018281534, "meanRev": 40.9025, "meanMA": 133.525, "sumClients": 547.0, "meanMehr": 13.6, "notes": [{"badge": "crit", "name": "Höntrop · Pünktlichk.", "value": "operative Terminqualität unter Vergleich"}, {"badge": "crit", "name": "Linden · Mehrstunden", "value": "erhöhte Belastung und Überhang"}, {"badge": "warn", "name": "Gerthe · SGBXI-Ausl.", "value": "Auslastung und Leistungsmix unter Vergleich"}, {"badge": "warn", "name": "Hattingen · SPX", "value": "Gesamtleistung unter dem Feldvergleich"}]}};
+const CFG = {displayModeBar:false,responsive:true};
+
+function esc(v){return String(v ?? '').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#39;')}
+function fnum(v,d=1){if(v===null||v===undefined||Number.isNaN(v)) return 'n. v.'; if(d===0) return new Intl.NumberFormat('de-DE',{maximumFractionDigits:0}).format(v); return new Intl.NumberFormat('de-DE',{minimumFractionDigits:d,maximumFractionDigits:d}).format(v)}
+function fmt(field,v){const m=DATA.fieldMeta[field]; return `${fnum(v,m.digits)}${m.suffix}`;}
+function rowClass(b){return b==='ok'?'tok':b==='warn'?'twrn':b==='crit'?'tcrt':'tneu';}
+function badgeClass(b){return b==='ok'?'bg':b==='warn'?'by':b==='crit'?'br':'bn';}
+function deltaMode(field, apr, mai){if(apr==null||mai==null) return 'none'; if(field==='SPX' || field==='Erlöse pro Arbeitsstunde') return apr!==0?'pct':'abs'; return DATA.fieldMeta[field].suffix.trim()==='%'?'pp':'abs';}
+function deltaData(field, apr, mai){
+  if(apr==null||mai==null) return {text:'n. v.', cls:'dneu', arrow:'•', cell:'flat'};
+  const diff = mai-apr; let text=''; const mode=deltaMode(field,apr,mai);
+  if(mode==='pct') text = `${fnum((diff/apr)*100,1)} %`;
+  else if(mode==='pp') text = `${fnum(diff, field==='Krankheitsquote'?2:1)} PP`;
+  else text = `${fnum(diff, DATA.fieldMeta[field].digits)}${DATA.fieldMeta[field].suffix}`;
+  let good=null; const dir=DATA.fieldMeta[field].dir;
+  if(dir==='up') good = diff>0; else if(dir==='down') good = diff<0;
+  if(Math.abs(diff)<1e-9) good=null;
+  return {text, cls:good===null?'dneu':(good?'dpos':'dneg'), arrow:good===null?'•':(good?'▲':'▼'), cell:good===null?'flat':(good?'up':'down')};
+}
+function getBadge(field, value){
+  const dir = DATA.fieldMeta[field].dir;
+  const vals = DATA.serviceOrder.map(k => DATA.records[k][field].mai).filter(v => v!=null);
+  if(value==null || !vals.length || dir==='neutral') return {status:'neutral', text:'neutral'};
+  const mn=Math.min(...vals), mx=Math.max(...vals); if(mx===mn) return {status:'neutral', text:'neutral'};
+  const hi = mn + (mx-mn)*0.66, lo = mn + (mx-mn)*0.33;
+  if(dir==='up'){ if(value>=hi) return {status:'ok',text:'stark'}; if(value<=lo) return {status:'crit',text:'krit.'}; return {status:'warn',text:'beob.'}; }
+  if(dir==='down'){ if(value<=lo) return {status:'ok',text:'stark'}; if(value>=hi) return {status:'crit',text:'krit.'}; return {status:'warn',text:'beob.'}; }
+  return {status:'neutral', text:'neutral'};
+}
+function titleForPriority(field){return DATA.fieldMeta[field].short;}
+function serviceIntro(key){
+  const fld = DATA.priorityField[key];
+  const low = titleForPriority(fld);
+  return `${DATA.serviceNames[key]} zeigt im Mai eine insgesamt belastbare, aber selektiv erklärungsbedürftige Lage. Das prioritäre Beobachtungsfeld liegt aktuell bei ${low} und sollte in der nächsten Führungsrunde zuerst adressiert werden.`;
+}
+// ============================================================================
+// VIVENDI-INTEGRATION — Rohdaten-Schicht + Ableitungsfunktionen
+//
+// Prinzip für spätere Erweiterung (neue Station oder neuer Monat):
+// 1) Rohwerte 1:1 aus den vier Vivendi-Exportreitern (Übersicht/Pflege/
+//    Rentabilität/Mitarbeiter) unter "raw.apr"/"raw.mai" eintragen — exakt wie
+//    im Export, Quoten als Dezimalbruch (0.xx), keine Umrechnung von Hand.
+// 2) deriveShared() und deriveExtra() berechnen daraus automatisch alle
+//    Kennzahlen und Deltas nach denselben, für alle Stationen identischen
+//    Formeln. Es wird nichts mehr händisch nachgerechnet oder übertragen.
+// 3) Nur "meta", "mapping" (Kompatibilitätstext) und "dataQuality" (fachliche
+//    Beobachtungen) bleiben bewusst manuell, weil das echte Analyse-/
+//    Controlling-Urteil ist, keine mechanische Ableitung.
+// Damit reduziert sich das Einbinden einer weiteren Station künftig auf:
+// Rohwerte einfügen + kurze Analyse-Notizen schreiben.
+// ============================================================================
+DATA.vivendi = {
+  order: ["mitte","suedwest","sued","ost"],
+  names: {mitte:"PT Mitte", suedwest:"Süd/West", sued:"PT Süd", ost:"PT Ost"},
+  colors: {mitte:"#c2571a", suedwest:"#9a3412", sued:"#b45309", ost:"#92400e"},
+  rawFieldDefs: [
+    {group:"Wirtschaftlichkeit", key:"erloese", label:"Erlöse gesamt", unit:"€", dir:"up"},
+    {group:"Wirtschaftlichkeit", key:"kosten", label:"Kosten gesamt", unit:"€", dir:"down"},
+    {group:"Wirtschaftlichkeit", key:"kostendeckung", label:"Kostendeckungsgrad", unit:"x", dir:"up"},
+    {group:"Wirtschaftlichkeit", key:"erlEinsatzstd", label:"Erlöse pro Einsatzstunde", unit:"€", dir:"up"},
+    {group:"Wirtschaftlichkeit", key:"unbilled", label:"Noch nicht abgerechnete Leistungen", unit:"€", dir:"down"},
+    {group:"Kapazität & Personal", key:"auslastung", label:"Auslastung (Einsatzzeit)", unit:"%", dir:"up", pct:true},
+    {group:"Kapazität & Personal", key:"auslastungFahrzeit", label:"Auslastung mit Fahrzeit", unit:"%", dir:"up", pct:true},
+    {group:"Kapazität & Personal", key:"ausfallquote", label:"Ausfallquote (gesamt)", unit:"%", dir:"down", pct:true},
+    {group:"Kapazität & Personal", key:"urlaubsquote", label:"Urlaubsquote", unit:"%", dir:"neutral", pct:true},
+    {group:"Kapazität & Personal", key:"orgaQuote", label:"Orga-/Koordinationsquote", unit:"%", dir:"down", pct:true},
+    {group:"Kapazität & Personal", key:"leitungsQuote", label:"Leitungs-/Verwaltungsquote", unit:"%", dir:"down", pct:true},
+    {group:"Kapazität & Personal", key:"kontRot", label:"Kontengrenzen Rot über-/unterschritten", unit:"", dir:"down"},
+    {group:"Kapazität & Personal", key:"dienste10hA", label:"Dienste > 10 Std./Tag (Zählung A)", unit:"", dir:"down"},
+    {group:"Kapazität & Personal", key:"dienste10hB", label:"Dienste > 10 Std./Tag (Zählung B)", unit:"", dir:"down"},
+    {group:"Klienten & SGB XI", key:"zugaenge", label:"Zugänge", unit:"", dir:"neutral"},
+    {group:"Klienten & SGB XI", key:"abgaenge", label:"Abgänge", unit:"", dir:"neutral"},
+    {group:"Klienten & SGB XI", key:"maWechsel", label:"Mitarbeiter-Wechsel pro Klient/Einsatzgruppe", unit:"", dir:"down"},
+    {group:"Klienten & SGB XI", key:"defKlienten", label:"Defizitäre Klienten", unit:"", dir:"down"},
+    {group:"Klienten & SGB XI", key:"erloese39", label:"Erlöse Verhinderungspflege §39", unit:"€", dir:"up", withSoll:"soll39"},
+    {group:"Klienten & SGB XI", key:"erloese45b", label:"Erlöse Betreuungsleistungen §45b", unit:"€", dir:"neutral"}
+  ],
+  stations: {
+    mitte: {
+      meta: {
+        fullName: "Ambulant Pflegeteam Mitte",
+        source: "VivendiBI EasyView Export",
+        period: "April 2026 und Mai 2026, beide Monate als eigene Exporte vorliegend und feldweise gegen die „Vorheriger Wert“-Spalten abgeglichen",
+        tabs: "Übersicht, Pflege, Rentabilität, Mitarbeiter"
+      },
+      sharedFields: ["Erlöse pro Arbeitsstunde","SGBXI Auslastung","Pünktlichkeitsquote","Krankheitsquote","Mehrstundenquote","Anzahl Klienten","Auslastung der MA","SPX"],
+      gaugeFields: ["Erlöse pro Arbeitsstunde","SGBXI Auslastung","Pünktlichkeitsquote","Mehrstundenquote","Anzahl Klienten","Auslastung der MA"],
+      priorityField: "SGBXI Auslastung",
+      raw: {
+        apr: {kosten:81305.568166666679, erloese:139643.77000000022, kostendeckung:1.7175179160392462, unbilled:8148.3300000000008, erlEinsatzstd:88.749424974721549, erlArbeitsstd:38.879213585284546, einsatzzeit:1090.0999999999995, einsatzzeitFahrzeit:1639.8166666666668, verfEinsatzzeit:4563.6666666666652, auslastung:0.23886494777591114, auslastungFahrzeit:0.3593199912351181, mehrarbeit1:341.7799, mehrarbeit2:1021.7574999999999, zugaenge:11, abgaenge:5, puenktlichkeit1:0.29168558840239556, puenktlichkeit2:0.0020122022761938285, maWechsel:18, klienten:170, sgbxiAusschoepfung:0.2111640233736814, defKlienten:4, erloese39:260, soll39:339, erloese45b:0, sollDienstdauer:2825.1865999999995, istDienstdauer:3641.3841000000002, sollStdVertrag:5661.0880000000034, istStdGesamt:5938.8550000000005, orgaQuote:0.05909336350072409, leitungsQuote:0.077457839813047394, krankheitsquote:0, ausfallquote:0.3962959863475366, urlaubsquote:0.010752688172043012, urlaubstage:988.00329999999997, kontGelb:1, kontRot:1, dienste10hA:23, dienste10hB:105},
+        mai: {kosten:65182.291666666679, erloese:136296.05000000019, kostendeckung:2.09099813024371, unbilled:17485.27, erlEinsatzstd:93.932952654595567, erlArbeitsstd:40.793908380092866, einsatzzeit:983.01666666666665, einsatzzeitFahrzeit:1515.833333333333, verfEinsatzzeit:4562.9666666666644, auslastung:0.21543367253760357, auslastungFahrzeit:0.33220346412056495, mehrarbeit1:517.07709999999997, mehrarbeit2:1212.2516000000003, zugaenge:8, abgaenge:5, puenktlichkeit1:0.29764539301383108, puenktlichkeit2:0.0020373778268515104, maWechsel:16, klienten:159, sgbxiAusschoepfung:0.1874067569744032, defKlienten:2, erloese39:104, soll39:262, erloese45b:0, sollDienstdauer:2777.2413999999999, istDienstdauer:3306.9142000000002, sollStdVertrag:5207.984000000004, istStdGesamt:5695.3302000000003, orgaQuote:0.067682031210619692, leitungsQuote:0.065420432521235028, krankheitsquote:0, ausfallquote:0.32851296312898581, urlaubsquote:0.0012853470437017994, urlaubstage:895.00329999999997, kontGelb:0, kontRot:1, dienste10hA:38, dienste10hB:112}
+      },
+      mapping: {
+        "Erlöse pro Arbeitsstunde": {status:"direkt", label:"direkt vergleichbar", note:"Identisches Feld und identische Definition wie im snap-Cockpit."},
+        "SGBXI Auslastung": {status:"naeherung", label:"angenähert", note:"Vivendi weist „SGB XI Ausschöpfung (ganzer Monat)“ aus – inhaltlich verwandt, aber nicht zwingend deckungsgleich mit der snap-Auslastungsformel."},
+        "Pünktlichkeitsquote": {status:"direkt", label:"direkt, mit Vorbehalt", note:"Basiert auf der ersten „Pünktlichkeit“-Zeile im Export. Eine zweite Zeile mit stark abweichender Größenordnung (0,20 %) ist inhaltlich ungeklärt und wurde nicht verwendet."},
+        "Krankheitsquote": {status:"fehlt", label:"nicht verfügbar", note:"Export weist 0,00 % für Mai und April aus. Bei PT Süd ist dasselbe Feld dagegen befüllt (siehe dort) – die 0,00 % hier sind also möglicherweise reale Werte, nicht zwingend ein Datenloch. Zur Sicherheit trotzdem als „n. v.“ statt als 0 % geführt, bis das mit der Einrichtung geklärt ist."},
+        "Mehrstundenquote": {status:"abgeleitet", label:"abgeleitet", note:"Kein natives Vivendi-Feld. Berechnet als Mehrarbeit ÷ Soll-Stunden lt. Vertrag."},
+        "Anzahl Klienten": {status:"direkt", label:"direkt vergleichbar", note:"„Betreute Klienten“ – direkte Entsprechung."},
+        "Auslastung der MA": {status:"abgeleitet", label:"abgeleitet", note:"Angenähert über Ist-Dienstdauer ÷ Soll-Dienstdauer – Größenordnung passt am besten zu den snap-Werten (110–150 %)."},
+        "SPX": {status:"fehlt", label:"nicht verfügbar", note:"Der SPX Performance Index ist eine snap-interne Gewichtungsformel über mehrere Kennzahlen. Ohne die genaue Formel kann er aus den Vivendi-Rohdaten nicht seriös nachgebildet werden."}
+      },
+      extraOverrides: {
+        unbilled: {flag:"warn"},
+        ausfallquote: {flag:"warn"},
+        dienste10hA: {flag:"warn"},
+        dienste10hB: {flag:"warn"},
+        erloese39: {flag:"crit"}
+      },
+      dataQuality: [
+        "Zeitraum bestätigt: April- und Mai-Export liegen beide als eigene Ist-Exporte vor und wurden feldweise gegen die „Vorheriger Wert“-Spalte des Mai-Exports abgeglichen. Fast alle Felder stimmen exakt überein.",
+        "Ausnahmen: „Noch nicht genommene Urlaubstage“ (Mai-Vorwert 30.833 vs. echter April-Ist-Wert 988,0) und „Kontengrenzen Rot“ (Mai-Vorwert 24 vs. echter April-Ist-Wert 1) sind in der Vorheriger-Wert-Spalte nachweislich fehlerhaft. Dasselbe Muster tritt bei Süd/West, PT Süd und PT Ost auf (siehe dort) — eindeutig ein systematischer Exportfehler bei genau diesen zwei bis drei Feldern, nicht stationsspezifisch. Die Dashboard-Werte nutzen durchgehend die echten Ist-Werte aus dem jeweiligen Monatsexport.",
+        "„Pünktlichkeit“ erscheint zweimal mit sehr unterschiedlicher Größenordnung (29,8 % vs. 0,20 %) — vermutlich zwei unterschiedliche Kennzahlen. Nur die plausible Quote wurde übernommen.",
+        "Zugänge (8) minus Abgänge (5) erklärt rechnerisch nicht die Differenz der Klientenzahl (159 vs. 170 = −11) — die Bewegungszeilen scheinen einen anderen Ausschnitt abzubilden als der Gesamtbestand.",
+        "Krankheitsquote wird in beiden Monaten mit 0,00 % geführt — siehe Kompatibilitätshinweis oben zum Gegenbefund bei PT Süd."
+      ]
+    },
+    suedwest: {
+      meta: {
+        fullName: "Ambulant Pflegeteam Süd/West",
+        source: "VivendiBI EasyView Export",
+        period: "April 2026 und Mai 2026, beide Monate als eigene Exporte vorliegend",
+        tabs: "Übersicht, Pflege, Rentabilität, Mitarbeiter"
+      },
+      sharedFields: ["Erlöse pro Arbeitsstunde","SGBXI Auslastung","Pünktlichkeitsquote","Krankheitsquote","Mehrstundenquote","Anzahl Klienten","Auslastung der MA","SPX"],
+      gaugeFields: ["Erlöse pro Arbeitsstunde","SGBXI Auslastung","Pünktlichkeitsquote","Mehrstundenquote","Anzahl Klienten","Auslastung der MA"],
+      priorityField: "Auslastung der MA",
+      raw: {
+        apr: {kosten:76485.666499999992, erloese:127539.60000000027, kostendeckung:1.6674967459425916, unbilled:7108.3800000000001, erlEinsatzstd:81.794528992093063, erlArbeitsstd:35.806041037658701, einsatzzeit:975.65, einsatzzeitFahrzeit:1591.5499999999997, verfEinsatzzeit:3838.8999999999983, auslastung:0.25414832373857105, auslastungFahrzeit:0.41458490713485646, mehrarbeit1:206.55899999999997, mehrarbeit2:1043.3409000000001, zugaenge:9, abgaenge:4, puenktlichkeit1:0.4165178565292797, puenktlichkeit2:0.0020000000000000005, maWechsel:23, klienten:189, sgbxiAusschoepfung:0.18270921656624853, defKlienten:12, erloese39:0, soll39:0, erloese45b:0, sollDienstdauer:4087.1833999999994, istDienstdauer:3765.6730000000002, sollStdVertrag:6239.872000000003, istStdGesamt:6333.103900000001, orgaQuote:0.097566039854442885, leitungsQuote:0.060922632211786107, krankheitsquote:0, ausfallquote:0.45181992040269514, urlaubsquote:0.010559662090813094, urlaubstage:1126.0032999999999, kontGelb:0, kontRot:0, dienste10hA:27, dienste10hB:92},
+        mai: {kosten:80426.327666666679, erloese:134162.2900000001, kostendeckung:1.6681389526579704, unbilled:5155.6199999999999, erlEinsatzstd:91.385759904526495, erlArbeitsstd:40.47734880545741, einsatzzeit:913.83333333333303, einsatzzeitFahrzeit:1502.7333333333331, verfEinsatzzeit:3826.6999999999989, auslastung:0.2388045400301391, auslastungFahrzeit:0.39269692772711046, mehrarbeit1:392.16300000000012, mehrarbeit2:1209.3262999999999, zugaenge:10, abgaenge:2, puenktlichkeit1:0.46309384678059107, puenktlichkeit2:0.002, maWechsel:17, klienten:184, sgbxiAusschoepfung:0.18331202928575718, defKlienten:10, erloese39:1274, soll39:1642, erloese45b:0, sollDienstdauer:3564.6729000000009, istDienstdauer:3630.6242999999999, sollStdVertrag:5419.0960000000014, istStdGesamt:5580.3567000000012, orgaQuote:0.075043037388362183, leitungsQuote:0.10029680620869465, krankheitsquote:0, ausfallquote:0.35134218212251556, urlaubsquote:0.0097560975609756097, urlaubstage:916.00329999999997, kontGelb:0, kontRot:1, dienste10hA:35, dienste10hB:116}
+      },
+      mapping: {
+        "Erlöse pro Arbeitsstunde": {status:"direkt", label:"direkt vergleichbar", note:"Identisches Feld und identische Definition wie im snap-Cockpit. Beide Monate liegen als eigene Ist-Exporte vor."},
+        "SGBXI Auslastung": {status:"naeherung", label:"angenähert", note:"Vivendi weist „SGB XI Ausschöpfung (ganzer Monat)“ aus – inhaltlich verwandt, aber nicht zwingend deckungsgleich mit der snap-Auslastungsformel."},
+        "Pünktlichkeitsquote": {status:"direkt", label:"direkt, mit Vorbehalt", note:"Basiert auf der ersten „Pünktlichkeit“-Zeile im Export. Eine zweite Zeile mit stark abweichender Größenordnung (0,20 %) ist inhaltlich ungeklärt und wurde nicht verwendet."},
+        "Krankheitsquote": {status:"fehlt", label:"nicht verfügbar", note:"Export weist 0,00 % für Mai und April aus – identisches Muster wie bei PT Mitte. Siehe Kompatibilitätshinweis bei PT Mitte zum Gegenbefund bei PT Süd."},
+        "Mehrstundenquote": {status:"abgeleitet", label:"abgeleitet", note:"Kein natives Vivendi-Feld. Berechnet als Mehrarbeit ÷ Soll-Stunden lt. Vertrag."},
+        "Anzahl Klienten": {status:"direkt", label:"direkt vergleichbar", note:"„Betreute Klienten“ – direkte Entsprechung."},
+        "Auslastung der MA": {status:"abgeleitet", label:"abgeleitet", note:"Angenähert über Ist-Dienstdauer ÷ Soll-Dienstdauer."},
+        "SPX": {status:"fehlt", label:"nicht verfügbar", note:"Der SPX Performance Index ist eine snap-interne Gewichtungsformel über mehrere Kennzahlen. Ohne die genaue Formel kann er aus den Vivendi-Rohdaten nicht seriös nachgebildet werden."}
+      },
+      extraOverrides: {
+        leitungsQuote: {flag:"warn"},
+        kontRot: {flag:"warn"},
+        dienste10hA: {flag:"warn"},
+        dienste10hB: {flag:"warn"},
+        erloese39: {flag:"warn"},
+        ausfallquote: {flag:"crit"}
+      },
+      dataQuality: [
+        "Für Süd/West liegen beide Monate als eigene Ist-Exporte vor. April- und Mai-Werte sind daher ohne Zusatzannahme belastbar.",
+        "„Noch nicht genommene Urlaubstage“ zeigt dieselbe Auffälligkeit wie bei PT Mitte: Mai-Vorwert 35.528 vs. echter April-Ist-Wert 1.126,0 — bestätigt den systematischen Exportfehler bei diesem Feld.",
+        "Leitungs-/Verwaltungsquote steigt auffällig stark von 6,09 % (April) auf 10,03 % (Mai) — gegenläufig zur sinkenden Orga-/Koordinationsquote. Vor der PDL-Runde ggf. gegenprüfen, ob eine Umbuchung zwischen beiden Quoten stattgefunden hat.",
+        "Kontengrenzen Rot springt von 0 (April) auf 1 (Mai) bei gleichzeitig steigenden „Dienste > 10 Std./Tag“ (beide Zählungen) — konsistentes Bild einer wachsenden Arbeitszeitbelastung im Mai.",
+        "Krankheitsquote wird in beiden Monaten mit 0,00 % geführt — siehe Kompatibilitätshinweis bei PT Mitte."
+      ]
+    },
+    sued: {
+      meta: {
+        fullName: "Ambulant Pflegeteam Süd",
+        source: "VivendiBI EasyView Export",
+        period: "April 2026 und Mai 2026, beide Monate als eigene Exporte vorliegend",
+        tabs: "Übersicht, Pflege, Rentabilität, Mitarbeiter"
+      },
+      sharedFields: ["Erlöse pro Arbeitsstunde","SGBXI Auslastung","Pünktlichkeitsquote","Krankheitsquote","Mehrstundenquote","Anzahl Klienten","Auslastung der MA","SPX"],
+      gaugeFields: ["Erlöse pro Arbeitsstunde","SGBXI Auslastung","Pünktlichkeitsquote","Mehrstundenquote","Anzahl Klienten","Auslastung der MA"],
+      priorityField: "Erlöse pro Arbeitsstunde",
+      raw: {
+        apr: {kosten:86628.045833333352, erloese:110179.79000000011, kostendeckung:1.271872047211809, unbilled:292.88999999999999, erlEinsatzstd:80.447303359415173, erlArbeitsstd:32.014395638363013, einsatzzeit:957.50000000000011, einsatzzeitFahrzeit:1389.0166666666664, verfEinsatzzeit:3066, auslastung:0.31229615133724725, auslastungFahrzeit:0.45303870406610125, mehrarbeit1:270.78880000000004, mehrarbeit2:885.63610000000006, zugaenge:5, abgaenge:5, puenktlichkeit1:0.48018143889914755, puenktlichkeit2:0.0020000000000000009, maWechsel:23, klienten:132, sgbxiAusschoepfung:0.18712993811753087, defKlienten:5, erloese39:1210, soll39:1258, erloese45b:0, sollDienstdauer:3463.8742000000002, istDienstdauer:3791.9591, sollStdVertrag:5777.2000000000062, istStdGesamt:5938.8092000000015, orgaQuote:0.045163494407594262, leitungsQuote:0.073649703900308894, krankheitsquote:0.0021429548536430493, ausfallquote:0.46815038274002801, urlaubsquote:0, urlaubstage:984.00059999999996, kontGelb:0, kontRot:0, dienste10hA:25, dienste10hB:100},
+        mai: {kosten:74971.326499999996, erloese:112604.42000000007, kostendeckung:1.5019664884814341, unbilled:30, erlEinsatzstd:82.966869505962819, erlArbeitsstd:29.225814932844923, einsatzzeit:948.06666666666683, einsatzzeitFahrzeit:1384.2666666666669, verfEinsatzzeit:3033, auslastung:0.31258380041762834, auslastungFahrzeit:0.45640180239586775, mehrarbeit1:201.47309999999999, mehrarbeit2:953.78620000000001, zugaenge:8, abgaenge:3, puenktlichkeit1:0.52143181924259119, puenktlichkeit2:0.002, maWechsel:23, klienten:131, sgbxiAusschoepfung:0.19686203205117472, defKlienten:2, erloese39:1285, soll39:1441, erloese45b:0, sollDienstdauer:4020.8516, istDienstdauer:4050.1785999999997, sollStdVertrag:5397.6000000000031, istStdGesamt:5549.4286000000011, orgaQuote:0.04238729890156559, leitungsQuote:0.069409621321555162, krankheitsquote:0.016053220326143123, ausfallquote:0.45378053877474878, urlaubsquote:0, urlaubstage:918.00059999999996, kontGelb:0, kontRot:0, dienste10hA:29, dienste10hB:74}
+      },
+      mapping: {
+        "Erlöse pro Arbeitsstunde": {status:"direkt", label:"direkt vergleichbar", note:"Identisches Feld und identische Definition wie im snap-Cockpit. Beide Monate liegen als eigene Ist-Exporte vor."},
+        "SGBXI Auslastung": {status:"naeherung", label:"angenähert", note:"Vivendi weist „SGB XI Ausschöpfung (ganzer Monat)“ aus – inhaltlich verwandt, aber nicht zwingend deckungsgleich mit der snap-Auslastungsformel."},
+        "Pünktlichkeitsquote": {status:"direkt", label:"direkt, mit Vorbehalt", note:"Basiert auf der ersten „Pünktlichkeit“-Zeile im Export. Eine zweite Zeile mit stark abweichender Größenordnung (0,20 %) ist inhaltlich ungeklärt und wurde nicht verwendet."},
+        "Krankheitsquote": {status:"direkt", label:"direkt, auffällig niedrig", note:"Anders als bei PT Mitte, Süd/West und PT Ost ist dieses Feld hier tatsächlich befüllt (0,21 % im April, 1,61 % im Mai) statt durchgehend 0,00 %. Das relativiert die Vermutung eines generellen Datenlochs – die 0,00 % bei den anderen Stationen könnten also auch reale Werte sein. Trotzdem bleibt auch dieser Wert im Vergleich zu den snap-Diensten (2,5–14 %) auffällig niedrig."},
+        "Mehrstundenquote": {status:"abgeleitet", label:"abgeleitet", note:"Kein natives Vivendi-Feld. Berechnet als Mehrarbeit ÷ Soll-Stunden lt. Vertrag."},
+        "Anzahl Klienten": {status:"direkt", label:"direkt vergleichbar", note:"„Betreute Klienten“ – direkte Entsprechung."},
+        "Auslastung der MA": {status:"abgeleitet", label:"abgeleitet", note:"Angenähert über Ist-Dienstdauer ÷ Soll-Dienstdauer."},
+        "SPX": {status:"fehlt", label:"nicht verfügbar", note:"Der SPX Performance Index ist eine snap-interne Gewichtungsformel über mehrere Kennzahlen. Ohne die genaue Formel kann er aus den Vivendi-Rohdaten nicht seriös nachgebildet werden."}
+      },
+      extraOverrides: {
+        ausfallquote: {flag:"crit"},
+        dienste10hA: {flag:"warn"}
+      },
+      dataQuality: [
+        "Für PT Süd liegen beide Monate als eigene Ist-Exporte vor. 35 von 36 Feldern stimmen zwischen Mai-„Vorheriger Wert“ und dem echten April-Export exakt überein.",
+        "„Noch nicht genommene Urlaubstage“ zeigt zum dritten Mal dieselbe Auffälligkeit: Mai-Vorwert 30.662 vs. echter April-Ist-Wert 984,0 — mit nunmehr mehreren betroffenen Stationen eindeutig ein systematischer Exportfehler, nicht stationsspezifisch.",
+        "Wichtiger Gegenbefund zu PT Mitte/Süd-West/PT Ost: Die Krankheitsquote ist hier tatsächlich befüllt (0,21 % / 1,61 %) statt durchgehend 0,00 %. Die 0,00 %-Werte bei den anderen Stationen sind damit nicht zwangsläufig ein Systemfehler.",
+        "Ausfallquote liegt in beiden Monaten bei rund 45–47 % — das ist kein Datenqualitätsproblem, sondern ein inhaltlich sehr hoher Wert und sollte als eigenständiger Befund in die PDL-Runde, nicht nur als Randnotiz.",
+        "Zugänge (8) minus Abgänge (3) im Mai ergibt rechnerisch ein Plus von 5, während die Klientenzahl nur um 1 sinkt (132 → 131) — wie bei den anderen Vivendi-Stationen bilden die Bewegungszeilen offenbar einen anderen Ausschnitt ab als der Gesamtbestand."
+      ]
+    },
+    ost: {
+      meta: {
+        fullName: "Ambulant Pflegeteam Ost",
+        source: "VivendiBI EasyView Export",
+        period: "April 2026 und Mai 2026, beide Monate als eigene Exporte vorliegend",
+        tabs: "Übersicht, Pflege, Rentabilität, Mitarbeiter"
+      },
+      sharedFields: ["Erlöse pro Arbeitsstunde","SGBXI Auslastung","Pünktlichkeitsquote","Krankheitsquote","Mehrstundenquote","Anzahl Klienten","Auslastung der MA","SPX"],
+      gaugeFields: ["Erlöse pro Arbeitsstunde","SGBXI Auslastung","Pünktlichkeitsquote","Mehrstundenquote","Anzahl Klienten","Auslastung der MA"],
+      priorityField: "Auslastung der MA",
+      raw: {
+        apr: {kosten:69553.538500000024, erloese:142801.81000000017, kostendeckung:2.0531207049947593, unbilled:0, erlEinsatzstd:92.028817302450761, erlArbeitsstd:47.367584815511464, einsatzzeit:1043.5833333333328, einsatzzeitFahrzeit:1587.4833333333336, verfEinsatzzeit:4093.3333333333344, auslastung:0.25494706840390857, auslastungFahrzeit:0.387821661237785, mehrarbeit1:270.07679999999999, mehrarbeit2:852.71659999999986, zugaenge:5, abgaenge:6, puenktlichkeit1:0.4630791536673472, puenktlichkeit2:0.0020116121540545767, maWechsel:17, klienten:180, sgbxiAusschoepfung:0.20604477357082082, defKlienten:2, erloese39:216, soll39:216, erloese45b:0, sollDienstdauer:2907.5137999999997, istDienstdauer:3074.9994999999999, sollStdVertrag:4682.8000000000011, istStdGesamt:4882.2138000000004, orgaQuote:0.071181603966397472, leitungsQuote:0.11592890840912214, krankheitsquote:0, ausfallquote:0.46056833889576893, urlaubsquote:0, urlaubstage:819.00029999999992, kontGelb:1, kontRot:1, dienste10hA:22, dienste10hB:83},
+        mai: {kosten:64813.100000000042, erloese:145341.79000000018, kostendeckung:2.2424755180665645, unbilled:465.61000000000001, erlEinsatzstd:97.843225509699067, erlArbeitsstd:51.510018103772886, einsatzzeit:992.76666666666608, einsatzzeitFahrzeit:1533.1166666666668, verfEinsatzzeit:4113.5000000000018, auslastung:0.24134354361654689, auslastungFahrzeit:0.37270369920181501, mehrarbeit1:290.29769999999996, mehrarbeit2:983.43830000000003, zugaenge:10, abgaenge:7, puenktlichkeit1:0.46000853377850626, puenktlichkeit2:0.0020110784535383223, maWechsel:17, klienten:180, sgbxiAusschoepfung:0.20693384486714714, defKlienten:3, erloese39:208, soll39:208, erloese45b:0, sollDienstdauer:2430.0898999999999, istDienstdauer:2861.4534999999996, sollStdVertrag:4680.4000000000015, istStdGesamt:4928.3184000000001, orgaQuote:0.073837827427109648, leitungsQuote:0.10311518613278341, krankheitsquote:0, ausfallquote:0.42094256734710966, urlaubsquote:0, urlaubstage:812.00029999999992, kontGelb:1, kontRot:1, dienste10hA:34, dienste10hB:98}
+      },
+      mapping: {
+        "Erlöse pro Arbeitsstunde": {status:"direkt", label:"direkt vergleichbar", note:"Identisches Feld und identische Definition wie im snap-Cockpit. Beide Monate liegen als eigene Ist-Exporte vor. Höchster Wert aller vier Vivendi-Stationen (51,51 € im Mai)."},
+        "SGBXI Auslastung": {status:"naeherung", label:"angenähert", note:"Vivendi weist „SGB XI Ausschöpfung (ganzer Monat)“ aus – inhaltlich verwandt, aber nicht zwingend deckungsgleich mit der snap-Auslastungsformel."},
+        "Pünktlichkeitsquote": {status:"direkt", label:"direkt, mit Vorbehalt", note:"Basiert auf der ersten „Pünktlichkeit“-Zeile im Export. Eine zweite Zeile mit stark abweichender Größenordnung (0,20 %) ist inhaltlich ungeklärt und wurde nicht verwendet."},
+        "Krankheitsquote": {status:"fehlt", label:"nicht verfügbar", note:"Export weist 0,00 % für Mai und April aus – wie bei PT Mitte und Süd/West. Siehe Kompatibilitätshinweis bei PT Mitte/PT Süd zum Gegenbefund."},
+        "Mehrstundenquote": {status:"abgeleitet", label:"abgeleitet", note:"Kein natives Vivendi-Feld. Berechnet als Mehrarbeit ÷ Soll-Stunden lt. Vertrag."},
+        "Anzahl Klienten": {status:"direkt", label:"direkt vergleichbar", note:"„Betreute Klienten“ – direkte Entsprechung. Mit 180 unverändert stabilste Klientenzahl aller Vivendi-Stationen."},
+        "Auslastung der MA": {status:"abgeleitet", label:"abgeleitet", note:"Angenähert über Ist-Dienstdauer ÷ Soll-Dienstdauer. Steigt deutlich von 105,8 % (April) auf 117,8 % (Mai)."},
+        "SPX": {status:"fehlt", label:"nicht verfügbar", note:"Der SPX Performance Index ist eine snap-interne Gewichtungsformel über mehrere Kennzahlen. Ohne die genaue Formel kann er aus den Vivendi-Rohdaten nicht seriös nachgebildet werden."}
+      },
+      extraOverrides: {
+        ausfallquote: {flag:"crit"},
+        dienste10hA: {flag:"warn"},
+        dienste10hB: {flag:"warn"}
+      },
+      dataQuality: [
+        "Für PT Ost liegen beide Monate als eigene Ist-Exporte vor. Beim Feld-für-Feld-Abgleich zwischen Mai-„Vorheriger Wert“ und dem echten April-Export zeigten sich diesmal drei statt der üblichen einen Abweichung (siehe unten) — alle drei wurden mit dem echten April-Ist-Wert korrigiert.",
+        "„Noch nicht genommene Urlaubstage“: Mai-Vorwert 25.412 vs. echter April-Ist-Wert 819,0 — derselbe Fehler wie bei allen anderen drei Vivendi-Stationen.",
+        "Neu bei PT Ost, aber im selben Muster: „Kontengrenzen Gelb“ (Mai-Vorwert 24 vs. echter April-Ist-Wert 1) und „Kontengrenzen Rot“ (Mai-Vorwert 22 vs. echter April-Ist-Wert 1) sind ebenfalls fehlerhaft. Damit ist bestätigt: Der Vorheriger-Wert-Fehler betrifft spezifisch zählerartige „Bestands“-Felder (Urlaubstage, Kontengrenzen) und nicht die normalen Monatswerte – vermutlich verwendet der Export für diese drei Felder eine andere (falsche) Referenzquelle als für alle übrigen Felder.",
+        "Kostendeckungsgrad ist mit 2,24 (Mai) der höchste aller vier Vivendi-Stationen bei gleichzeitig sinkenden Kosten (−6,8 %) und steigenden Erlösen (+1,8 %) — wirtschaftlich der stärkste Monatsverlauf im Vivendi-Bild.",
+        "Zugänge (10) minus Abgänge (7) im Mai ergibt ein rechnerisches Plus von 3, während die Klientenzahl konstant bei 180 bleibt — wie bei den anderen Vivendi-Stationen bilden die Bewegungszeilen offenbar einen anderen Ausschnitt ab als der Gesamtbestand."
+      ]
+    }
+  }
+};
+function deriveVivendiShared(raw){
+  const out = {};
+  out["Erlöse pro Arbeitsstunde"] = {apr: raw.apr.erlArbeitsstd, mai: raw.mai.erlArbeitsstd};
+  out["SGBXI Auslastung"] = {apr: raw.apr.sgbxiAusschoepfung*100, mai: raw.mai.sgbxiAusschoepfung*100};
+  out["Pünktlichkeitsquote"] = {apr: raw.apr.puenktlichkeit1*100, mai: raw.mai.puenktlichkeit1*100};
+  const krankBeideNull = raw.apr.krankheitsquote===0 && raw.mai.krankheitsquote===0;
+  out["Krankheitsquote"] = krankBeideNull ? {apr:null, mai:null} : {apr: raw.apr.krankheitsquote*100, mai: raw.mai.krankheitsquote*100};
+  out["Mehrstundenquote"] = {apr: raw.apr.mehrarbeit1/raw.apr.sollStdVertrag*100, mai: raw.mai.mehrarbeit1/raw.mai.sollStdVertrag*100};
+  out["Anzahl Klienten"] = {apr: raw.apr.klienten, mai: raw.mai.klienten};
+  out["Auslastung der MA"] = {apr: raw.apr.istDienstdauer/raw.apr.sollDienstdauer*100, mai: raw.mai.istDienstdauer/raw.mai.sollDienstdauer*100};
+  out["SPX"] = {apr:null, mai:null};
+  return out;
+}
+function deriveVivendiExtra(raw, overrides){
+  overrides = overrides || {};
+  const groups = {};
+  DATA.vivendi.rawFieldDefs.forEach(def => {
+    const aprRaw = raw.apr[def.key], maiRaw = raw.mai[def.key];
+    const apr = def.pct ? aprRaw*100 : aprRaw;
+    const mai = def.pct ? maiRaw*100 : maiRaw;
+    let label = def.label;
+    if(def.withSoll) label += ` (Soll ${fnum(raw.mai[def.withSoll],0)} €)`;
+    const item = {label, mai, apr, unit:def.unit, dir:def.dir};
+    if(overrides[def.key]) Object.assign(item, overrides[def.key]);
+    if(!groups[def.group]) groups[def.group] = [];
+    groups[def.group].push(item);
+  });
+  return Object.keys(groups).map(g => ({group:g, items:groups[g]}));
+}
+DATA.vivendi.order.forEach(key => {
+  const st = DATA.vivendi.stations[key];
+  st.values = deriveVivendiShared(st.raw);
+  st.extra = deriveVivendiExtra(st.raw, st.extraOverrides);
+});
+function peerAvgValue(field){
+  const vals = DATA.serviceOrder.map(k => DATA.records[k][field] ? DATA.records[k][field].mai : null).filter(v=>v!=null);
+  if(!vals.length) return null;
+  return vals.reduce((a,b)=>a+b,0)/vals.length;
+}
+function badgeVsPeer(field, value){
+  const dir = DATA.fieldMeta[field].dir; const avg = peerAvgValue(field);
+  if(value==null || avg==null || dir==='neutral') return {status:'neutral', text:'k. A.'};
+  const diff = (value-avg)/Math.abs(avg||1);
+  if(dir==='up'){ if(diff>=0.08) return {status:'ok',text:'über Ø'}; if(diff<=-0.08) return {status:'crit',text:'unter Ø'}; return {status:'warn',text:'nahe Ø'}; }
+  if(dir==='down'){ if(diff<=-0.08) return {status:'ok',text:'unter Ø'}; if(diff>=0.08) return {status:'crit',text:'über Ø'}; return {status:'warn',text:'nahe Ø'}; }
+  return {status:'neutral', text:'k. A.'};
+}
+function mapStatusClass(status){return status==='direkt'?'ok':status==='naeherung'?'warn':status==='abgeleitet'?'warn':'neutral';}
+function mapStatusBadge(status){return status==='direkt'?'bg':status==='naeherung'?'by':status==='abgeleitet'?'by':'bn';}
+function feFmt(item, which){
+  const v = item[which]; if(v==null) return 'n. v.';
+  if(item.unit==='€') return fnum(v,2)+' €';
+  if(item.unit==='%') return fnum(v,2)+' %';
+  if(item.unit==='x') return fnum(v,2)+'x';
+  return fnum(v,0);
+}
+function feDelta(item){
+  if(item.mai==null||item.apr==null) return {text:'n. v.', cls:'flat'};
+  const diff = item.mai-item.apr; let good=null;
+  if(item.dir==='up') good = diff>0; else if(item.dir==='down') good = diff<0;
+  if(Math.abs(diff)<1e-9) good=null;
+  const text = item.unit==='€' ? `${diff>0?'+':''}${fnum(diff,0)} €` : item.unit==='%' ? `${diff>0?'+':''}${fnum(diff,2)} PP` : item.unit==='x' ? `${diff>0?'+':''}${fnum(diff,2)}x` : `${diff>0?'+':''}${fnum(diff,0)}`;
+  return {text, cls: good===null?'flat':(good?'up':'down')};
+}
+function vivendiStationHTML(key){
+  const P = DATA.vivendi.stations[key]; const color = DATA.vivendi.colors[key]; const name = DATA.vivendi.names[key];
+  const otherStations = DATA.vivendi.order.filter(k=>k!==key);
+  const mapRows = P.sharedFields.map(f => {
+    const m = P.mapping[f];
+    return `<div class="trow ${rowClass(mapStatusClass(m.status))}"><div class="tname">${esc(DATA.fieldMeta[f].short)} — <span style="font-weight:400;color:var(--muted)">${esc(m.note)}</span></div><div class="tval"></div><div class="bdg ${badgeClass(mapStatusClass(m.status))}">${esc(m.label)}</div></div>`;
+  }).join('');
+  const kpiItems = P.sharedFields.map(field => {
+    const v = P.values[field]; const badge = badgeVsPeer(field, v.mai); const dd = deltaData(field, v.apr, v.mai);
+    const approx = (P.mapping[field].status==='abgeleitet' || P.mapping[field].status==='naeherung') ? '≈ ' : '';
+    return `<div class="kpi ${badge.status}"><div class="label">${esc(DATA.fieldMeta[field].short)}</div><div class="value">${approx}${fmt(field, v.mai)}</div><div class="note">April: ${fmt(field, v.apr)}</div><span class="delta ${dd.cls}">${dd.text} vs. April</span></div>`;
+  }).join('');
+  const dataQualityRows = P.dataQuality.map(txt => `<div class="trow tneu" style="grid-template-columns:1fr"><div class="tname" style="font-weight:400;color:var(--ink)">${esc(txt)}</div></div>`).join('');
+  const extraCards = P.extra.map(group => {
+    const rows = group.items.map(item => {
+      const dd = feDelta(item);
+      const badgeCls = item.flag ? (item.flag==='crit'?'br':'by') : 'bn';
+      const badgeTxt = item.flag ? (item.flag==='crit'?'krit.':'beob.') : '';
+      return `<div class="trow ${item.flag?(item.flag==='crit'?'tcrt':'twrn'):'tneu'}"><div class="tname">${esc(item.label)}</div><div class="tval">${feFmt(item,'mai')}<br><span class="tddelta ${dd.cls}">${dd.text}</span></div><div class="bdg ${badgeCls}">${badgeTxt}</div></div>`;
+    }).join('');
+    return `<div class="card s6"><h3>${esc(group.group)}</h3><p class="meta">Vivendi-spezifische Zusatzkennzahlen ohne direkte snap-Entsprechung.</p><div class="tbl">${rows}</div></div>`;
+  }).join('');
+  const otherNote = otherStations.length ? `<p class="src-tag">Bereits ebenfalls im Vivendi-System erfasst: ${otherStations.map(k=>esc(DATA.vivendi.names[k])).join(', ')} — in Heatmap unten mit abgebildet.</p>` : '';
+  return `
+  <div class="main">
+    <div class="sec-head"><div class="sec-bar" style="background:${color}"></div><h2>${esc(name)} — Herkunft &amp; Methodik</h2><div class="badge-top" style="background:${color};color:#fff">Mai 2026 · Vivendi</div></div>
+    <p class="src-tag">Quelle: ${esc(P.meta.source)} (${esc(P.meta.fullName)}). Zeitraum: ${esc(P.meta.period)}. Exportierte Vivendi-Reiter: ${esc(P.meta.tabs)}. Anderes Herkunftssystem als die vier snap-Dienste — deshalb bewusst als eigener Reiter statt Teil der Gesamtsicht geführt.</p>
+    ${otherNote}
+    <div class="bento"><div class="card s12"><h3>Kompatibilität je Kennzahl</h3><p class="meta">Grün = direkt vergleichbar, Gelb = angenähert/abgeleitet (Formel siehe Hinweistext), Grau = nicht verfügbar.</p><div class="tbl">${mapRows}</div></div></div>
+
+    <div class="sec-head"><div class="sec-bar" style="background:${color}"></div><h2>Kernkennzahlen im Ø-Vergleich zu den vier snap-Diensten</h2><div class="badge-top" style="background:${color};color:#fff">Mai 2026</div></div>
+    <p class="src-tag">Bewertung (stark/beob./krit.) bezieht sich auf den Abstand zum Durchschnitt von Höntrop, Linden, Gerthe und Hattingen. Werte mit „≈“ sind abgeleitet, siehe Methodik oben.</p>
+    <div class="g4">${kpiItems}</div>
+
+    <div class="sec-head"><div class="sec-bar" style="background:${color}"></div><h2>Entwicklung April → Mai</h2></div>
+    <div class="bento"><div class="card s12"><h3>Veränderung der Kernkennzahlen</h3><p class="meta">Gleiche Logik wie in den Dienstreitern: Index-/Erlöswerte relativ, Quoten in Prozentpunkten. Felder ohne Datenbasis (SPX, Krankheitsquote) erscheinen als „n. v.“.</p><div id="delta-${key}" style="width:100%;height:350px"></div></div></div>
+
+    <div class="sec-head"><div class="sec-bar" style="background:${color}"></div><h2>Steuerungsprofil im Vergleich</h2></div>
+    <div class="bento"><div class="card s12"><h3>Gauge-Profil ${esc(name)} (Mai)</h3><p class="meta">Die schwarze Marke zeigt den Durchschnitt der vier snap-Dienste. SPX und Krankheitsquote fehlen mangels Datenbasis und werden hier ausgelassen.</p><div id="gauge-${key}" style="width:100%;height:320px"></div></div></div>
+
+    <div class="sec-head"><div class="sec-bar" style="background:${color}"></div><h2>Heatmap: alle bislang erfassten Vivendi-Dienste im Bild</h2></div>
+    <div class="bento"><div class="card s12"><h3>Kompakter Profilvergleich inkl. snap- und Vivendi-Diensten</h3><p class="meta">Bei Mehrstunden ist die Logik invertiert, damit dunklere Felder günstiger bleiben. SPX und Krankheitsquote sind für Vivendi-Dienste nicht abgebildet.</p><div id="heat-${key}" style="width:100%;height:420px"></div></div></div>
+
+    <div class="sec-head"><div class="sec-bar" style="background:${color}"></div><h2>Vivendi-spezifische Zusatzkennzahlen</h2></div>
+    <div class="bento">${extraCards}</div>
+
+    <div class="sec-head"><div class="sec-bar" style="background:${color}"></div><h2>Datenqualitäts-Hinweise</h2></div>
+    <div class="bento"><div class="card s12"><h3>Vor Verwendung in der PDL-Runde zu klären</h3><p class="meta">Auffälligkeiten im Export, die vor einer belastbaren Interpretation abgeglichen werden sollten.</p><div class="tbl">${dataQualityRows}</div></div></div>
+  </div>`;
+}
+function renderVivendiStation(key){
+  const panel = document.getElementById('panel-'+key);
+  panel.innerHTML = vivendiStationHTML(key);
+  const P = DATA.vivendi.stations[key]; const color = DATA.vivendi.colors[key];
+
+  const deltaVals = P.sharedFields.map(field => {
+    const v=P.values[field]; if(v.apr==null||v.mai==null) return 0;
+    const mode=deltaMode(field,v.apr,v.mai); if(mode==='pct') return ((v.mai-v.apr)/v.apr)*100; return v.mai-v.apr;
+  });
+  const deltaText = P.sharedFields.map(field => deltaData(field, P.values[field].apr, P.values[field].mai).text);
+  const deltaColors = P.sharedFields.map(field => { const c=deltaData(field, P.values[field].apr, P.values[field].mai).cls; return c==='dpos'?'#2f8f61':c==='dneg'?'#c7443e':'#7a7490'; });
+  Plotly.react('delta-'+key,[{type:'bar',orientation:'h',y:P.sharedFields.map(f=>DATA.fieldMeta[f].short),x:deltaVals,marker:{color:deltaColors},text:deltaText,textposition:'outside',cliponaxis:false,hovertemplate:'%{y}<br>Änderung: %{text}<extra></extra>'}],{height:350,margin:{l:130,r:80,t:20,b:40},paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)',font:{family:'Inter, Segoe UI, Arial, sans-serif',color:'#24163a'},xaxis:{gridcolor:'rgba(90,37,144,0.07)',zerolinecolor:'rgba(36,22,58,0.35)',zerolinewidth:2,title:'Veränderung'},yaxis:{autorange:'reversed'}},CFG);
+
+  const gaugeTraces = P.gaugeFields.map((field, idx) => {
+    const stationVals = DATA.serviceOrder.map(k=>DATA.records[k][field].mai).filter(v=>v!=null);
+    const current = P.values[field].mai; const avg = peerAvgValue(field);
+    const allVals = stationVals.concat([current]); const mx = Math.max(...allVals); const padded = mx<=0?1:mx*1.12;
+    const dir=DATA.fieldMeta[field].dir;
+    const steps = dir==='down' ? [{range:[0,padded*0.35],color:'#e6f4ed'},{range:[padded*0.35,padded*0.65],color:'#fff4dd'},{range:[padded*0.65,padded],color:'#fde8e7'}] : [{range:[0,padded*0.45],color:'#fde8e7'},{range:[padded*0.45,padded*0.75],color:'#fff4dd'},{range:[padded*0.75,padded],color:'#e6f4ed'}];
+    return {type:'indicator',mode:'gauge+number',value:current,number:{valueformat: DATA.fieldMeta[field].digits===0 ? '.0f' : DATA.fieldMeta[field].digits===1 ? '.1f' : '.2f',suffix:DATA.fieldMeta[field].suffix,font:{size:26,color:'#24163a'}},title:{text:`<b>${DATA.fieldMeta[field].short}</b><br><span style="font-size:11px;color:#6f6384">Ø 4 snap-Dienste: ${fmt(field, avg)}</span>`,font:{size:13}},domain:{row:0,column:idx},gauge:{shape:'angular',axis:{range:[0,padded],tickfont:{size:9,color:'#6f6384'}},bar:{color:color,thickness:0.28},bgcolor:'#fff',borderwidth:1,bordercolor:'rgba(90,37,144,0.10)',steps:steps,threshold:{line:{color:'#24163a',width:3},thickness:0.85,value:avg}}};
+  });
+  Plotly.react('gauge-'+key, gaugeTraces, {grid:{rows:1,columns:6,pattern:'independent'},height:320,margin:{l:14,r:14,t:8,b:8},paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)',font:{family:'Inter, Segoe UI, Arial, sans-serif',color:'#24163a'}}, CFG);
+
+  const heatRows = DATA.serviceOrder.concat(DATA.vivendi.order);
+  const heatNames = DATA.serviceOrder.map(k=>DATA.serviceNames[k]).concat(DATA.vivendi.order.map(k=>DATA.vivendi.names[k]));
+  const z = heatRows.map(s => P.gaugeFields.map(field => {
+    const vals = DATA.serviceOrder.map(k=>DATA.records[k][field].mai).concat(DATA.vivendi.order.map(k=>DATA.vivendi.stations[k].values[field].mai));
+    const valid = vals.filter(v=>v!=null); const mn=Math.min(...valid), mx=Math.max(...valid);
+    const dir = DATA.fieldMeta[field].dir;
+    const isSnap = DATA.serviceOrder.includes(s);
+    const raw = isSnap ? DATA.records[s][field].mai : DATA.vivendi.stations[s].values[field].mai;
+    if(raw==null) return null;
+    let norm = mx===mn ? 0.5 : (raw-mn)/(mx-mn); if(dir==='down') norm = 1-norm; return norm;
+  }));
+  Plotly.react('heat-'+key,[{type:'heatmap',x:P.gaugeFields.map(f=>DATA.fieldMeta[f].short),y:heatNames,z:z,colorscale:[[0,'#fde8e7'],[0.5,'#fff4dd'],[1,'#e6f4ed']],zmin:0,zmax:1,hovertemplate:'%{y}<br>%{x}: %{z:.2f}<extra></extra>'}],{height:420,margin:{l:110,r:20,t:20,b:50},paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)',font:{family:'Inter, Segoe UI, Arial, sans-serif',color:'#24163a'}},CFG);
+}
+function overviewHTML(){
+  const ov = DATA.overview;
+  const kpis = [
+    {label:'SPX klien­tengewichtet', value:fnum(ov.weightedSpx,0), note:'Mai 2026 über vier Dienste', delta:'Referenz aus Dienstwerten', status:'warn'},
+    {label:'Klienten gesamt', value:fnum(ov.sumClients,0), note:'Höntrop, Linden, Gerthe, Hattingen', delta:'Mengensicht Mai', status:'neutral'},
+    {label:'Ø Erlöse pro Arbeitsstunde', value:fnum(ov.meanRev,2)+' €', note:'Mittelwert der vier Dienste', delta:'Wirtschaftlichkeitsblick', status:'warn'},
+    {label:'Ø Auslastung der MA', value:fnum(ov.meanMA,1)+' %', note:'Belastungsindikator Mai', delta:'Ergänzend Ø Mehrstunden '+fnum(ov.meanMehr,1)+' %', status:'crit'}
+  ];
+  const rows = DATA.serviceOrder.map(k => {
+    const r=DATA.records[k];
+    const cells = DATA.coreFields.map(f => deltaData(f, r[f].apr, r[f].mai));
+    return `<tr>
+      <td><span class="ov-dot" style="background:${DATA.serviceColors[k]}"></span>${esc(DATA.serviceNames[k])}<span class="ov-sub">Quelle: ${esc(DATA.sourceNames[k])}</span></td>
+      <td>${fmt('SPX', r['SPX'].mai)}<br><span class="tddelta ${cells[0].cell}">${cells[0].arrow} ${cells[0].text}</span></td>
+      <td>${fmt('Erlöse pro Arbeitsstunde', r['Erlöse pro Arbeitsstunde'].mai)}<br><span class="tddelta ${cells[1].cell}">${cells[1].arrow} ${cells[1].text}</span></td>
+      <td>${fmt('SGBXI Auslastung', r['SGBXI Auslastung'].mai)}<br><span class="tddelta ${cells[2].cell}">${cells[2].arrow} ${cells[2].text}</span></td>
+      <td>${fmt('Pünktlichkeitsquote', r['Pünktlichkeitsquote'].mai)}<br><span class="tddelta ${cells[3].cell}">${cells[3].arrow} ${cells[3].text}</span></td>
+      <td>${fmt('Krankheitsquote', r['Krankheitsquote'].mai)}<br><span class="tddelta ${cells[4].cell}">${cells[4].arrow} ${cells[4].text}</span></td>
+      <td>${fmt('Mehrstundenquote', r['Mehrstundenquote'].mai)}<br><span class="tddelta ${cells[5].cell}">${cells[5].arrow} ${cells[5].text}</span></td>
+      <td>${fmt('Anzahl Klienten', r['Anzahl Klienten'].mai)}<br><span class="tddelta ${cells[6].cell}">${cells[6].arrow} ${cells[6].text}</span></td>
+      <td>${fmt('Auslastung der MA', r['Auslastung der MA'].mai)}<br><span class="tddelta ${cells[7].cell}">${cells[7].arrow} ${cells[7].text}</span></td>
+    </tr>`;
+  }).join('');
+  const notes = ov.notes.map(n => `<div class="trow ${rowClass(n.badge)}"><div class="tname">${esc(n.name)}</div><div class="tval">${esc(n.value)}</div><div class="bdg ${badgeClass(n.badge)}">${n.badge==='crit'?'krit.':'beob.'}</div></div>`).join('');
+  return `
+    <div class="main">
+      <div class="sec-head"><div class="sec-bar" style="background:#5a2590"></div><h2>Gesamtsicht aller vier Dienste</h2><div class="badge-top" style="background:#5a2590;color:#fff">Mai 2026</div></div>
+      <p class="src-tag">Managementsicht aus dem Blatt April-Mai_cockpit. Sichtbar bleibt nur die verdichtete Steuerungsebene.</p>
+      <div class="g4">${kpis.map(k => `<div class="kpi ${k.status}"><div class="label">${k.label}</div><div class="value">${k.value}</div><div class="note">${k.note}</div><span class="delta dneu">${k.delta}</span></div>`).join('')}</div>
+      <div class="sec-head"><div class="sec-bar" style="background:#5a2590"></div><h2>Dienste im direkten Vergleich</h2></div>
+      <div class="bento"><div class="card s12"><h3>Kernkennzahlen mit April-Entwicklung</h3><p class="meta">Die Tabelle zeigt bewusst nur die Management-Kernschicht. Zusätzliche Strukturwerte folgen erst in den Dienstreiteren.</p><div style="overflow:auto"><table class="ov-table"><thead><tr><th>Dienst</th><th>SPX</th><th>Erlös/Std.</th><th>SGBXI-Ausl.</th><th>Pünktlichk.</th><th>Krankheit</th><th>Mehrstunden</th><th>Klienten</th><th>MA-Auslast.</th></tr></thead><tbody>${rows}</tbody></table></div></div></div>
+      <div class="sec-head"><div class="sec-bar" style="background:#5a2590"></div><h2>SPX-Entwicklung</h2></div>
+      <div class="bento"><div class="card s12"><h3>.snap Performance Index: April vs. Mai</h3><p class="meta">Die SPX-Sicht dient als schneller Einstieg in die Gesamtbewegung des Monats.</p><div id="ov-spx" style="width:100%;height:350px"></div></div></div>
+      <div class="sec-head"><div class="sec-bar" style="background:#5a2590"></div><h2>Managementhinweise</h2></div>
+      <div class="bento"><div class="card s12"><h3>Prioritäre Beobachtungsfelder</h3><p class="meta">Je Dienst ist nur das aktuell auffälligste Feld hervorgehoben, damit die Führungsrunde klar bleibt.</p><div class="tbl">${notes}</div></div></div>
+    </div>`;
+}
+function servicePanelHTML(key){
+  const color = DATA.serviceColors[key];
+  return `
+  <div class="main">
+    <div class="sec-head"><div class="sec-bar" style="background:${color}"></div><h2>Kernkennzahlen ${esc(DATA.serviceNames[key])}</h2><div class="badge-top" style="background:${color};color:#fff">Mai 2026</div></div>
+    <p class="src-tag">Quelle im Cockpit: ${esc(DATA.sourceNames[key])}. Die Darstellung priorisiert Führungslogik statt Vollabbildung der Excel-Struktur.</p>
+    <div class="g4" id="kpis-${key}"></div>
+
+    <div class="sec-head"><div class="sec-bar" style="background:${color}"></div><h2>Entwicklung April → Mai</h2></div>
+    <div class="bento"><div class="card s12"><h3>Veränderung der Kernkennzahlen</h3><p class="meta">Index- und Erlöswerte werden relativ, Quoten in Prozentpunkten dargestellt. So bleibt die Veränderungslogik konsistent.</p><div id="delta-${key}" style="width:100%;height:350px"></div></div></div>
+
+    <div class="sec-head"><div class="sec-bar" style="background:${color}"></div><h2>Visualisierte Kernkennzahlen</h2></div>
+    <div class="bento">
+      <div class="card s6"><h3>Wirtschaftlicher Vergleich</h3><p class="meta">Erlöse pro Arbeitsstunde im Vier-Dienste-Vergleich.</p><div class="insight-grid" id="insights-${key}"></div><div id="erloes-${key}" style="width:100%;height:320px"></div></div>
+      <div class="card s6"><h3>Operative Schlüsselquoten</h3><p class="meta">Pünktlichkeit, Krankheit und Mehrstunden in einer kompakten Vergleichsansicht.</p><div id="operativ-${key}" style="width:100%;height:320px"></div></div>
+    </div>
+
+    <div class="sec-head"><div class="sec-bar" style="background:${color}"></div><h2>Steuerungsprofil</h2></div>
+    <div class="bento"><div class="card s12"><h3>Gauge-Profil der Kernachsen</h3><p class="meta">Die Gauges zeigen je Kennzahl den Mai-Istwert des Dienstes. Die schwarze Marke steht für den Durchschnitt der vier Dienste.</p><p class="intro">${serviceIntro(key)}</p><div id="gauge-${key}" style="width:100%;height:470px"></div></div></div>
+
+    <div class="sec-head"><div class="sec-bar" style="background:${color}"></div><h2>Heatmap im Vergleich</h2></div>
+    <div class="bento"><div class="card s12"><h3>Kompakter Profilvergleich</h3><p class="meta">Die Heatmap verdichtet die sechs Kernachsen. Bei Krankheit und Mehrstunden ist die Logik invertiert, damit dunklere Felder günstiger bleiben.</p><div id="heat-${key}" style="width:100%;height:400px"></div></div></div>
+
+    <div class="sec-head"><div class="sec-bar" style="background:${color}"></div><h2>Struktur und Einordnung</h2></div>
+    <div class="bento" id="structure-${key}"></div>
+  </div>`;
+}
+function renderOverview(){
+  document.getElementById('panel-uebersicht').innerHTML = overviewHTML();
+  const apr = DATA.serviceOrder.map(k => DATA.records[k]['SPX'].apr);
+  const mai = DATA.serviceOrder.map(k => DATA.records[k]['SPX'].mai);
+  Plotly.react('ov-spx',[
+    {type:'bar',name:'April',x:DATA.serviceOrder.map(k=>DATA.serviceNames[k]),y:apr,marker:{color:'rgba(122,116,144,0.35)'}},
+    {type:'bar',name:'Mai',x:DATA.serviceOrder.map(k=>DATA.serviceNames[k]),y:mai,marker:{color:DATA.serviceOrder.map(k=>DATA.serviceColors[k])}}
+  ],{barmode:'group',height:350,margin:{l:50,r:20,t:20,b:40},paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)',font:{family:'Inter, Segoe UI, Arial, sans-serif',color:'#24163a'},xaxis:{gridcolor:'rgba(90,37,144,0.07)'},yaxis:{gridcolor:'rgba(90,37,144,0.07)'}},CFG);
+}
+function renderService(key){
+  const panel = document.getElementById('panel-'+key);
+  panel.innerHTML = servicePanelHTML(key);
+  const r = DATA.records[key];
+  const kpiItems = DATA.coreFields.map(field => {
+    const badge = getBadge(field, r[field].mai); const dd = deltaData(field, r[field].apr, r[field].mai);
+    return `<div class="kpi ${badge.status}"><div class="label">${esc(DATA.fieldMeta[field].short)}</div><div class="value">${fmt(field, r[field].mai)}</div><div class="note">April: ${fmt(field, r[field].apr)}</div><span class="delta ${dd.cls}">${dd.text} vs. April</span></div>`;
+  }).join('');
+  document.getElementById('kpis-'+key).innerHTML = kpiItems;
+
+  const lowField = DATA.priorityField[key];
+  document.getElementById('insights-'+key).innerHTML = `
+    <div class="insight"><div class="k">Prioritätsfeld</div><div class="v">${esc(DATA.fieldMeta[lowField].short)}</div></div>
+    <div class="insight"><div class="k">Klienten Mai</div><div class="v">${fmt('Anzahl Klienten', r['Anzahl Klienten'].mai)}</div></div>
+    <div class="insight"><div class="k">MA-Auslastung</div><div class="v">${fmt('Auslastung der MA', r['Auslastung der MA'].mai)}</div></div>`;
+
+  const deltaVals = DATA.coreFields.map(field => {
+    const apr=r[field].apr, mai=r[field].mai; const mode=deltaMode(field,apr,mai); if(apr==null||mai==null) return 0;
+    if(mode==='pct') return ((mai-apr)/apr)*100; return mai-apr;
+  });
+  const deltaText = DATA.coreFields.map(field => deltaData(field, r[field].apr, r[field].mai).text);
+  const deltaColors = DATA.coreFields.map(field => deltaData(field, r[field].apr, r[field].mai).cls==='dpos'?'#2f8f61':deltaData(field, r[field].apr, r[field].mai).cls==='dneg'?'#c7443e':'#7a7490');
+  Plotly.react('delta-'+key,[{type:'bar',orientation:'h',y:DATA.coreFields.map(f=>DATA.fieldMeta[f].short),x:deltaVals,marker:{color:deltaColors},text:deltaText,textposition:'outside',cliponaxis:false,hovertemplate:'%{y}<br>Änderung: %{text}<extra></extra>'}],{height:350,margin:{l:130,r:80,t:20,b:40},paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)',font:{family:'Inter, Segoe UI, Arial, sans-serif',color:'#24163a'},xaxis:{gridcolor:'rgba(90,37,144,0.07)',zerolinecolor:'rgba(36,22,58,0.35)',zerolinewidth:2,title:'Veränderung'},yaxis:{autorange:'reversed'}},CFG);
+
+  Plotly.react('erloes-'+key,[{type:'bar',x:DATA.serviceOrder.map(k=>DATA.serviceNames[k]),y:DATA.serviceOrder.map(k=>DATA.records[k]['Erlöse pro Arbeitsstunde'].mai),marker:{color:DATA.serviceOrder.map(k=>k===key?DATA.serviceColors[k]:'rgba(122,116,144,0.35)')},text:DATA.serviceOrder.map(k=>fnum(DATA.records[k]['Erlöse pro Arbeitsstunde'].mai,2)),textposition:'outside'}],{height:320,margin:{l:50,r:20,t:20,b:40},paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)',font:{family:'Inter, Segoe UI, Arial, sans-serif',color:'#24163a'},xaxis:{gridcolor:'rgba(90,37,144,0.07)'},yaxis:{gridcolor:'rgba(90,37,144,0.07)'}},CFG);
+
+  Plotly.react('operativ-'+key,[
+    {type:'bar',name:'Pünktlichkeit',x:DATA.serviceOrder.map(k=>DATA.serviceNames[k]),y:DATA.serviceOrder.map(k=>DATA.records[k]['Pünktlichkeitsquote'].mai),marker:{color:'#009bdc'}},
+    {type:'bar',name:'Krankheit',x:DATA.serviceOrder.map(k=>DATA.serviceNames[k]),y:DATA.serviceOrder.map(k=>DATA.records[k]['Krankheitsquote'].mai),marker:{color:'#c7443e'}},
+    {type:'bar',name:'Mehrstunden',x:DATA.serviceOrder.map(k=>DATA.serviceNames[k]),y:DATA.serviceOrder.map(k=>DATA.records[k]['Mehrstundenquote'].mai),marker:{color:'#c27a00'}}
+  ],{barmode:'group',height:320,margin:{l:50,r:20,t:20,b:40},paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)',font:{family:'Inter, Segoe UI, Arial, sans-serif',color:'#24163a'},xaxis:{gridcolor:'rgba(90,37,144,0.07)'},yaxis:{gridcolor:'rgba(90,37,144,0.07)'}},CFG);
+
+  const gaugeTraces = DATA.gaugeFields.map((field, idx) => {
+    const vals = DATA.serviceOrder.map(k=>DATA.records[k][field].mai).filter(v=>v!=null); const current = DATA.records[key][field].mai; const avg = vals.reduce((a,b)=>a+b,0)/vals.length; const mx = Math.max(...vals); const padded = mx<=0?1:mx*1.12;
+    const dir=DATA.fieldMeta[field].dir;
+    const steps = dir==='down' ? [{range:[0,padded*0.35],color:'#e6f4ed'},{range:[padded*0.35,padded*0.65],color:'#fff4dd'},{range:[padded*0.65,padded],color:'#fde8e7'}] : [{range:[0,padded*0.45],color:'#fde8e7'},{range:[padded*0.45,padded*0.75],color:'#fff4dd'},{range:[padded*0.75,padded],color:'#e6f4ed'}];
+    return {type:'indicator',mode:'gauge+number',value:current,number:{valueformat: DATA.fieldMeta[field].digits===0 ? '.0f' : DATA.fieldMeta[field].digits===1 ? '.1f' : '.2f',suffix:DATA.fieldMeta[field].suffix,font:{size:28,color:'#24163a'}},title:{text:`<b>${DATA.fieldMeta[field].short}</b><br><span style="font-size:11px;color:#6f6384">Ø Dienste: ${fmt(field, avg)}</span>`,font:{size:14}},domain:{row:Math.floor(idx/3),column:idx%3},gauge:{shape:'angular',axis:{range:[0,padded],tickfont:{size:10,color:'#6f6384'}},bar:{color:DATA.serviceColors[key],thickness:0.28},bgcolor:'#fff',borderwidth:1,bordercolor:'rgba(90,37,144,0.10)',steps:steps,threshold:{line:{color:'#24163a',width:3},thickness:0.85,value:avg}}};
+  });
+  Plotly.react('gauge-'+key, gaugeTraces, {grid:{rows:2,columns:3,pattern:'independent'},height:470,margin:{l:18,r:18,t:8,b:8},paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)',font:{family:'Inter, Segoe UI, Arial, sans-serif',color:'#24163a'}}, CFG);
+
+  const z = DATA.serviceOrder.map(s => DATA.gaugeFields.map(field => {
+    const vals=DATA.serviceOrder.map(k=>DATA.records[k][field].mai); const norm=(function(values, direction){
+      const valid=values.filter(v=>v!=null); const mn=Math.min(...valid), mx=Math.max(...valid); let arr = values.map(v=> mx===mn ? 0.5 : (v-mn)/(mx-mn)); if(direction==='down') arr=arr.map(x=>1-x); return arr;
+    })(vals, DATA.fieldMeta[field].dir); return norm[DATA.serviceOrder.indexOf(s)];
+  }));
+  Plotly.react('heat-'+key,[{type:'heatmap',x:DATA.gaugeFields.map(f=>DATA.fieldMeta[f].short),y:DATA.serviceOrder.map(k=>DATA.serviceNames[k]),z:z,colorscale:[[0,'#fde8e7'],[0.5,'#fff4dd'],[1,'#e6f4ed']],zmin:0,zmax:1,hovertemplate:'%{y}<br>%{x}: %{z:.2f}<extra></extra>'}],{height:400,margin:{l:110,r:20,t:20,b:50},paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)',font:{family:'Inter, Segoe UI, Arial, sans-serif',color:'#24163a'}},CFG);
+
+  const structure = Object.entries(DATA.structureCards).map(([title,fields]) => {
+    const rows = fields.map(field => { const badge=getBadge(field, r[field].mai); return `<div class="trow ${rowClass(badge.status)}"><div class="tname">${esc(DATA.fieldMeta[field].short)}</div><div class="tval">${fmt(field, r[field].mai)}</div><div class="bdg ${badgeClass(badge.status)}">${badge.text}</div></div>`; }).join('');
+    return `<div class="card s6"><h3>${esc(title)}</h3><p class="meta">Ergänzende Cockpitwerte für Einordnung und Ursachenbild.</p><div class="tbl">${rows}</div></div>`;
+  }).join('');
+  document.getElementById('structure-'+key).innerHTML = structure;
+}
+function activate(key){document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===key)); document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active', p.id==='panel-'+key)); if(key==='uebersicht') renderOverview(); else if(DATA.vivendi.order.includes(key)) renderVivendiStation(key); else renderService(key);}
+function init(){renderOverview(); renderService('hontrop'); document.querySelectorAll('.tab').forEach(tab => tab.addEventListener('click', () => activate(tab.dataset.tab)));}
+window.addEventListener('load', init);
+</script>
+</body>
+</html>

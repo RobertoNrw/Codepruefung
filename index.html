@@ -1,0 +1,2390 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GF Jahreskalender 2027</title>
+<meta name="description" content="Interaktiver Jahreskalender 2027 für GF Jens Fritsch (Diakonie Ruhr) mit Fokusmodus Tag/Woche/Monat, Regelprüfung und Export.">
+<style>
+  :root {
+    --primary: #5A2572;
+    --primary-light: #f3ecf6;
+    --secondary: #009BDC;
+    --text: #212529;
+    --muted: #6c757d;
+    --border: #dee2e6;
+    --bg: #f8f9fa;
+    --card: #ffffff;
+    --c-jf: #1976d2;
+    --c-sk: #7b1fa2;
+    --c-gremium: #00796b;
+    --c-fokus: #2e7d32;
+    --c-projekt: #b45309;
+    --c-klausur: #c2185b;
+    --warn: #8a5a00;
+    --warn-bg: #fff6e0;
+    --bad: #c0392b;
+    --bad-bg: #fdecea;
+    --ok: #2e7d32;
+    --ok-bg: #e8f5e9;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--bg); }
+  body {
+    font-family: "Helvetica Neue", Helvetica, Arial, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    color: var(--text);
+    padding: 16px;
+    line-height: 1.4;
+  }
+  button { font-family: inherit; }
+
+  header.top {
+    background: var(--card);
+    border-left: 6px solid var(--primary);
+    padding: 18px 22px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  header.top h1 { font-size: 1.4rem; color: var(--primary); }
+  header.top p { font-size: 0.86rem; color: var(--muted); margin-top: 4px; }
+  .head-right { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .pill { font-size: 0.8rem; background: #eee; padding: 6px 12px; border-radius: 20px; }
+  .pill.cyan { background: var(--secondary); color: #fff; font-weight: 600; }
+  .pill.status-ok { background: var(--ok-bg); color: var(--ok); font-weight: 600; }
+  .pill.status-bad { background: var(--bad-bg); color: var(--bad); font-weight: 600; }
+  .pill.status-warn { background: var(--warn-bg); color: var(--warn); font-weight: 600; }
+
+  .filter-row {
+    background: var(--card);
+    padding: 12px 18px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    margin-bottom: 16px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .filter-btn {
+    border: 1px solid var(--border);
+    background: #ffffff;
+    color: var(--text);
+    padding: 7px 14px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    font-weight: 500;
+  }
+  .filter-btn:hover { background: #e9ecef; }
+  .filter-btn.active { background: var(--primary); color: #ffffff; border-color: var(--primary); }
+  .filter-btn:focus-visible, .btn:focus-visible, .icon-btn:focus-visible, .cell:focus-visible, .week-ev:focus-visible, .month-day:focus-visible, .detail-card:focus-visible, .month-title:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, summary:focus-visible, .focus-nav button:focus-visible, .focus-close-btn:focus-visible { outline: 3px solid var(--secondary); outline-offset: 2px; }
+  .search-input { border: 1px solid var(--border); border-radius: 20px; padding: 7px 14px; font-size: 0.85rem; min-width: 260px; font-family: inherit; }
+  .filter-info { font-size: 0.78rem; color: var(--muted); }
+  .legend { margin-left: auto; display: flex; gap: 12px; flex-wrap: wrap; font-size: 0.78rem; }
+  .legend-item { display: flex; align-items: center; gap: 5px; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+  .dot.ph { box-shadow: 0 0 0 2px #fff, 0 0 0 3.5px var(--warn); }
+
+  .layout { display: grid; grid-template-columns: 2.2fr 1fr; gap: 16px; }
+  @media (max-width: 1024px) { .layout { grid-template-columns: 1fr; } }
+
+  .panel {
+    background: var(--card);
+    border-radius: 8px;
+    padding: 18px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    margin-bottom: 16px;
+  }
+  .panel-h2 {
+    font-size: 1.1rem; font-weight: 700; color: var(--primary);
+    margin-bottom: 12px; border-bottom: 2px solid var(--primary-light); padding-bottom: 6px;
+    display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap;
+  }
+  .panel-h2 .sub { font-size: 0.75rem; color: var(--muted); font-weight: 400; }
+
+  /* Kalender-Raster (Jahresübersicht, unverändertes Grundlayout) */
+  .months-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+  .month-card { border: 1px solid var(--border); border-radius: 6px; overflow: hidden; background: #ffffff; }
+  .month-title {
+    background: var(--primary-light); color: var(--primary); font-weight: 700; font-size: 0.9rem; padding: 7px 12px;
+    display: flex; justify-content: space-between; align-items: center; cursor: pointer;
+  }
+  .month-title:hover { background: #ebdff0; }
+  .month-title small { font-weight: 500; font-size: 0.7rem; color: var(--muted); }
+  .days-head { display: grid; grid-template-columns: repeat(7, 1fr); background: #f1f3f5; text-align: center; font-size: 0.7rem; font-weight: 600; color: var(--muted); padding: 4px 0; }
+  .days-grid { display: grid; grid-template-columns: repeat(7, 1fr); }
+  .cell {
+    min-height: 46px; border-right: 1px solid #f1f3f5; border-bottom: 1px solid #f1f3f5; padding: 3px;
+    cursor: pointer; position: relative; background: #ffffff; display: flex; flex-direction: column; justify-content: flex-start;
+  }
+  .cell:nth-child(7n) { border-right: none; }
+  .cell.empty { background: #fafbfc; cursor: default; }
+  .cell.weekend { background: #fdfafc; }
+  .cell.holiday { background: #f6f6f6; }
+  .cell.holiday .day-num { color: #adb5bd; }
+  .cell:hover:not(.empty) { background: #f1f8ff; }
+  .cell.selected { outline: 2px solid var(--primary); outline-offset: -2px; background: #faeefd !important; }
+  .viol-count { position: absolute; top: 2px; right: 3px; background: var(--bad); color: #fff; font-size: 0.62rem; font-weight: 700; line-height: 1; border-radius: 8px; padding: 2px 5px; min-width: 14px; text-align: center; }
+  [role="row"] { display: contents; }
+  .cell.has-placeholder::after {
+    content: ""; position: absolute; bottom: 0; right: 0; width: 0; height: 0;
+    border-bottom: 9px solid var(--warn); border-left: 9px solid transparent;
+  }
+  .day-num { font-size: 0.72rem; color: #495057; font-weight: 600; margin-bottom: 2px; }
+  .dot-row { display: flex; gap: 3px; flex-wrap: wrap; align-items: center; }
+  .termin-dot { width: 7px; height: 7px; border-radius: 50%; }
+  .termin-dot.ph { box-shadow: 0 0 0 1.5px #fff, 0 0 0 2.5px var(--warn); }
+  .more { font-size: 0.6rem; color: var(--muted); font-weight: 600; }
+
+  /* Rechte Spalte */
+  .details-box { position: sticky; top: 16px; }
+  .kpi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+  .kpi { background: #f8f9fa; border-radius: 6px; padding: 8px 10px; border-left: 4px solid var(--primary); }
+  .kpi .v { font-size: 1.15rem; font-weight: 700; color: var(--primary); font-variant-numeric: tabular-nums; }
+  .kpi .l { font-size: 0.68rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.03em; }
+  .kpi.bad { border-left-color: var(--bad); } .kpi.bad .v { color: var(--bad); }
+  .kpi.warn { border-left-color: var(--warn); } .kpi.warn .v { color: var(--warn); }
+  .detail-card { border-left: 4px solid var(--primary); background: #f8f9fa; padding: 8px 10px; border-radius: 4px; margin-bottom: 8px; font-size: 0.85rem; cursor: pointer; }
+  .detail-card:hover { background: #f1f3f5; }
+  .detail-title { font-weight: 700; color: var(--text); }
+  .detail-meta { font-size: 0.76rem; color: var(--muted); margin-top: 2px; }
+  .empty-note { font-size: 0.86rem; color: var(--muted); font-style: italic; padding: 10px 0; }
+  .btn-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+  .btn { padding: 7px 12px; border-radius: 6px; border: 1px solid var(--primary); background: var(--primary); color: #fff; font-size: 0.8rem; cursor: pointer; font-weight: 600; }
+  .btn.secondary { background: #fff; color: var(--primary); }
+  .btn.cyan { background: var(--secondary); border-color: var(--secondary); }
+  .btn.danger { background: #fff; color: var(--bad); border-color: var(--bad); }
+  .btn.small { padding: 4px 9px; font-size: 0.74rem; }
+  .btn:hover { filter: brightness(0.95); }
+  .info-rule { font-size: 0.8rem; background: var(--ok-bg); color: #1b5e20; padding: 10px; border-radius: 6px; margin-top: 12px; line-height: 1.45; }
+  .info-rule.warn { background: var(--warn-bg); color: #6b4a00; }
+  .changelog { font-size: 0.76rem; max-height: 180px; overflow: auto; border: 1px solid var(--border); border-radius: 6px; padding: 6px 8px; margin-top: 8px; background: #fff; }
+  .changelog div { padding: 3px 0; border-bottom: 1px dashed #eee; }
+  .changelog div:last-child { border-bottom: none; }
+  .changelog time { color: var(--muted); margin-right: 6px; font-variant-numeric: tabular-nums; }
+  .banner { display: flex; justify-content: space-between; align-items: center; gap: 10px; background: #eef8fd; border: 1px solid var(--secondary); border-left: 5px solid var(--secondary); padding: 8px 14px; border-radius: 6px; margin-bottom: 12px; font-size: 0.84rem; flex-wrap: wrap; }
+
+  /* Formatliste */
+  details.fl { margin-top: 4px; }
+  details.fl summary { cursor: pointer; font-weight: 700; color: var(--primary); font-size: 0.95rem; padding: 6px 0; }
+  table.fl-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; margin-top: 8px; }
+  table.fl-table th, table.fl-table td { border-bottom: 1px solid #eee; padding: 5px 6px; text-align: left; vertical-align: top; }
+  table.fl-table th { background: var(--primary-light); color: var(--primary); font-weight: 700; }
+  table.fl-table tr.group td { background: #f8f9fa; font-weight: 700; color: var(--primary); }
+  .tag { display: inline-block; font-size: 0.68rem; font-weight: 700; padding: 1px 7px; border-radius: 10px; margin-left: 4px; vertical-align: middle; }
+  .tag.ok { background: var(--ok-bg); color: var(--ok); }
+  .tag.warn { background: var(--warn-bg); color: var(--warn); }
+  .tag.bad { background: var(--bad-bg); color: var(--bad); }
+  .tag.grey { background: #eceff1; color: #546e7a; }
+  .tag.cyan { background: #e1f3fb; color: #006a99; }
+  ul.open-list { font-size: 0.82rem; padding-left: 18px; line-height: 1.5; }
+
+  /* ===== Fokusmodus (Overlay) ===== */
+  .focus-overlay { position: fixed; inset: 0; background: rgba(33, 18, 44, 0.62); display: none; z-index: 1000; align-items: center; justify-content: center; padding: 16px; }
+  .focus-overlay.active { display: flex; }
+  .focus-modal { background: #fff; border-radius: 10px; width: min(1180px, 100%); max-height: 94vh; display: flex; flex-direction: column; box-shadow: 0 12px 40px rgba(0,0,0,0.35); overflow: hidden; }
+  .focus-modal-header { background: var(--primary); color: #fff; padding: 12px 18px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .focus-modal-header h2 { font-size: 1.05rem; flex: 1; min-width: 200px; }
+  .focus-nav { display: flex; gap: 4px; align-items: center; }
+  .focus-nav button, .focus-close-btn { background: rgba(255,255,255,0.14); border: 1px solid rgba(255,255,255,0.4); color: #fff; border-radius: 6px; padding: 5px 10px; cursor: pointer; font-size: 0.8rem; font-weight: 600; }
+  .focus-nav button.active { background: var(--secondary); border-color: var(--secondary); }
+  .focus-nav button:hover, .focus-close-btn:hover { background: rgba(255,255,255,0.28); }
+  .focus-close-btn { font-size: 1rem; padding: 4px 10px; }
+  .focus-summary { padding: 10px 18px; font-size: 0.84rem; border-bottom: 1px solid var(--border); line-height: 1.45; max-height: 140px; overflow: auto; }
+  .focus-summary.ok { background: var(--ok-bg); color: #1b5e20; }
+  .focus-summary.bad { background: var(--bad-bg); color: #7a1f14; }
+  .focus-summary.warn { background: var(--warn-bg); color: #6b4a00; }
+  .focus-toolbar { display: flex; gap: 8px; padding: 8px 18px; border-bottom: 1px solid var(--border); font-size: 0.78rem; color: var(--muted); align-items: center; flex-wrap: wrap; }
+  .focus-toolbar .spacer { flex: 1; }
+  .focus-body { padding: 14px 18px; overflow: auto; flex: 1; }
+
+  /* Tagesfokus: Baustein-Karten */
+  .baustein-card { border: 1px solid var(--border); border-left: 6px solid var(--primary); border-radius: 6px; padding: 10px 12px; margin-bottom: 10px; background: #fff; cursor: grab; position: relative; }
+  .baustein-card.dragging { opacity: 0.5; }
+  .baustein-card.dropready { outline: 2px dashed var(--secondary); outline-offset: 2px; }
+  .baustein-card.violation { border-color: var(--bad); box-shadow: 0 0 0 2px var(--bad); background: #fff8f7; }
+  .baustein-card.placeholder { border-style: dashed; background: #fffdf5; }
+  .baustein-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .baustein-time { font-weight: 700; font-variant-numeric: tabular-nums; min-width: 110px; color: var(--primary); }
+  .baustein-title { font-weight: 700; flex: 1; }
+  .baustein-actions { display: flex; gap: 4px; }
+  .icon-btn { border: 1px solid var(--border); background: #fff; border-radius: 5px; padding: 3px 8px; cursor: pointer; font-size: 0.8rem; color: var(--text); }
+  .icon-btn:hover { background: #f1f3f5; }
+  .icon-btn.del { color: var(--bad); border-color: #f1c4bf; }
+  .baustein-desc { font-size: 0.8rem; color: #444; margin-top: 4px; }
+  .baustein-rule { font-size: 0.74rem; color: var(--primary); background: var(--primary-light); border-radius: 4px; padding: 4px 8px; margin-top: 6px; display: inline-block; }
+  .baustein-violation-msg { font-size: 0.78rem; color: var(--bad); font-weight: 600; margin-top: 6px; }
+  .baustein-hint-msg { font-size: 0.76rem; color: #6b4a00; margin-top: 4px; }
+
+  /* Wochenfokus */
+  .week-grid { display: grid; grid-template-columns: 52px repeat(5, 1fr); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; min-width: 760px; }
+  .week-head { background: var(--primary-light); color: var(--primary); font-weight: 700; font-size: 0.8rem; text-align: center; padding: 6px 4px; border-bottom: 1px solid var(--border); border-right: 1px solid #eee; }
+  .week-head.holiday { color: #adb5bd; }
+  .week-head small { display: block; font-weight: 500; color: var(--muted); font-size: 0.68rem; }
+  .week-times { position: relative; border-right: 1px solid #eee; }
+  .week-times div { position: absolute; left: 0; right: 4px; font-size: 0.66rem; color: var(--muted); text-align: right; transform: translateY(-50%); }
+  .week-col { position: relative; border-right: 1px solid #eee; background: repeating-linear-gradient(to bottom, #fff 0, #fff calc(var(--hourpx) - 1px), #f1f3f5 calc(var(--hourpx) - 1px), #f1f3f5 var(--hourpx)); }
+  .week-col.holiday { background: repeating-linear-gradient(to bottom, #f6f6f6 0, #f6f6f6 calc(var(--hourpx) - 1px), #e9e9e9 calc(var(--hourpx) - 1px), #e9e9e9 var(--hourpx)); }
+  .week-col.dragover { background-color: #e6f4fb; box-shadow: inset 0 0 0 2px var(--secondary); }
+  .week-ev { touch-action: none; position: absolute; left: 3px; right: 3px; border-radius: 4px; padding: 3px 5px; font-size: 0.68rem; line-height: 1.2; color: #fff; overflow: hidden; cursor: grab; border: 1px solid rgba(0,0,0,0.15); box-shadow: 0 1px 2px rgba(0,0,0,0.15); }
+  .week-ev b { display: block; font-size: 0.7rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .week-ev.violation { outline: 2px solid var(--bad); outline-offset: 1px; }
+  .week-ev.placeholder { border: 2px dashed #fff; }
+  .week-ev.overlapped { left: 45%; }
+  .week-ev:hover { filter: brightness(1.08); z-index: 5; }
+
+  /* Monatsfokus */
+  .month-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 10px; }
+  .week-list-day .row { cursor: pointer; }
+  .month-day { border: 1px solid var(--border); border-radius: 6px; padding: 8px 10px; cursor: pointer; background: #fff; }
+  .month-day:hover { background: #f8f4fa; }
+  .month-day.violation { border-color: var(--bad); }
+  .month-day h4 { font-size: 0.82rem; color: var(--primary); margin-bottom: 4px; display: flex; justify-content: space-between; }
+  .month-day .row { font-size: 0.74rem; display: flex; gap: 6px; align-items: center; padding: 1px 0; }
+  .month-day .row .t { font-variant-numeric: tabular-nums; color: var(--muted); min-width: 92px; }
+  .month-day .row.ph { color: #6b4a00; }
+  .month-day .row.bad { color: var(--bad); font-weight: 600; }
+
+  /* Bearbeitungsformular */
+  .form-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.35); display: none; z-index: 1100; align-items: center; justify-content: center; padding: 16px; }
+  .form-overlay.active { display: flex; }
+  .form-modal { background: #fff; border-radius: 10px; width: min(560px, 100%); box-shadow: 0 12px 40px rgba(0,0,0,0.35); overflow: hidden; max-height: 94vh; display: flex; flex-direction: column; }
+  .form-modal header { background: var(--secondary); color: #fff; padding: 10px 16px; font-weight: 700; font-size: 0.95rem; }
+  .form-modal .body { padding: 14px 16px; overflow: auto; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .form-grid .full { grid-column: 1 / -1; }
+  .form-modal label { display: block; font-size: 0.72rem; color: var(--muted); font-weight: 600; margin-bottom: 2px; }
+  .form-modal input, .form-modal select, .form-modal textarea { width: 100%; padding: 6px 8px; border: 1px solid var(--border); border-radius: 5px; font-size: 0.84rem; font-family: inherit; }
+  .form-modal .check { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; margin-top: 6px; }
+  .form-modal .check input { width: auto; }
+  .form-modal footer { padding: 10px 16px; border-top: 1px solid var(--border); display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; }
+  .form-rule { font-size: 0.74rem; background: var(--primary-light); color: var(--primary); padding: 6px 8px; border-radius: 5px; margin-top: 8px; }
+  .form-warn { font-size: 0.76rem; color: var(--bad); font-weight: 600; margin-top: 6px; display: none; }
+
+  /* Prüfprotokoll */
+  .audit-list { font-size: 0.8rem; }
+  .audit-list .row { padding: 6px 8px; border-bottom: 1px solid #eee; cursor: pointer; display: flex; gap: 10px; align-items: flex-start; }
+  .audit-list .row:hover { background: #f8f4fa; }
+  .audit-list .d { min-width: 110px; font-weight: 700; color: var(--primary); font-variant-numeric: tabular-nums; }
+
+  @media print {
+    body { padding: 0; }
+    .filter-row, .details-box .btn-row, .focus-overlay, .form-overlay { display: none !important; }
+    .layout { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div>
+    <h1>GF Jahresplanung 2027 – Diakonie Ruhr</h1>
+    <p>Jahresübersicht mit Fokusmodus (Tag / Woche / Monat), Regelprüfung nach den 7 GF-Korrekturregeln, Formatliste Stand 27.09.2026. Modell A1.</p>
+  </div>
+  <div class="head-right">
+    <span class="pill" id="pillStatus" role="status" aria-live="polite">Prüfung läuft</span>
+    <span class="pill">Geschäftsführung: Jens Fritsch</span>
+    <span class="pill cyan">Stand 28.09.2026</span>
+  </div>
+</header>
+
+<div class="filter-row" role="group" aria-label="Filter und Suche">
+  <button type="button" class="filter-btn active" data-filter="all" aria-pressed="true">Alle Formate</button>
+  <button type="button" class="filter-btn" data-filter="JF" aria-pressed="false">Jour Fixe</button>
+  <button type="button" class="filter-btn" data-filter="Steuerkreis" aria-pressed="false">Steuerkreise</button>
+  <button type="button" class="filter-btn" data-filter="Gremium" aria-pressed="false">Gremien / Puffer</button>
+  <button type="button" class="filter-btn" data-filter="Blocker" aria-pressed="false">Blocker &amp; Klausur</button>
+  <button type="button" class="filter-btn" data-filter="Platzhalter" aria-pressed="false">Nur Platzhalter</button>
+  <input type="search" id="searchInput" class="search-input" placeholder="Suche in Titel, Beschreibung, Ort" aria-label="Termine suchen (Titel, Beschreibung, Ort)" autocomplete="off">
+  <span class="filter-info" id="filterInfo" aria-live="polite"></span>
+
+  <div class="legend">
+    <div class="legend-item"><span class="dot" style="background:var(--c-jf)"></span> JF</div>
+    <div class="legend-item"><span class="dot" style="background:var(--c-sk)"></span> Steuerkreis</div>
+    <div class="legend-item"><span class="dot" style="background:var(--c-gremium)"></span> Gremium / Puffer</div>
+    <div class="legend-item"><span class="dot" style="background:var(--c-fokus)"></span> Fokuszeit</div>
+    <div class="legend-item"><span class="dot" style="background:var(--c-projekt)"></span> Projektzeit</div>
+    <div class="legend-item"><span class="dot" style="background:var(--c-klausur)"></span> Klausur</div>
+    <div class="legend-item"><span class="dot ph" style="background:#6c757d"></span> Platzhalter (unbestätigt)</div>
+    <div class="legend-item"><span class="dot" style="background:var(--bad);border-radius:0;width:8px;height:8px"></span> Regelverstoß am Tag</div>
+  </div>
+</div>
+
+<div class="layout">
+  <div>
+    <div class="panel">
+      <div id="restoreBanner" class="banner" style="display:none">
+        <div><strong>Gespeicherter Arbeitsstand gefunden</strong> (<span id="restoreInfo"></span>). Wiederherstellen oder mit dem Ausgangsstand weiterarbeiten?</div>
+        <div style="display:flex;gap:6px">
+          <button type="button" class="btn small cyan" id="restoreYes">Wiederherstellen</button>
+          <button type="button" class="btn small secondary" id="restoreNo">Verwerfen</button>
+        </div>
+      </div>
+      <h2 class="panel-h2"><span>Jahresübersicht 2027 (12 Monate)</span><span class="sub">Klick auf einen Tag öffnet den Fokusmodus. Klick auf den Monatstitel öffnet den Monatsfokus.</span></h2>
+      <div id="calendarContainer" class="months-container" role="region" aria-label="Jahresübersicht 2027, Pfeiltasten wechseln den Tag, Eingabetaste öffnet den Fokusmodus"></div>
+    </div>
+
+    <div class="panel">
+      <details class="fl">
+        <summary>Formatliste 2027 (Stand 27.09.2026) – Bezeichnungen, Rhythmus, Slot, Status</summary>
+        <div id="formatListContainer"></div>
+      </details>
+    </div>
+
+    <div class="panel">
+      <details class="fl">
+        <summary>Offene Punkte (zu klären mit Sandra Merino-Kesting / Kerstin Tomnitz / GF)</summary>
+        <ul class="open-list" style="margin-top:8px">
+          <li><strong>Wochengespräch mit GF-Beteiligung:</strong> Wochentag bestätigen. Im Tool als Arbeitsannahme auf dem 2. Donnerstag, 14:00–16:00 Uhr.</li>
+          <li><strong>Fokuszeit-Blocker Montag:</strong> 07:30–09:00 oder 09:00–10:30? Im Tool: 07:30–09:00 (Regelfassung); die Alternative ist am Baustein vermerkt.</li>
+          <li><strong>Dienstags-JF:</strong> Verteilung der 13 monatlichen Partner-JF (IM/LeWo) und der 13 GBL-/Referate-/A³-Formate auf die Dienstage ist eine gekennzeichnete Arbeitsannahme (bis zu 7 Slots je Dienstag, 50 Min., 10 Min. Wechsel). Keine bestätigte Einzelzuordnung.</li>
+          <li><strong>JF-Dauer:</strong> 50 Min. lt. SEK-Liste; Arbeitsdatei rechnet vorsorglich mit 75 Min. Im Tool: 50 Min. je JF (SEK-Vorgabe), Dauer je Baustein editierbar.</li>
+          <li><strong>Platzhalter:</strong> Vorstandssitzung IM, Verwaltungsrat IM, AG Wohlfahrt / AG-FW, LK ambulant / LK stationär, Klausur Strategie, Gesellschafterversammlungen und AG DADuL sind als unbestätigt markiert (gestrichelter Ring, Ecke unten rechts).</li>
+          <li><strong>Steuerungsgruppen UK DR / Personal / Digitalisierung:</strong> Do-Rotation bis zur Klärung mit den neuen Steuerkreisen beibehalten.</li>
+          <li><strong>Steuerkreis Personal, Steuerkreis Marketing &amp; Vertrieb:</strong> ohne GF, Rhythmus offen – blockieren keine GF-Ressource, daher nicht im Kalender.</li>
+          <li><strong>Persistenz:</strong> Änderungen werden als JSON exportiert/importiert; zusätzlich Autosave im Browser (sofern verfügbar). Endgültiges Speicherkonzept offen.</li>
+        </ul>
+      </details>
+    </div>
+  </div>
+
+  <div>
+    <div class="panel details-box">
+      <h2 class="panel-h2" id="detailHeading">Tagesübersicht</h2>
+      <div class="kpi-grid" id="kpiGrid"></div>
+      <p id="detailSub" style="font-size:0.84rem; color:var(--muted); margin-bottom:10px;">Klicken Sie auf ein Datum im Kalender.</p>
+      <div id="detailList"><div class="empty-note">Kein Tag ausgewählt.</div></div>
+
+      <div class="btn-row">
+        <button type="button" class="btn small" id="btnNewGlobal">Neuer Termin</button>
+        <button type="button" class="btn small cyan" id="btnAudit">Prüfprotokoll gesamt</button>
+        <button type="button" class="btn small secondary" id="btnUndo" disabled title="Nichts zum Rückgängigmachen">Rückgängig</button>
+        <button type="button" class="btn small secondary" id="btnExport">Export JSON</button>
+        <button type="button" class="btn small secondary" id="btnIcs">Export ICS</button>
+        <button type="button" class="btn small secondary" id="btnImport">Import JSON</button>
+        <button type="button" class="btn small danger" id="btnReset">Ausgangsstand</button>
+        <input type="file" id="importFile" accept=".json,application/json" style="display:none">
+      </div>
+
+      <div style="margin-top:12px;font-size:0.8rem;font-weight:700;color:var(--primary)">Änderungsprotokoll</div>
+      <div class="changelog" id="changelog"><div style="color:var(--muted)">Noch keine Änderungen in dieser Sitzung.</div></div>
+
+      <div class="info-rule">
+        <strong>Angewendete GF-Korrekturregeln:</strong><br>
+        1. JF Jahndorf: alle 6–8 Wochen, 50 Min. (nicht monatlich).<br>
+        2. JF Mala: kein eigener Termin, Teilslot innerhalb JF Personal.<br>
+        3. JF Personal: 75 Min. = 50 Referat + 20 Poolspringer Frau Mala + 5 Wechselpuffer, Block nicht trennbar.<br>
+        4. GBL-Klausur (18.–19.11.) und Leistungsklausur Sozialwirtschaft (03.–04.05., 08.–09.11.) nie in derselben ISO-Woche.<br>
+        5. Fokuszeit-Blocker: Montag und Freitag, je inkl. 0,5 Std. Abstimmung Assistenz GF.<br>
+        6. Projektarbeit-Blocker GF: wöchentlich Mittwoch 13:30–15:30.<br>
+        7. Wochengespräch mit GF-Beteiligung: monatlich, 2 Std., 14:00–16:00 (Wochentag offen).
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Fokusmodus -->
+<div class="focus-overlay" id="focusOverlay">
+  <div class="focus-modal" role="dialog" aria-modal="true" aria-labelledby="focusTitle">
+    <div class="focus-modal-header">
+      <h2 id="focusTitle">Fokusmodus</h2>
+      <div class="focus-nav">
+        <button type="button" id="fmPrev" title="Zurück" aria-label="Zurück">&lsaquo;</button>
+        <button type="button" id="fmDay" class="active">Tag</button>
+        <button type="button" id="fmWeek">Woche</button>
+        <button type="button" id="fmMonth">Monat</button>
+        <button type="button" id="fmNext" title="Weiter" aria-label="Weiter">&rsaquo;</button>
+      </div>
+      <button type="button" class="focus-close-btn" id="focusCloseBtn" title="Schließen (Esc)" aria-label="Fokusmodus schließen">&#x2715;</button>
+    </div>
+    <div class="focus-summary" id="focusSummary" role="status" aria-live="polite"></div>
+    <div class="focus-toolbar" id="focusToolbar">
+      <span id="focusHint">Bausteine per Drag &amp; Drop aufeinander ziehen, um Zeiten zu tauschen. „Bearbeiten“ öffnet das Formular, „Löschen“ entfernt den Termin. Die Regelprüfung läuft bei jeder Änderung.</span>
+      <span class="spacer"></span>
+      <button type="button" class="btn small" id="fmNew">Neuer Termin an diesem Tag</button>
+    </div>
+    <div class="focus-body" id="focusBody"></div>
+  </div>
+</div>
+
+<!-- Bearbeitungsformular -->
+<div class="form-overlay" id="formOverlay">
+  <div class="form-modal" role="dialog" aria-modal="true" aria-labelledby="formTitle">
+    <header id="formTitle">Termin bearbeiten</header>
+    <div class="body">
+      <div class="form-grid">
+        <div class="full"><label for="fTitle">Titel (Bezeichnung des Formats)</label><input type="text" id="fTitle"></div>
+        <div><label for="fDate">Datum</label><input type="date" id="fDate" min="2027-01-01" max="2027-12-31"></div>
+        <div><label for="fType">Typ / Kategorie</label>
+          <select id="fType">
+            <option value="JF">JF</option>
+            <option value="Steuerkreis">Steuerkreis</option>
+            <option value="Gremium">Gremium / Puffer</option>
+            <option value="Blocker">Fokuszeit (Blocker)</option>
+            <option value="Projekt">Projektzeit</option>
+            <option value="Klausur">Klausur</option>
+          </select>
+        </div>
+        <div><label for="fStart">Beginn</label><input type="time" id="fStart" step="300"></div>
+        <div><label for="fDuration">Dauer (Minuten)</label><input type="number" id="fDuration" min="5" max="720" step="5"></div>
+        <div><label for="fTurnus">Turnus (Serieninformation)</label><input type="text" id="fTurnus" placeholder="z. B. monatlich, alle 6-8 Wochen"></div>
+        <div><label for="fOrt">Ort / Träger</label><input type="text" id="fOrt" placeholder="optional"></div>
+        <div class="full"><label for="fDesc">Beschreibung / Hinweis</label><textarea id="fDesc" rows="3"></textarea></div>
+        <div class="full">
+          <div class="check"><input type="checkbox" id="fPlaceholder"><label for="fPlaceholder" style="margin:0">Platzhalter – Termin noch nicht bestätigt</label></div>
+          <div class="check" id="fAssumptionRow"><input type="checkbox" id="fAssumption"><label for="fAssumption" style="margin:0">Arbeitsannahme – Slot/Wochentag noch nicht bestätigt (Haken entfernen = bestätigt)</label></div>
+          <div class="check" id="fDeviateRow" style="display:none"><input type="checkbox" id="fDeviate"><label for="fDeviate" style="margin:0">Abweichung von der Vorgabe – bei gesperrten Formaten sind Titel, Beginn, Dauer und Turnus sonst schreibgeschützt</label></div>
+          <div class="check"><input type="checkbox" id="fSeries"><label for="fSeries" style="margin:0">Änderung von Titel/Dauer/Turnus/Beschreibung auf alle Termine derselben Reihe übertragen</label></div>
+        </div>
+      </div>
+      <div class="form-rule" id="fRuleInfo" style="display:none"></div>
+      <div class="form-warn" id="fWarn"></div>
+    </div>
+    <footer>
+      <button type="button" class="btn danger small" id="fDelete" style="margin-right:auto">Termin löschen</button>
+      <button type="button" class="btn secondary" id="fCancel">Abbrechen</button>
+      <button type="button" class="btn cyan" id="fSave">Speichern &amp; prüfen</button>
+    </footer>
+  </div>
+</div>
+
+<!-- Dialog (Bestätigung / Hinweis / Export) -->
+<div class="form-overlay" id="dlgOverlay" style="z-index:1200">
+  <div class="form-modal" style="width:min(640px,100%)" role="dialog" aria-modal="true" aria-labelledby="dlgTitle">
+    <header id="dlgTitle">Hinweis</header>
+    <div class="body">
+      <div id="dlgText" style="font-size:0.88rem;line-height:1.5;white-space:pre-line"></div>
+      <textarea id="dlgArea" rows="10" style="display:none;margin-top:10px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:0.74rem"></textarea>
+    </div>
+    <footer id="dlgFooter"></footer>
+  </div>
+</div>
+
+<!-- Prüfprotokoll -->
+<div class="form-overlay" id="auditOverlay">
+  <div class="form-modal" style="width:min(820px,100%)" role="dialog" aria-modal="true" aria-labelledby="auditTitle">
+    <header id="auditTitle">Prüfprotokoll gesamt – alle Regelverstöße 2027</header>
+    <div class="body audit-list" id="auditBody"></div>
+    <footer><button type="button" class="btn secondary" id="auditClose">Schließen</button></footer>
+  </div>
+</div>
+
+<script>
+(function() {
+  "use strict";
+  // Zentrale Konstanten. Zahlen, die Regeln oder Raster bestimmen, stehen nur hier.
+  var CONFIG = {
+    YEAR: 2027,
+    DAY_START: 7,
+    DAY_END: 18,
+    HOUR_PX: 44,
+    SLOT_GAP_MIN: 10,
+    GRID_SNAP_MIN: 15,
+    MAX_PLACE_TRIES: 200,
+    STORAGE_KEY: "gf-jahreskalender-2027-fokusmodus",
+    DURATION_MIN: 5,
+    DURATION_MAX: 720,
+    DATA_VERSION: 4,
+    UNDO_MAX: 50,
+    SEARCH_DEBOUNCE_MS: 150,
+    MOBILE_MAX_PX: 767,
+    MAX_IMPORT_BYTES: 5 * 1024 * 1024,
+    MAX_EVENTS: 5000,
+    MAX_ERRORS: 40
+  };
+  var YEAR = CONFIG.YEAR;
+  var monthNames = ["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
+  var dayShorts = ["Mo","Di","Mi","Do","Fr","Sa","So"];
+  var WEEKDAY_SHORT = ["So","Mo","Di","Mi","Do","Fr","Sa"];
+  var WEEKDAY_LONG = ["Sonntag","Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag"];
+
+  // NRW-Feiertage 2027
+  var HOLIDAYS = {
+    "2027-01-01": "Neujahr", "2027-03-26": "Karfreitag", "2027-03-29": "Ostermontag", "2027-05-01": "Tag der Arbeit",
+    "2027-05-06": "Christi Himmelfahrt", "2027-05-17": "Pfingstmontag", "2027-05-27": "Fronleichnam",
+    "2027-10-03": "Tag der Deutschen Einheit", "2027-11-01": "Allerheiligen", "2027-12-25": "1. Weihnachtstag", "2027-12-26": "2. Weihnachtstag"
+  };
+
+  var typeColors = {
+    JF: "#1976d2", Steuerkreis: "#7b1fa2", Gremium: "#00796b", Blocker: "#2e7d32", Projekt: "#b45309", Klausur: "#c2185b"
+  };
+  var typeLabels = { JF: "JF", Steuerkreis: "Steuerkreis", Gremium: "Gremium / Puffer", Blocker: "Fokuszeit", Projekt: "Projektzeit", Klausur: "Klausur" };
+
+  // ================= Zeit-Helfer =================
+  function pad2(n) { return n < 10 ? "0" + n : "" + n; }
+  function toMin(hhmm) { if (!hhmm) return 0; var p = hhmm.split(":"); return parseInt(p[0], 10) * 60 + parseInt(p[1], 10); }
+  function fromMin(m) { return pad2(Math.floor(m / 60)) + ":" + pad2(m % 60); }
+  function rangeStr(start, dur) { return start + " – " + fromMin(toMin(start) + dur); }
+  function formatYMD(year, monthIndex, day) { return year + "-" + pad2(monthIndex + 1) + "-" + pad2(day); }
+  function parseDateKey(dateKey) { var p = dateKey.split("-"); return new Date(parseInt(p[0], 10), parseInt(p[1], 10) - 1, parseInt(p[2], 10)); }
+  function dateToKey(d) { return formatYMD(d.getFullYear(), d.getMonth(), d.getDate()); }
+  function addDays(d, n) { var x = new Date(d.getTime()); x.setDate(x.getDate() + n); return x; }
+  function fmtDateDE(dateKey) { var d = parseDateKey(dateKey); return WEEKDAY_SHORT[d.getDay()] + " " + pad2(d.getDate()) + "." + pad2(d.getMonth() + 1) + "." + d.getFullYear(); }
+  function fmtDateLong(dateKey) { var d = parseDateKey(dateKey); return WEEKDAY_LONG[d.getDay()] + ", " + d.getDate() + ". " + monthNames[d.getMonth()] + " " + d.getFullYear(); }
+  function isHoliday(dateKey) { return !!HOLIDAYS[dateKey]; }
+  function isWeekend(dateKey) { var g = parseDateKey(dateKey).getDay(); return g === 0 || g === 6; }
+
+  function getISOWeek(date) {
+    var d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+    var dayNum = (d.getUTCDay() + 6) % 7;
+    d.setUTCDate(d.getUTCDate() - dayNum + 3);
+    var firstThursday = new Date(Date.UTC(d.getUTCFullYear(), 0, 4));
+    var weekNum = 1 + Math.round(((d - firstThursday) / 86400000 - 3 + ((firstThursday.getUTCDay() + 6) % 7)) / 7);
+    return { year: d.getUTCFullYear(), week: weekNum };
+  }
+  function getISOWeekKey(date) { var w = getISOWeek(date); return w.year + "-W" + pad2(w.week); }
+  function mondayOfWeek(date) { var d = new Date(date.getTime()); var wd = (d.getDay() + 6) % 7; d.setDate(d.getDate() - wd); return d; }
+
+  function getNthWeekdayOfMonth(year, monthIndex, weekdayTarget, nth) {
+    var count = 0; var d = new Date(year, monthIndex, 1);
+    while (d.getMonth() === monthIndex) {
+      if (d.getDay() === weekdayTarget) { count++; if (count === nth) return new Date(d); }
+      d.setDate(d.getDate() + 1);
+    }
+    return null;
+  }
+  function getAllWeekdaysOfMonth(year, monthIndex, weekdayTarget) {
+    var dates = []; var d = new Date(year, monthIndex, 1);
+    while (d.getMonth() === monthIndex) { if (d.getDay() === weekdayTarget) dates.push(new Date(d)); d.setDate(d.getDate() + 1); }
+    return dates;
+  }
+  // ================= Datenbestand =================
+  var eventsData = {};
+  var uidCounter = 1;
+  var changelog = [];
+  var RULES = {};
+
+  function defRule(r) { RULES[r.id] = r; return r; }
+
+  function nowISO() { return new Date().toISOString(); }
+
+  function addEvent(dateStr, title, type, start, duration, desc, rule, opts) {
+    opts = opts || {};
+    if (!eventsData[dateStr]) eventsData[dateStr] = [];
+    var ev = {
+      uid: "ev" + (uidCounter++),
+      title: title, type: type, start: start, duration: duration,
+      time: rangeStr(start, duration),
+      desc: desc || "", color: typeColors[type] || "#333333",
+      rule: rule || null,
+      placeholder: !!opts.placeholder, assumption: !!opts.assumption,
+      ort: opts.ort || "", blockKey: opts.blockKey || null, seriesId: opts.seriesId || (rule ? rule.id : null),
+      source: opts.source || "generiert",
+      version: 1, updatedAt: null,
+      deviation: false,
+      // Vorgabe gesperrter Formate: Abweichungen davon meldet die Prüfung, solange sie nicht bestätigt sind
+      baseline: (rule && rule.editable === false) ? { title: title, start: start, duration: duration } : null
+    };
+    eventsData[dateStr].push(ev);
+    return ev;
+  }
+  function refreshTime(ev) { ev.time = rangeStr(ev.start, ev.duration); ev.color = typeColors[ev.type] || "#333333"; }
+  function touch(ev) { ev.version = (ev.version || 1) + 1; ev.updatedAt = nowISO(); }
+
+  // ---- Slot-Allokator: erst aufs Raster, dann suchen. Ein gefundenes freies Fenster wird nicht noch einmal gerastet. ----
+  function snapUp(min) { var g = CONFIG.GRID_SNAP_MIN; return Math.ceil(min / g) * g; }
+  // Liefert das Ende des ersten kollidierenden Termins oder -1, wenn das Fenster frei ist.
+  function slotClash(evs, s, duration, gap, blockKey) {
+    var e = s + duration;
+    for (var i = 0; i < evs.length; i++) {
+      if (blockKey && evs[i].blockKey === blockKey) continue;
+      var os = toMin(evs[i].start), oe = os + evs[i].duration;
+      if (s < oe + gap && os < e + gap) return oe;
+    }
+    return -1;
+  }
+  function findSlot(dateKey, preferredStart, duration, opts) {
+    opts = opts || {};
+    var evs = eventsData[dateKey] || [];
+    var gap = (opts.gap === undefined) ? CONFIG.SLOT_GAP_MIN : opts.gap;
+    var pref = toMin(preferredStart);
+    var limit = CONFIG.DAY_END * 60;
+    var s = snapUp(pref), tries = 0, hit = -1;
+    while (tries < CONFIG.MAX_PLACE_TRIES) {
+      hit = slotClash(evs, s, duration, gap, opts.blockKey);
+      if (hit < 0) break;
+      s = snapUp(hit + gap);
+      tries++;
+    }
+    if (hit < 0 && (opts.force || s + duration <= limit)) return s;
+    if (!opts.force) {
+      // hinter der Wunschzeit ist nichts mehr frei: das freie Fenster im Kernzeitfenster nehmen, das der Wunschzeit am nächsten liegt
+      var best = -1;
+      for (var t = snapUp(CONFIG.DAY_START * 60); t + duration <= limit; t += CONFIG.GRID_SNAP_MIN) {
+        if (slotClash(evs, t, duration, gap, opts.blockKey) < 0 && (best < 0 || Math.abs(t - pref) < Math.abs(best - pref))) best = t;
+      }
+      if (best >= 0) return best;
+    }
+    return pref; // kein Fenster: Wunschzeit setzen, die Prüfung meldet die Überschneidung
+  }
+  function placeOnDay(dateKey, title, type, preferredStart, duration, desc, rule, opts) {
+    opts = opts || {};
+    return addEvent(dateKey, title, type, fromMin(findSlot(dateKey, preferredStart, duration, opts)), duration, desc, rule, opts);
+  }
+
+  // ---- Klausur-/Feiertagsausweichen: bleibt im Jahr, prüft jedes Ziel erneut ----
+  // Reihenfolge: gleicher Monat vorwärts, gleicher Monat rückwärts, danach anderer Monat rückwärts, zuletzt vorwärts.
+  // Ohne freies Ziel bleibt der Termin liegen, die Prüfung meldet ihn, und der Konflikt steht in generationConflicts.
+  var generationConflicts = [];
+  function isFreeDay(d) { var k = dateToKey(d); return d.getFullYear() === YEAR && !hasKlausur(k) && !isHoliday(k); }
+  function shiftToFree(d, maxWeeks, label) {
+    var key = dateToKey(d);
+    if (isFreeDay(d)) return { date: d, shifted: false };
+    var fwd = [], back = [], w;
+    for (w = 1; w <= maxWeeks; w++) { fwd.push(7 * w); back.push(-7 * w); }
+    for (var pass = 0; pass < 2; pass++) {
+      var order = pass === 0 ? fwd.concat(back) : back.concat(fwd);
+      for (var i = 0; i < order.length; i++) {
+        var c = addDays(d, order[i]);
+        if ((c.getMonth() === d.getMonth()) !== (pass === 0)) continue;
+        if (isFreeDay(c)) return { date: c, shifted: true, from: key };
+      }
+    }
+    generationConflicts.push((label || "Termin") + " am " + fmtDateDE(key) + ": kein freies Ausweichziel in " + YEAR + ", bleibt liegen.");
+    return { date: d, shifted: false, conflict: true, from: key };
+  }
+  function avoidKlausur(d) { return shiftToFree(d, 3, "Monatstermin"); }
+    function shiftNote(r) { return r.shifted ? " Verschoben von " + fmtDateDE(r.from) + " (Feiertag/Klausur)." : ""; }
+
+  function hasKlausur(dateKey) {
+    var evs = eventsData[dateKey] || [];
+    for (var i = 0; i < evs.length; i++) if (evs[i].type === "Klausur") return true;
+    return false;
+  }
+
+  // Intervalltermine (alle 6–8 Wochen = 7-Wochen-Takt) an einem Wochentag
+  function intervalDates(startKey, weeks) {
+    var out = []; var d = parseDateKey(startKey);
+    while (d.getFullYear() === YEAR) { out.push(dateToKey(d)); d = addDays(d, weeks * 7); }
+    return out;
+  }
+
+  function buildInitialData() {
+    eventsData = {}; uidCounter = 1; RULES = {}; generationConflicts = [];
+
+    // ---- Regeln (Kern: 7 GF-Korrekturregeln + Strukturregeln) ----
+    var rFokusMo = defRule({ id: "fokuszeit-mo", label: "Fokuszeit-Blocker (Mo)", allowedDays: ["Mo"], turnus: "wöchentlich", duration: 90, fixedTime: "07:30 – 09:00", altTimes: ["09:00 – 10:30"], note: "Regel 5: inkl. 0,5 Std. Abstimmung Assistenz GF. Alternative 09:00–10:30 noch offen.", editable: true });
+    var rFokusFr = defRule({ id: "fokuszeit-fr", label: "Fokuszeit-Blocker (Fr)", allowedDays: ["Fr"], turnus: "wöchentlich", duration: 120, fixedTime: "09:00 – 11:00", note: "Regel 5: inkl. 0,5 Std. Abstimmung Assistenz GF.", editable: true });
+    var rProjekt = defRule({ id: "projektarbeit", label: "Projektarbeit-Blocker GF", allowedDays: ["Mi"], turnus: "wöchentlich", duration: 120, fixedTime: "13:30 – 15:30", note: "Regel 6: fest auf Mittwoch.", editable: true });
+    var rWG = defRule({ id: "wochengespraech", label: "Wochengespräch mit GF-Beteiligung", allowedDays: ["Mo","Di","Mi","Do","Fr"], turnus: "monatlich", duration: 120, fixedTime: "14:00 – 16:00", note: "Regel 7: Wochentag noch nicht bestätigt (Arbeitsannahme 2. Donnerstag).", editable: true });
+    var rPuffer = defRule({ id: "pufferslot", label: "Pufferslot Gremien", allowedDays: ["Do"], turnus: "monatlich", duration: 90, note: "Schutzslot für kurzfristige Gremienbelange.", editable: true });
+    var rLK = defRule({ id: "lk-sozialwirtschaft", label: "Leitungskonferenz Sozialwirtschaft", allowedDays: ["Mo"], turnus: "monatlich", duration: 120, note: "1. Montag, 2 Std. (ehemals Betriebsleitungskonferenz).", editable: false });
+    var rEKL = defRule({ id: "ekl", label: "Erweiterte Konzernleitung (eKL)", allowedDays: ["Mo"], turnus: "monatlich", duration: 180, note: "3. Montag, 3 Std. (EVAR).", editable: false });
+    var rMachleit = defRule({ id: "machleit-ebner", label: "JF Machleit Ebner", allowedDays: ["Mo"], turnus: "quartalsweise", duration: 50, note: "Quartalsweise direkt nach der eKL, ab 01/2027.", editable: true });
+    var rWA = defRule({ id: "wirtschaftsausschuss", label: "Wirtschaftsausschuss SBO", allowedDays: ["Di"], turnus: "monatlich", duration: 120, fixedTime: "15:00 – 17:00", note: "4. Dienstag, 2 Std. (Modell A1).", editable: false });
+    var rMAVBR = defRule({ id: "mav-br-sbo", label: "JF MAV+BR SBO", allowedDays: ["Do"], turnus: "alle 2 Monate", duration: 50, note: "Ersetzt Monatsgespräch SBO und Betriebsversammlung SBO (beide gestrichen).", editable: true });
+    var rJahndorf = defRule({ id: "jahndorf", label: "JF Jahndorf", allowedDays: ["Di"], turnus: "alle 6-8 Wochen", duration: 50, note: "Regel 1: alle 6–8 Wochen, nicht monatlich.", editable: true });
+    var rPersonal = defRule({ id: "jf-personal", label: "JF Personal", allowedDays: ["Di"], turnus: "alle 6-8 Wochen", totalDuration: 75, blockParts: [50, 20, 5], notSplittable: true, subslots: "50 Min. Referat + 20 Min. Poolspringer Frau Mala + 5 Min. Wechselpuffer", note: "Regeln 2+3: Mala-Teilslot im Block, Block nicht trennbar.", editable: true });
+    var rQM = defRule({ id: "jf-qm", label: "JF QM & Regulatorik", allowedDays: ["Di"], turnus: "alle 6-8 Wochen", duration: 50, editable: true });
+    var rA3 = defRule({ id: "jf-a3", label: "JF A³-Team", allowedDays: ["Di"], turnus: "monatlich", duration: 90, note: "90 Min., abweichend von der 50-Min.-Norm.", editable: true });
+    var rGBL = defRule({ id: "jf-gbl", label: "JF GBL (Di-Mittagsband)", allowedDays: ["Di"], turnus: "monatlich", duration: 50, note: "GBL-JF liegen auf dem Dienstag-Mittagsband.", editable: true });
+    var rReferat = defRule({ id: "jf-referat", label: "JF Referat (Di-Mittagsband)", allowedDays: ["Di"], turnus: "monatlich", duration: 50, editable: true });
+    var rPartner = defRule({ id: "jf-partner", label: "JF Partner (Di)", allowedDays: ["Di"], turnus: "monatlich", duration: 50, note: "Dienstag = JF-Tag (Arbeitsannahme Slotverteilung).", editable: true });
+    var rSKWF = defRule({ id: "sk-wifi", label: "Steuerkreis Wirtschaft & Finanzen", allowedDays: ["Do"], turnus: "monatlich", duration: 90, note: "Teil 1 Doppelpack in derselben Einrichtung, GF dabei.", editable: true });
+    var rSKQM = defRule({ id: "sk-qm", label: "Steuerkreis QM & Regulatorik", allowedDays: ["Do"], turnus: "alle 2 Monate", duration: 90, note: "Teil 2 Doppelpack direkt im Anschluss, gleiche Einrichtung.", editable: true, coupledAfter: "sk-wifi", coupledMaxGapMin: 15 });
+    var rSG = defRule({ id: "steuerungsgruppe", label: "Steuerungsgruppen DR (Rotation)", allowedDays: ["Do"], turnus: "monatlich", duration: 120, note: "Alte Steuerungsgruppen UK DR / Personal / Digitalisierung, Do-Rotation bis zur Klärung.", pendingClarification: true, editable: true });
+    var rKlausurSW = defRule({ id: "klausur-sw", label: "Leistungsklausur Sozialwirtschaft", allowedDays: ["Mo","Di"], turnus: "2x jährlich", couplingForbiddenWith: "gbl-klausur", note: "Regel 4: nie in derselben ISO-Woche wie die GBL-Klausur.", editable: true });
+    var rGBLKlausur = defRule({ id: "gbl-klausur", label: "GBL-Klausur", allowedDays: ["Do","Fr"], turnus: "jährlich (November)", couplingForbiddenWith: "klausur-sw", note: "Regel 4: nie in derselben ISO-Woche wie die Leistungsklausur Sozialwirtschaft.", editable: true });
+    var rFiD = defRule({ id: "fuehrung-dialog", label: "Führung im Dialog", allowedDays: ["Do","Fr"], turnus: "jährlich (Feb/März)", editable: true });
+    var rStrategie = defRule({ id: "klausur-strategie", label: "Klausur Strategie", turnus: "halbjährlich", editable: true });
+    var rIMK = defRule({ id: "imk", label: "IMK", allowedDays: ["Mi"], turnus: "quartalsweise", duration: 180, editable: true });
+    var rExtern = defRule({ id: "extern-im", label: "Externe Gremien IM / Stadt", allowedDays: ["Mi"], turnus: "unregelmäßig", editable: true });
+    var rGVV = defRule({ id: "gesellschafter", label: "Gesellschafter / AR", allowedDays: ["Do"], turnus: "2-3x jährlich", editable: true });
+    var rLKamb = defRule({ id: "lk-ambulant-stationaer", label: "LK ambulant / LK stationär", allowedDays: ["Do"], turnus: "offen", editable: true });
+
+    var m, i, k;
+
+    // ---- 1. Klausuren (zuerst, damit Blocker ausweichen) ----
+    addEvent("2027-05-03", "Leistungsklausur Sozialwirtschaft (Tag 1)", "Klausur", "09:00", 540, "2-Tage-Block Mo+Di, 1. von 2×/Jahr (Datum lt. Arbeitsdatei 27.09.).", rKlausurSW, { seriesId: "klausur-sw" });
+    addEvent("2027-05-04", "Leistungsklausur Sozialwirtschaft (Tag 2)", "Klausur", "09:00", 360, "Fortsetzung Dienstag.", rKlausurSW, { seriesId: "klausur-sw" });
+    addEvent("2027-11-08", "Leistungsklausur Sozialwirtschaft (Tag 1)", "Klausur", "09:00", 540, "2-Tage-Block Mo+Di, 2. von 2×/Jahr – KW 45, eine Woche vor der GBL-Klausur (KW 46).", rKlausurSW, { seriesId: "klausur-sw" });
+    addEvent("2027-11-09", "Leistungsklausur Sozialwirtschaft (Tag 2)", "Klausur", "09:00", 360, "Fortsetzung Dienstag.", rKlausurSW, { seriesId: "klausur-sw" });
+    addEvent("2027-11-18", "GBL-Klausur (Tag 1)", "Klausur", "09:00", 540, "Jährlich im November, 1,5 Tage Do–Fr. Regel 4: nicht mit der Leistungsklausur Sozialwirtschaft gekoppelt.", rGBLKlausur, { seriesId: "gbl-klausur" });
+    addEvent("2027-11-19", "GBL-Klausur (Tag 2)", "Klausur", "09:00", 240, "Fortsetzung bis Freitagmittag.", rGBLKlausur, { seriesId: "gbl-klausur" });
+    addEvent("2027-02-04", "Führung im Dialog (Tag 1)", "Klausur", "09:00", 540, "Jährlich Feb/März, 1,5 Tage Do–Fr, Gesamtführung (Datum lt. Arbeitsdatei 27.09.).", rFiD, { seriesId: "fuehrung-dialog" });
+    addEvent("2027-02-05", "Führung im Dialog (Tag 2)", "Klausur", "09:00", 240, "Fortsetzung bis Freitagmittag.", rFiD, { seriesId: "fuehrung-dialog" });
+    addEvent("2027-04-08", "Klausur Strategie (Tag 1)", "Klausur", "09:00", 480, "Platzhalter: Halbjahrestakt, Termin noch offen lt. Merino-Kesting.", rStrategie, { placeholder: true, seriesId: "klausur-strategie" });
+    addEvent("2027-04-09", "Klausur Strategie (Tag 2)", "Klausur", "09:00", 240, "Platzhalter: Tag 2 von 2.", rStrategie, { placeholder: true, seriesId: "klausur-strategie" });
+    addEvent("2027-09-30", "Klausur Strategie (Tag 1)", "Klausur", "09:00", 480, "Platzhalter: Halbjahrestakt, 2. Termin, noch offen.", rStrategie, { placeholder: true, seriesId: "klausur-strategie" });
+    addEvent("2027-10-01", "Klausur Strategie (Tag 2)", "Klausur", "09:00", 240, "Platzhalter: Tag 2 von 2.", rStrategie, { placeholder: true, seriesId: "klausur-strategie" });
+
+    // ---- 2. Blocker (Regel 5 + 6) ----
+    for (m = 0; m < 12; m++) {
+      var mondays = getAllWeekdaysOfMonth(YEAR, m, 1);
+      for (i = 0; i < mondays.length; i++) {
+        k = dateToKey(mondays[i]); if (isHoliday(k) || hasKlausur(k)) continue;
+        addEvent(k, "Fokuszeit-Blocker (Mo)", "Blocker", "07:30", 90, "Wissensmanagement, Selbstorganisation, Vor-/Nachbereitung – inkl. 0,5 Std. Abstimmung mit Assistenz GF.", rFokusMo);
+      }
+      var fridays = getAllWeekdaysOfMonth(YEAR, m, 5);
+      for (i = 0; i < fridays.length; i++) {
+        k = dateToKey(fridays[i]); if (isHoliday(k) || hasKlausur(k)) continue;
+        addEvent(k, "Fokuszeit-Blocker (Fr)", "Blocker", "09:00", 120, "Wissensmanagement, Selbstorganisation, Vor-/Nachbereitung – inkl. 0,5 Std. Abstimmung mit Assistenz GF.", rFokusFr);
+      }
+      var weds = getAllWeekdaysOfMonth(YEAR, m, 3);
+      for (i = 0; i < weds.length; i++) {
+        k = dateToKey(weds[i]); if (isHoliday(k) || hasKlausur(k)) continue;
+        addEvent(k, "Projektarbeit-Blocker GF", "Projekt", "13:30", 120, "Statusmeetings, Telefonate, operative Klärung – fest Mittwoch (Regel 6).", rProjekt);
+      }
+    }
+
+    // ---- 3. Montags-Anker ----
+    for (m = 0; m < 12; m++) {
+      var mo3 = avoidKlausur(getNthWeekdayOfMonth(YEAR, m, 1, 3));
+      k = dateToKey(mo3.date);
+      var ekl = placeOnDay(k, "Erweiterte Konzernleitung (eKL)", "Gremium", "12:00", 180, "Monatlicher Montag-Anker (EVAR), 3. Montag, 3 Std." + shiftNote(mo3), rEKL, { ort: "EVAR" });
+      if (m % 3 === 0) {
+        placeOnDay(k, "JF Machleit Ebner", "JF", fromMin(toMin(ekl.start) + ekl.duration + 15), 50, "Quartalsweise direkt im Anschluss an die eKL, ab 01/2027 (EVAR), 50 Min.", rMachleit, { ort: "EVAR" });
+      }
+      var mo1 = avoidKlausur(getNthWeekdayOfMonth(YEAR, m, 1, 1));
+      k = dateToKey(mo1.date);
+      placeOnDay(k, "Leitungskonferenz Sozialwirtschaft", "Gremium", "14:00", 120, "Monatlicher Montag-Anker (Diakonie Ruhr), 1. Montag, 2 Std." + shiftNote(mo1), rLK, { ort: "Westring" });
+    }
+
+    // ---- 4. Dienstag = JF-Tag (Arbeitsannahme Slotverteilung) ----
+    var partnerIM = PARTNER_IM, partnerLeWo = PARTNER_LEWO;
+    var tueGroups = {
+      1: { partner: ["JF Zittlau", "JF Konter", "JF Rojano-Marin", "JF Röper"], gbl: ["JF Melzig", "JF Frerich/Culina"], referat: ["JF Wirtschaft & Finanzen"] },
+      2: { partner: ["JF Weisang", "JF Pernak", "JF MAV IM", "JF Möller/Hagenbrock"], gbl: ["JF Moreira"], referat: ["JF Marketing & Vertrieb"] },
+      3: { partner: ["JF Lahn", "JF Rethfeldt (MiR)", "JF Raatz"], gbl: ["JF Kutlu", "JF Rieckert"], referat: [] },
+      4: { partner: ["JF Malcher (Bau)", "JF Sonnenschein (Immobilien)"], gbl: ["JF Bradtke", "JF Eull"], referat: [] }
+    };
+    // Intervalltermine: Klausurtage werden um eine Woche verschoben
+    var avoidTue = function(list) { return list.map(function(k0) { return dateToKey(shiftToFree(parseDateKey(k0), 1, "Intervalltermin").date); }); };
+    var jahndorfDates = avoidTue(intervalDates("2027-01-19", 7));
+    var personalDates = avoidTue(intervalDates("2027-01-12", 7));
+    var qmDates = avoidTue(intervalDates("2027-01-26", 7));
+    var traeger = function(name) { return partnerIM.indexOf(name) >= 0 ? "Innere Mission" : (partnerLeWo.indexOf(name) >= 0 ? "LeWo" : ""); };
+    var countDay = function(kk) { return (eventsData[kk] || []).length; };
+
+    for (m = 0; m < 12; m++) {
+      var tuesdays = getAllWeekdaysOfMonth(YEAR, m, 2).map(dateToKey);
+      var freeTuesdays = tuesdays.filter(function(kk) { return !hasKlausur(kk) && !isHoliday(kk); });
+      // Zielt auf den Dienstag des Monats mit der geringsten Belegung, wenn der Stamm-Dienstag ausfällt
+      var target = function(kk) {
+        if (freeTuesdays.indexOf(kk) >= 0) return { key: kk, moved: false };
+        var best = freeTuesdays[0];
+        freeTuesdays.forEach(function(c) { if (countDay(c) < countDay(best)) best = c; });
+        return { key: best, moved: true, from: kk };
+      };
+      var movedNote = function(t) { return t.moved ? " Verschoben von " + fmtDateDE(t.from) + " (Klausur/Feiertag)." : ""; };
+
+      // Reihenfolge: reguläre Dienstage zuerst, ausfallende (Klausur/Feiertag) zuletzt, damit deren Formate auf die am wenigsten belegten Dienstage verteilt werden
+      var order = []; for (i = 0; i < tuesdays.length; i++) order.push(i);
+      order.sort(function(a, b) { return (freeTuesdays.indexOf(tuesdays[a]) < 0 ? 1 : 0) - (freeTuesdays.indexOf(tuesdays[b]) < 0 ? 1 : 0) || a - b; });
+      for (var oi = 0; oi < order.length; oi++) {
+        i = order[oi];
+        k = tuesdays[i];
+        var nth = i + 1;
+        // feste Zeit zuerst: Wirtschaftsausschuss SBO (4. Di)
+        if (nth === 4) {
+          var tw = target(k);
+          addEvent(tw.key, "Wirtschaftsausschuss SBO", "Gremium", "15:00", 120, "Monatlich, 4. Dienstag, 2 Std. (Modell A1)." + movedNote(tw), rWA, { ort: "SBO" });
+        }
+        // Intervalltermine (6–8 Wochen, 7-Wochen-Takt)
+        if (personalDates.indexOf(k) >= 0) {
+          var bk = "jf-personal-" + k;
+          // Slot für den ganzen 75-Min.-Block suchen, Teil 2 und 3 schließen rechnerisch an Teil 1 an
+          var p1 = addEvent(k, "JF Personal", "JF", fromMin(findSlot(k, "09:00", rPersonal.totalDuration, {})), rPersonal.blockParts[0], "Referat Personal, 50 Min. – Teil 1 von 3 des unteilbaren 75-Min.-Blocks (Regel 3).", rPersonal, { blockKey: bk, seriesId: "jf-personal" });
+          var p2 = addEvent(k, "JF Personal – Poolspringer-Slot Frau Mala", "JF", fromMin(toMin(p1.start) + 50), 20, "Teilslot für Frau Mala innerhalb JF Personal, 20 Min. – Teil 2 von 3 (Regel 2: kein eigener Termin).", rPersonal, { blockKey: bk, seriesId: "jf-personal" });
+          addEvent(k, "JF Personal – Wechselpuffer", "JF", fromMin(toMin(p2.start) + 20), 5, "Wechselpuffer, 5 Min. – Teil 3 von 3, Block gesamt 75 Min.", rPersonal, { blockKey: bk, seriesId: "jf-personal" });
+        }
+        if (qmDates.indexOf(k) >= 0) {
+          placeOnDay(k, "JF QM & Regulatorik", "JF", "09:00", 50, "Referat QM & Regulatorik, alle 6–8 Wochen, 50 Min.", rQM, { seriesId: "jf-qm" });
+        }
+        if (jahndorfDates.indexOf(k) >= 0) {
+          placeOnDay(k, "JF Jahndorf", "JF", "09:00", 50, "Regel 1: Turnus alle 6–8 Wochen (nicht monatlich), 50 Min. Träger: LeWo.", rJahndorf, { seriesId: "jahndorf", ort: "LeWo" });
+        }
+        var g = tueGroups[nth];
+        if (g) {
+          var j, t;
+          for (j = 0; j < g.partner.length; j++) {
+            t = target(k);
+            placeOnDay(t.key, g.partner[j], "JF", "09:00", 50, "Monatlicher Jour fixe, 50 Min. Träger: " + traeger(g.partner[j]) + ". Slotzuordnung = Arbeitsannahme." + movedNote(t), rPartner, { assumption: true, seriesId: "partner-" + g.partner[j], ort: traeger(g.partner[j]) });
+          }
+          for (j = 0; j < g.gbl.length; j++) {
+            var d = g.gbl[j] === "JF Rieckert" ? "Monatlicher Jour fixe GBL, ambulanter Bereich, 50 Min. (ersetzt die frühere 3-Std.-Sitzung DB/DD). Di-Mittagsband." :
+                    g.gbl[j] === "JF Frerich/Culina" ? "Monatlicher Jour fixe GBL / Tochtergesellschaft Culina, 50 Min. Di-Mittagsband (Takt: monatlich als Obergrenze)." :
+                    "Monatlicher Jour fixe GBL, 50 Min. Di-Mittagsband.";
+            t = target(k);
+            placeOnDay(t.key, g.gbl[j], "JF", "12:00", 50, d + movedNote(t), rGBL, { assumption: true, seriesId: "gbl-" + g.gbl[j] });
+          }
+          for (j = 0; j < g.referat.length; j++) {
+            t = target(k);
+            placeOnDay(t.key, g.referat[j], "JF", "12:00", 50, "Monatlicher Jour fixe Referat " + g.referat[j].replace("JF ", "") + ", 50 Min. Di-Mittagsband." + movedNote(t), rReferat, { assumption: true, seriesId: "referat-" + g.referat[j] });
+          }
+          if (nth === 3) {
+            t = target(k);
+            placeOnDay(t.key, "JF A³-Team", "JF", "14:00", 90, "Strategie & Controlling, 90 Min. monatlich (Leitung Merino-Kesting), Dienstagnachmittag." + movedNote(t), rA3, { seriesId: "jf-a3" });
+          }
+        }
+      }
+    }
+
+    // ---- 5. Mittwoch: Innere Mission / extern ----
+    for (m = 0; m < 12; m += 3) {
+      var mi1 = avoidKlausur(getNthWeekdayOfMonth(YEAR, m, 3, 1)); k = dateToKey(mi1.date);
+      placeOnDay(k, "IMK", "Gremium", "09:00", 180, "Innere Mission Konferenz, quartalsweise, 3 Std., extern." + shiftNote(mi1), rIMK, { ort: "Innere Mission" });
+    }
+    var vsIM = ["2027-02-10", "2027-04-21", "2027-06-23", "2027-09-08", "2027-11-24"];
+    for (i = 0; i < vsIM.length; i++) placeOnDay(vsIM[i], "Vorstandssitzung IM", "Gremium", "09:00", 90, "Platzhalter: ca. 4–5×/Jahr, extern – genaue Termine noch offen.", rExtern, { placeholder: true, seriesId: "vorstand-im", ort: "Innere Mission" });
+    placeOnDay("2027-03-17", "Verwaltungsrat IM", "Gremium", "09:00", 90, "Platzhalter: ca. 2×/Jahr, extern – genaue Termine noch offen.", rExtern, { placeholder: true, seriesId: "verwaltungsrat-im", ort: "Innere Mission" });
+    placeOnDay("2027-10-13", "Verwaltungsrat IM", "Gremium", "09:00", 90, "Platzhalter: ca. 2×/Jahr, extern – genaue Termine noch offen.", rExtern, { placeholder: true, seriesId: "verwaltungsrat-im", ort: "Innere Mission" });
+    placeOnDay("2027-06-16", "AG Wohlfahrt Bochum", "Gremium", "10:00", 90, "Platzhalter: unregelmäßig, extern – Termin noch offen.", rExtern, { placeholder: true, seriesId: "ag-wohlfahrt", ort: "extern" });
+    placeOnDay("2027-09-15", "AG-FW Stadt Bochum", "Gremium", "10:00", 90, "Platzhalter: unregelmäßig, extern – Termin noch offen.", rExtern, { placeholder: true, seriesId: "ag-fw", ort: "Stadt Bochum" });
+
+    // ---- 6. Donnerstag: Steuerung, Gremien, Puffer ----
+    var rotation = ["Steuerungsgruppe UK DR", "Steuerungsgruppe Personal", "Steuerungsgruppe Digitalisierung"];
+    var rotationIds = ["uk-dr", "personal", "digitalisierung"]; // je Gruppe eine eigene Serie
+    for (m = 0; m < 12; m++) {
+      var do1 = avoidKlausur(getNthWeekdayOfMonth(YEAR, m, 4, 1)); k = dateToKey(do1.date);
+      placeOnDay(k, rotation[m % 3], "Steuerkreis", "09:00", 120, "Alte Steuerungsgruppe, Do-Rotation, 2 Std. – bis zur Klärung mit den neuen Steuerkreisen beibehalten." + shiftNote(do1), rSG, { seriesId: "steuerungsgruppe-" + rotationIds[m % 3], ort: "Diakonie Ruhr" });
+      var do2 = avoidKlausur(getNthWeekdayOfMonth(YEAR, m, 4, 2)); k = dateToKey(do2.date);
+      placeOnDay(k, "Wochengespräch mit GF-Beteiligung", "Gremium", "14:00", 120, "Monatlich, 2 Std., 14:00–16:00 Uhr (Regel 7). Wochentag = Arbeitsannahme 2. Donnerstag, noch nicht bestätigt." + shiftNote(do2), rWG, { assumption: true, seriesId: "wochengespraech" });
+      var do3 = avoidKlausur(getNthWeekdayOfMonth(YEAR, m, 4, 3)); k = dateToKey(do3.date);
+      if (m % 2 === 0) placeOnDay(k, "JF MAV+BR SBO", "JF", "14:00", 50, "Alle 2 Monate, 50 Min. Ersetzt Monatsgespräch SBO und Betriebsversammlung SBO (gestrichen)." + shiftNote(do3), rMAVBR, { seriesId: "mav-br-sbo", ort: "SBO" });
+      placeOnDay(k, "Pufferslot Gremien", "Gremium", "16:00", 90, "Fester Schutzslot für kurzfristige Gremienbelange, 3. Donnerstag, 16:00–17:30." + shiftNote(do3), rPuffer, { seriesId: "pufferslot" });
+      var do4 = avoidKlausur(getNthWeekdayOfMonth(YEAR, m, 4, 4)); k = dateToKey(do4.date);
+      var sk1 = placeOnDay(k, "Steuerkreis Wirtschaft & Finanzen", "Steuerkreis", "09:30", 90, "Monatlich – Teil 1 des Doppelpacks in derselben Einrichtung, GF dabei." + shiftNote(do4), rSKWF, { seriesId: "sk-wifi", ort: "Einrichtung (Vor-Ort)" });
+      if (m % 2 === 0) placeOnDay(k, "Steuerkreis QM & Regulatorik", "Steuerkreis", fromMin(toMin(sk1.start) + sk1.duration + 15), 90, "Alle 2 Monate – Teil 2 des Doppelpacks direkt im Anschluss, gleiche Einrichtung, GF dabei.", rSKQM, { seriesId: "sk-qm", ort: "Einrichtung (Vor-Ort)" });
+    }
+    // Gesellschafter / AR (Termine exemplarisch, unbestätigt)
+    placeOnDay("2027-03-11", "AR/GV SBO", "Gremium", "09:00", 180, "Platzhalter: 2×/Jahr (nicht quartalsweise), Termin noch offen.", rGVV, { placeholder: true, seriesId: "ar-gv-sbo", ort: "SBO" });
+    placeOnDay("2027-09-16", "AR/GV SBO", "Gremium", "09:00", 180, "Platzhalter: 2×/Jahr (nicht quartalsweise), Termin noch offen.", rGVV, { placeholder: true, seriesId: "ar-gv-sbo", ort: "SBO" });
+    placeOnDay("2027-03-25", "GVV DADuL", "Gremium", "09:00", 120, "Platzhalter: Gesellschafterversammlung DADuL, 2×/Jahr, Termin noch offen.", rGVV, { placeholder: true, seriesId: "gvv-dadul" });
+    placeOnDay("2027-10-14", "GVV DADuL", "Gremium", "09:00", 120, "Platzhalter: Gesellschafterversammlung DADuL, 2×/Jahr, Termin noch offen.", rGVV, { placeholder: true, seriesId: "gvv-dadul" });
+    placeOnDay("2027-04-15", "GVV Pflege/DfM/Culina", "Gremium", "09:00", 120, "Platzhalter: Gesellschafterversammlung Pflege/DfM/Culina, 2×/Jahr, Termin noch offen.", rGVV, { placeholder: true, seriesId: "gvv-pflege" });
+    placeOnDay("2027-11-04", "GVV Pflege/DfM/Culina", "Gremium", "09:00", 120, "Platzhalter: Gesellschafterversammlung Pflege/DfM/Culina, 2×/Jahr, Termin noch offen.", rGVV, { placeholder: true, seriesId: "gvv-pflege" });
+    placeOnDay("2027-02-18", "AG DADuL (Back, Kirchhoff)", "Gremium", "10:00", 120, "Platzhalter: 3×/Jahr, 2 Std., Termin noch offen.", rGVV, { placeholder: true, seriesId: "ag-dadul" });
+    placeOnDay("2027-06-17", "AG DADuL (Back, Kirchhoff)", "Gremium", "10:00", 120, "Platzhalter: 3×/Jahr, 2 Std., Termin noch offen.", rGVV, { placeholder: true, seriesId: "ag-dadul" });
+    placeOnDay("2027-10-21", "AG DADuL (Back, Kirchhoff)", "Gremium", "10:00", 120, "Platzhalter: 3×/Jahr, 2 Std., Termin noch offen.", rGVV, { placeholder: true, seriesId: "ag-dadul" });
+    // LK ambulant / stationär (offen): gemeinsamer Kopf, getrennte Fachteile direkt nacheinander
+    ["2027-03-04", "2027-09-02"].forEach(function(lk) {
+      var a = placeOnDay(lk, "LK ambulant", "Gremium", "09:00", 90, "Platzhalter: noch offen lt. Merino-Kesting – gemeinsamer Konferenzkopf mit LK stationär, getrennte Fachteile.", rLKamb, { placeholder: true, seriesId: "lk-ambulant" });
+      placeOnDay(lk, "LK stationär", "Gremium", fromMin(toMin(a.start) + a.duration), 90, "Platzhalter: noch offen – gemeinsamer Konferenzkopf mit LK ambulant, getrennte Fachteile.", rLKamb, { placeholder: true, seriesId: "lk-stationaer", gap: 0 });
+    });
+
+    // Tageslisten sortieren
+    for (var dk in eventsData) sortDay(dk);
+  }
+
+  function sortDay(dk) { if (eventsData[dk]) eventsData[dk].sort(function(a, b) { return toMin(a.start) - toMin(b.start) || a.title.localeCompare(b.title); }); }
+
+  // ================= Plausibilitäts-Engine =================
+  // Reine Auswertung über einen Kontext {eventsData, RULES}. Kein DOM-Zugriff, damit derselbe Code später auch serverseitig laufen kann.
+  function CTX() { return { eventsData: eventsData, RULES: RULES }; }
+  function ruleBaseId(rule) { return rule ? (rule.baseId || rule.id) : null; }
+  function allEventsFlat(ctx) {
+    ctx = ctx || CTX();
+    if (ctx._flat) return ctx._flat;
+    var out = [];
+    for (var dk in ctx.eventsData) for (var i = 0; i < ctx.eventsData[dk].length; i++) out.push({ dateKey: dk, ev: ctx.eventsData[dk][i] });
+    ctx._flat = out;
+    return out;
+  }
+  function indexOf(ctx) {
+    if (ctx._idx) return ctx._idx;
+    var idx = { series: {}, rule: {}, block: {} };
+    allEventsFlat(ctx).forEach(function(x) {
+      var e = x.ev;
+      if (e.seriesId) (idx.series[e.seriesId] = idx.series[e.seriesId] || []).push(x);
+      if (e.rule) { var b = ruleBaseId(e.rule); (idx.rule[b] = idx.rule[b] || []).push(x); }
+      if (e.blockKey) (idx.block[e.blockKey] = idx.block[e.blockKey] || []).push(x);
+    });
+    ctx._idx = idx;
+    return idx;
+  }
+  function findEventsBySeries(seriesId, ctx) { ctx = ctx || CTX(); return (indexOf(ctx).series[seriesId] || []).slice(); }
+  function findEventsByRuleId(ruleId, ctx) { ctx = ctx || CTX(); return (indexOf(ctx).rule[ruleId] || []).slice(); }
+  function overlaps(a, b) { var as = toMin(a.start), ae = as + a.duration, bs = toMin(b.start), be = bs + b.duration; return as < be && bs < ae; }
+  function daysBetween(k1, k2) { return Math.round(Math.abs(parseDateKey(k1) - parseDateKey(k2)) / 86400000); }
+
+  // ---- Turnus: Freitext wird einer Art zugeordnet (keine Teilstring-Prüfung) ----
+  // weekly, monthly, interval (min/max Tage), halfyear, peryear (höchstens n Vorkommen), open (keine Prüfung).
+  var turnusCache = {};
+  function parseTurnus(text) {
+    var t = String(text || "").toLowerCase().replace(/[–—]/g, "-").replace(/\s+/g, " ").trim();
+    if (turnusCache[t]) return turnusCache[t];
+    var r = { kind: "open" }, m;
+    if (/^w(ö|oe)chentlich/.test(t)) r = { kind: "weekly" };
+    else if (/^monatlich/.test(t)) r = { kind: "monthly" };
+    else if (/^quartal/.test(t)) r = { kind: "interval", minDays: 70, maxDays: 112 };
+    else if (/^halbj(ä|ae)hrlich/.test(t)) r = { kind: "halfyear", maxPerYear: 2, minDays: 120 };
+    else if ((m = t.match(/^(\d+)(?:-(\d+))?\s*x\s*j(ä|ae)hrlich/))) r = { kind: "peryear", maxPerYear: parseInt(m[2] || m[1], 10) };
+    else if (/^j(ä|ae)hrlich/.test(t)) r = { kind: "peryear", maxPerYear: 1 };
+    else if ((m = t.match(/^alle (\d+)(?:-(\d+))? (wochen?|monate?)/))) {
+      var lo = parseInt(m[1], 10), hi = parseInt(m[2] || m[1], 10), weeks = m[3].indexOf("woche") === 0;
+      if (weeks) r = m[2] ? { kind: "interval", minDays: lo * 7, maxDays: hi * 7 } : { kind: "interval", minDays: (lo - 1) * 7, maxDays: (lo + 1) * 7 };
+      else r = { kind: "interval", minDays: Math.floor(lo * 30.44 * 0.7), maxDays: Math.round(hi * 30.44 * 1.2) };
+    }
+    turnusCache[t] = r;
+    return r;
+  }
+  function occurrenceDates(list) {
+    var seen = {}, out = [];
+    list.forEach(function(x) { if (!seen[x.dateKey]) { seen[x.dateKey] = 1; out.push(x.dateKey); } });
+    return out.sort();
+  }
+  // Mehrtagestermine (Abstand höchstens 3 Tage) zählen als ein Vorkommen.
+  function clustersOf(dates) {
+    var out = [], cur = null;
+    dates.forEach(function(k) { if (cur && daysBetween(k, cur[cur.length - 1]) <= 3) cur.push(k); else { cur = [k]; out.push(cur); } });
+    return out;
+  }
+  function turnusMessages(ev, dateKey, rule, ctx) {
+    var msgs = [], spec = parseTurnus(rule.turnus);
+    if (spec.kind === "open") return msgs;
+    var group = ev.seriesId ? findEventsBySeries(ev.seriesId, ctx) : findEventsByRuleId(ruleBaseId(rule), ctx);
+    var others = group.filter(function(x) { return x.ev.uid !== ev.uid && !(ev.blockKey && x.ev.blockKey === ev.blockKey); });
+    var clusters = clustersOf(occurrenceDates(others.concat([{ dateKey: dateKey }])));
+    var ci = -1;
+    clusters.forEach(function(c, i) { if (c.indexOf(dateKey) >= 0) ci = i; });
+    var t = rule.turnus;
+    if (spec.kind === "weekly") {
+      var wk = getISOWeekKey(parseDateKey(dateKey));
+      var sameWeek = others.filter(function(x) { return getISOWeekKey(parseDateKey(x.dateKey)) === wk; });
+      if (sameWeek.length) msgs.push("Turnus wöchentlich, aber " + (sameWeek.length + 1) + " Termine in " + wk + ".");
+    } else if (spec.kind === "monthly") {
+      var sameMonth = others.filter(function(x) { return x.dateKey.substr(0, 7) === dateKey.substr(0, 7); });
+      if (sameMonth.length) msgs.push("Turnus monatlich, aber " + (sameMonth.length + 1) + " Termine im " + monthNames[parseDateKey(dateKey).getMonth()] + ".");
+    } else if (spec.kind === "interval" || spec.kind === "halfyear") {
+      if (ci > 0) {
+        var prevLast = clusters[ci - 1][clusters[ci - 1].length - 1], pg = daysBetween(clusters[ci][0], prevLast);
+        if (pg < spec.minDays) msgs.push("Turnus " + t + ", aber nur " + pg + " Tage Abstand zum " + fmtDateDE(prevLast) + " (mindestens " + spec.minDays + ").");
+        else if (spec.maxDays && pg > spec.maxDays) msgs.push("Lücke im Turnus " + t + ": " + pg + " Tage seit dem " + fmtDateDE(prevLast) + " (höchstens " + spec.maxDays + ").");
+      }
+      if (ci >= 0 && ci < clusters.length - 1) {
+        var nextFirst = clusters[ci + 1][0], ng = daysBetween(nextFirst, clusters[ci][clusters[ci].length - 1]);
+        if (ng < spec.minDays) msgs.push("Turnus " + t + ", aber nur " + ng + " Tage Abstand zum " + fmtDateDE(nextFirst) + " (mindestens " + spec.minDays + ").");
+      }
+      if (spec.kind === "halfyear" && clusters.length > spec.maxPerYear) msgs.push("Turnus " + t + ", aber " + clusters.length + " Vorkommen im Jahr (höchstens " + spec.maxPerYear + ").");
+    } else if (spec.kind === "peryear") {
+      if (clusters.length > spec.maxPerYear) msgs.push("Turnus " + t + ", aber " + clusters.length + " Vorkommen im Jahr (höchstens " + spec.maxPerYear + ").");
+    }
+    return msgs;
+  }
+
+  function checkPlausibility(dateKey, ctx) {
+    ctx = ctx || CTX();
+    var dt = parseDateKey(dateKey);
+    var weekday = WEEKDAY_SHORT[dt.getDay()];
+    var events = ctx.eventsData[dateKey] || [];
+    var results = [];
+    var thisWeek = getISOWeekKey(dt);
+    events.forEach(function(ev) {
+      var msgs = [], hints = [];
+      var rule = ev.rule;
+      if (isHoliday(dateKey)) msgs.push("Liegt auf einem Feiertag (" + HOLIDAYS[dateKey] + ").");
+      else if (isWeekend(dateKey)) msgs.push("Liegt am Wochenende.");
+      if (rule) {
+        if (rule.allowedDays && rule.allowedDays.indexOf(weekday) === -1) msgs.push("Wochentag " + weekday + " nicht zulässig – erlaubt: " + rule.allowedDays.join(", ") + ".");
+        if (rule.fixedTime) {
+          var alts = rule.altTimes || [];
+          if (ev.time !== rule.fixedTime && alts.indexOf(ev.time) === -1) msgs.push("Zeitfenster " + ev.time + " weicht vom festen Zeitfenster " + rule.fixedTime + (alts.length ? " (oder " + alts.join(", ") + ")" : "") + " ab.");
+          else if (ev.time !== rule.fixedTime) hints.push("Alternatives Zeitfenster " + ev.time + " – Fachklärung offen.");
+        }
+        if (rule.duration && ev.duration !== rule.duration && !ev.blockKey) msgs.push("Dauer " + ev.duration + " Min. weicht von der Regeldauer " + rule.duration + " Min. ab.");
+        if (rule.couplingForbiddenWith) {
+          findEventsByRuleId(rule.couplingForbiddenWith, ctx).forEach(function(o) {
+            if (getISOWeekKey(parseDateKey(o.dateKey)) === thisWeek) msgs.push("Kopplungsverbot verletzt: liegt in derselben ISO-Woche (" + thisWeek + ") wie " + o.ev.title + " am " + fmtDateDE(o.dateKey) + ".");
+          });
+        }
+        if (rule.notSplittable && ev.blockKey) {
+          var parts = (indexOf(ctx).block[ev.blockKey] || []).slice();
+          var otherDay = parts.filter(function(x) { return x.dateKey !== dateKey; });
+          var expected = rule.blockParts ? rule.blockParts.length : 0;
+          if (otherDay.length) msgs.push("Block nicht trennbar: Teil „" + otherDay[0].ev.title + "“ liegt an einem anderen Tag (" + fmtDateDE(otherDay[0].dateKey) + ").");
+          if (expected && parts.length < expected) msgs.push("Block unvollständig: nur " + parts.length + " von " + expected + " Teilen vorhanden (" + rule.subslots + ").");
+          var sorted = parts.map(function(x) { return x.ev; }).sort(function(a, b) { return toMin(a.start) - toMin(b.start); });
+          var total = 0;
+          for (var s = 0; s < sorted.length; s++) {
+            total += sorted[s].duration;
+            if (s > 0 && toMin(sorted[s].start) !== toMin(sorted[s - 1].start) + sorted[s - 1].duration) { msgs.push("Block nicht zusammenhängend: „" + sorted[s].title + "“ schließt nicht direkt an."); break; }
+          }
+          if (expected && parts.length === expected) {
+            var idx = sorted.indexOf(ev);
+            if (idx >= 0 && sorted[idx].duration !== rule.blockParts[idx]) msgs.push("Blockteil " + (idx + 1) + " dauert " + ev.duration + " Min. statt " + rule.blockParts[idx] + " Min.");
+            if (total !== rule.totalDuration) msgs.push("Blockdauer " + total + " Min. statt " + rule.totalDuration + " Min.");
+          }
+        }
+        if (rule.coupledAfter) {
+          var prev = events.filter(function(o) { return o.rule && ruleBaseId(o.rule) === rule.coupledAfter && o.uid !== ev.uid; });
+          var prevLabel = ctx.RULES[rule.coupledAfter] ? ctx.RULES[rule.coupledAfter].label : rule.coupledAfter;
+          if (!prev.length) msgs.push("Doppelpack: „" + prevLabel + "“ fehlt am selben Tag (gleiche Einrichtung, direkt nacheinander).");
+          else {
+            var maxGap = rule.coupledMaxGapMin !== undefined ? rule.coupledMaxGapMin : 15, bestGap = null;
+            prev.forEach(function(o) { var g = toMin(ev.start) - (toMin(o.start) + o.duration); if (g >= 0 && (bestGap === null || g < bestGap)) bestGap = g; });
+            if (bestGap !== null && bestGap > maxGap) msgs.push("Doppelpack: kein direkter Anschluss an „" + prevLabel + "“ – " + bestGap + " Min. Lücke, erlaubt höchstens " + maxGap + " Min.");
+          }
+        }
+        msgs = msgs.concat(turnusMessages(ev, dateKey, rule, ctx));
+        if (rule.editable === false && ev.baseline && !ev.deviation) {
+          if (ev.baseline.title !== ev.title) msgs.push("Titel weicht von der Vorgabe „" + ev.baseline.title + "“ ab (gesperrtes Format, Abweichung im Formular bestätigen).");
+          if (ev.baseline.start !== ev.start || ev.baseline.duration !== ev.duration) msgs.push("Beginn/Dauer weichen von der Vorgabe " + rangeStr(ev.baseline.start, ev.baseline.duration) + " ab (gesperrtes Format, Abweichung im Formular bestätigen).");
+        }
+      }
+      // Überschneidungen am Tag
+      events.forEach(function(o) {
+        if (o.uid === ev.uid) return;
+        if (ev.blockKey && o.blockKey === ev.blockKey) return;
+        if (overlaps(ev, o)) msgs.push("Überschneidung mit „" + o.title + "“ (" + o.time + ").");
+      });
+      var st = toMin(ev.start), en = st + ev.duration;
+      if (st < CONFIG.DAY_START * 60 || en > CONFIG.DAY_END * 60) hints.push("Außerhalb des Kernzeitfensters " + pad2(CONFIG.DAY_START) + ":00–" + pad2(CONFIG.DAY_END) + ":00.");
+      if (ev.placeholder) hints.push("Platzhalter – Termin unbestätigt, mit Sekretariat abzustimmen.");
+      if (ev.assumption) hints.push("Arbeitsannahme (Slot/Wochentag nicht bestätigt).");
+      if (ev.deviation) hints.push("Bewusste Abweichung von der Vorgabe.");
+      if (rule && rule.notSplittable) hints.push("Block nicht trennbar: " + rule.subslots + ", gesamt " + rule.totalDuration + " Min.");
+      results.push({ ev: ev, ok: msgs.length === 0, messages: msgs, hints: hints });
+    });
+    return results;
+  }
+
+  var violationCache = {};
+  function recomputeViolations() {
+    violationCache = {};
+    var total = 0, ctx = CTX();
+    for (var dk in eventsData) {
+      if (!eventsData[dk].length) continue;
+      var res = checkPlausibility(dk, ctx);
+      var n = res.filter(function(r) { return !r.ok; }).length;
+      if (n) { violationCache[dk] = res; total += n; }
+    }
+    return total;
+  }
+
+  // ================= Filter, Suche =================
+  // Ein Filter für alle Ansichten (Jahresraster, Seitenspalte, Tag, Woche, Monat).
+  var activeTypes = {};        // leer = alle Typen; sonst Vereinigung der gewählten
+  var onlyPlaceholder = false; // unabhängiger Zusatzfilter
+  var searchTerm = "";
+  var selectedDateKey = null;
+  function typeGroup(ev) { return (ev.type === "Projekt" || ev.type === "Klausur") ? "Blocker" : ev.type; }
+  function anyTypeSelected() { for (var k in activeTypes) if (activeTypes[k]) return true; return false; }
+  function filterActive() { return anyTypeSelected() || onlyPlaceholder || !!searchTerm; }
+  function passesFilter(ev) {
+    if (onlyPlaceholder && !ev.placeholder) return false;
+    if (anyTypeSelected() && !activeTypes[typeGroup(ev)]) return false;
+    if (searchTerm) {
+      var blob = (ev.title + " " + (ev.desc || "") + " " + (ev.ort || "")).toLowerCase();
+      if (blob.indexOf(searchTerm) === -1) return false;
+    }
+    return true;
+  }
+  function debounce(fn, ms) { var t = null; return function() { var a = arguments, self = this; clearTimeout(t); t = setTimeout(function() { fn.apply(self, a); }, ms); }; }
+  function updateFilterUI() {
+    var btns = document.querySelectorAll(".filter-btn");
+    for (var i = 0; i < btns.length; i++) {
+      var f = btns[i].getAttribute("data-filter"), on;
+      if (f === "all") on = !filterActive();
+      else if (f === "Platzhalter") on = onlyPlaceholder;
+      else on = !!activeTypes[f];
+      btns[i].classList.toggle("active", on);
+      btns[i].setAttribute("aria-pressed", on ? "true" : "false");
+    }
+    var info = document.getElementById("filterInfo");
+    if (!filterActive()) { info.textContent = ""; return; }
+    var all = allEventsFlat(), vis = all.filter(function(x) { return passesFilter(x.ev); }).length;
+    info.textContent = "Filter aktiv: " + vis + " von " + all.length + " Terminen sichtbar.";
+  }
+  function refreshAfterFilter() {
+    updateFilterUI();
+    renderCalendar();
+    if (selectedDateKey) selectDate(selectedDateKey);
+    if (document.getElementById("focusOverlay").classList.contains("active")) renderFocus();
+  }
+  function setFilter(opts) {
+    opts = opts || {};
+    if (opts.types) { activeTypes = {}; opts.types.forEach(function(t) { activeTypes[t] = true; }); }
+    if (opts.onlyPlaceholder !== undefined) onlyPlaceholder = !!opts.onlyPlaceholder;
+    if (opts.search !== undefined) searchTerm = String(opts.search).trim().toLowerCase();
+    refreshAfterFilter();
+  }
+  function byStart(a, b) { return toMin(a.start) - toMin(b.start) || a.title.localeCompare(b.title); }
+
+  // ================= Jahresübersicht =================
+  function focusedCellDate() {
+    var a = document.activeElement;
+    return (a && a.classList && a.classList.contains("cell")) ? a.getAttribute("data-date") : null;
+  }
+  function cellLabel(dateKey, visibleCount, violations) {
+    return fmtDateLong(dateKey) + (isHoliday(dateKey) ? ", Feiertag: " + HOLIDAYS[dateKey] : "") + ", " + visibleCount + (visibleCount === 1 ? " Termin" : " Termine") + (violations ? ", " + violations + (violations === 1 ? " Regelverstoß" : " Regelverstöße") : "");
+  }
+  function onCellKeydown(e, dateKey) {
+    var d = parseDateKey(dateKey), nd = null;
+    if (e.key === "ArrowRight") nd = addDays(d, 1);
+    else if (e.key === "ArrowLeft") nd = addDays(d, -1);
+    else if (e.key === "ArrowDown") nd = addDays(d, 7);
+    else if (e.key === "ArrowUp") nd = addDays(d, -7);
+    else if (e.key === "PageDown") nd = new Date(d.getFullYear(), d.getMonth() + 1, Math.min(d.getDate(), new Date(d.getFullYear(), d.getMonth() + 2, 0).getDate()));
+    else if (e.key === "PageUp") nd = new Date(d.getFullYear(), d.getMonth() - 1, Math.min(d.getDate(), new Date(d.getFullYear(), d.getMonth(), 0).getDate()));
+    else if (e.key === "Enter" || e.key === " ") { e.preventDefault(); selectDate(dateKey); openFocus(dateKey, "day"); return; }
+    else return;
+    e.preventDefault();
+    if (nd.getFullYear() !== YEAR) return;
+    var nk = dateToKey(nd);
+    selectDate(nk);
+    var target = document.querySelector('.cell[data-date="' + nk + '"]');
+    if (target) target.focus();
+  }
+
+  function renderCalendar() {
+    var container = document.getElementById("calendarContainer");
+    var restoreDate = focusedCellDate();
+    var tabDate = selectedDateKey || formatYMD(YEAR, 0, 4);
+    container.innerHTML = "";
+    for (var m = 0; m < 12; m++) {
+      var monthCard = document.createElement("div");
+      monthCard.className = "month-card";
+      monthCard.setAttribute("role", "group");
+      monthCard.setAttribute("aria-label", monthNames[m] + " " + YEAR);
+      var mTitle = document.createElement("div");
+      mTitle.className = "month-title";
+      var cnt = 0, hrs = 0;
+      for (var dd = 1; dd <= new Date(YEAR, m + 1, 0).getDate(); dd++) { var l = eventsData[formatYMD(YEAR, m, dd)] || []; l.forEach(function(e) { if (passesFilter(e)) { cnt++; hrs += e.duration; } }); }
+      mTitle.innerHTML = "<span>" + monthNames[m] + " " + YEAR + "</span><small>" + cnt + " Termine · " + (Math.round(hrs / 6) / 10).toLocaleString("de-DE") + " h</small>";
+      mTitle.title = "Monatsfokus öffnen";
+      mTitle.setAttribute("role", "button");
+      mTitle.setAttribute("tabindex", "0");
+      mTitle.setAttribute("aria-label", "Monatsfokus öffnen: " + monthNames[m] + " " + YEAR + ", " + cnt + " Termine");
+      (function(mm) {
+        mTitle.addEventListener("click", function() { openFocus(formatYMD(YEAR, mm, 1), "month"); });
+        mTitle.addEventListener("keydown", function(e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openFocus(formatYMD(YEAR, mm, 1), "month"); } });
+      })(m);
+      monthCard.appendChild(mTitle);
+
+      var dHead = document.createElement("div");
+      dHead.className = "days-head";
+      dHead.setAttribute("aria-hidden", "true");
+      for (var h = 0; h < 7; h++) { var sp = document.createElement("span"); sp.textContent = dayShorts[h]; dHead.appendChild(sp); }
+      monthCard.appendChild(dHead);
+
+      var dGrid = document.createElement("div");
+      dGrid.className = "days-grid";
+      dGrid.setAttribute("role", "grid");
+      dGrid.setAttribute("aria-label", monthNames[m] + " " + YEAR);
+      var firstWd = (new Date(YEAR, m, 1).getDay() + 6) % 7;
+      var daysInMonth = new Date(YEAR, m + 1, 0).getDate();
+      var row = null, pos = 0;
+      var addCell = function(c) { if (pos % 7 === 0) { row = document.createElement("div"); row.setAttribute("role", "row"); dGrid.appendChild(row); } row.appendChild(c); pos++; };
+      for (var empty = 0; empty < firstWd; empty++) { var ec = document.createElement("div"); ec.className = "cell empty"; ec.setAttribute("role", "gridcell"); ec.setAttribute("aria-hidden", "true"); addCell(ec); }
+      for (var day = 1; day <= daysInMonth; day++) {
+        var dateKey = formatYMD(YEAR, m, day);
+        var cell = document.createElement("div");
+        cell.className = "cell" + (isWeekend(dateKey) ? " weekend" : "") + (isHoliday(dateKey) ? " holiday" : "") + (selectedDateKey === dateKey ? " selected" : "");
+        cell.setAttribute("data-date", dateKey);
+        cell.setAttribute("role", "gridcell");
+        cell.setAttribute("tabindex", dateKey === tabDate ? "0" : "-1");
+        cell.setAttribute("aria-selected", selectedDateKey === dateKey ? "true" : "false");
+        if (isHoliday(dateKey)) cell.title = HOLIDAYS[dateKey];
+        var numSpan = document.createElement("span");
+        numSpan.className = "day-num"; numSpan.textContent = day; cell.appendChild(numSpan);
+        var list = (eventsData[dateKey] || []).filter(passesFilter);
+        var vio = (violationCache[dateKey] || []).filter(function(r) { return !r.ok; }).length;
+        if (list.length > 0) {
+          var dotRow = document.createElement("div"); dotRow.className = "dot-row";
+          for (var i = 0; i < Math.min(list.length, 4); i++) {
+            var dot = document.createElement("span");
+            dot.className = "termin-dot" + (list[i].placeholder ? " ph" : "");
+            dot.style.background = list[i].color; dot.title = list[i].time + " " + list[i].title;
+            dotRow.appendChild(dot);
+          }
+          if (list.length > 4) { var more = document.createElement("span"); more.className = "more"; more.textContent = "+" + (list.length - 4); dotRow.appendChild(more); }
+          cell.appendChild(dotRow);
+          if (list.some(function(e) { return e.placeholder; })) cell.classList.add("has-placeholder");
+        }
+        if (vio) {
+          cell.classList.add("has-violation");
+          var vb = document.createElement("span"); vb.className = "viol-count"; vb.textContent = vio; vb.setAttribute("aria-hidden", "true"); vb.title = vio + " Regelverstoß/-verstöße";
+          cell.appendChild(vb);
+        }
+        cell.setAttribute("aria-label", cellLabel(dateKey, list.length, vio));
+        (function(k) {
+          cell.addEventListener("click", function() { selectDate(k); openFocus(k, "day"); });
+          cell.addEventListener("keydown", function(e) { onCellKeydown(e, k); });
+        })(dateKey);
+        addCell(cell);
+      }
+      monthCard.appendChild(dGrid);
+      container.appendChild(monthCard);
+    }
+    if (restoreDate) { var rc = container.querySelector('.cell[data-date="' + restoreDate + '"]'); if (rc) rc.focus(); }
+    renderKPIs();
+  }
+
+  function renderKPIs() {
+    var flat = allEventsFlat();
+    var total = flat.length, hrs = 0, ph = 0, days = {};
+    flat.forEach(function(x) { hrs += x.ev.duration; if (x.ev.placeholder) ph++; days[x.dateKey] = 1; });
+    var viol = 0; for (var dk in violationCache) viol += violationCache[dk].filter(function(r) { return !r.ok; }).length;
+    var g = document.getElementById("kpiGrid");
+    g.innerHTML = '<div class="kpi"><div class="v">' + total + '</div><div class="l">Termine 2027</div></div>' +
+      '<div class="kpi"><div class="v">' + Math.round(hrs / 60).toLocaleString("de-DE") + ' h</div><div class="l">Terminzeit / ' + Object.keys(days).length + ' Tage</div></div>' +
+      '<div class="kpi warn"><div class="v">' + ph + '</div><div class="l">Platzhalter offen</div></div>' +
+      '<div class="kpi ' + (viol ? "bad" : "") + '"><div class="v">' + viol + '</div><div class="l">Regelverstöße</div></div>';
+    var pill = document.getElementById("pillStatus");
+    if (viol === 0) { pill.className = "pill status-ok"; pill.textContent = "Regelprüfung: keine Verstöße"; }
+    else { pill.className = "pill status-bad"; pill.textContent = "Regelprüfung: " + viol + " Verstöße"; }
+  }
+
+  function selectDate(dateKey) {
+    selectedDateKey = dateKey;
+    var all = document.querySelectorAll(".cell.selected");
+    for (var i = 0; i < all.length; i++) { all[i].classList.remove("selected"); all[i].setAttribute("aria-selected", "false"); }
+    var stops = document.querySelectorAll('.cell[tabindex="0"]');
+    for (i = 0; i < stops.length; i++) stops[i].setAttribute("tabindex", "-1");
+    var target = document.querySelector('.cell[data-date="' + dateKey + '"]');
+    if (target) { target.classList.add("selected"); target.setAttribute("aria-selected", "true"); target.setAttribute("tabindex", "0"); }
+    document.getElementById("detailHeading").textContent = fmtDateLong(dateKey);
+    var sub = document.getElementById("detailSub");
+    var listContainer = document.getElementById("detailList");
+    var dayAll = eventsData[dateKey] || [];
+    var visible = dayAll.filter(passesFilter);
+    listContainer.innerHTML = "";
+    if (isHoliday(dateKey)) { sub.textContent = "Feiertag: " + HOLIDAYS[dateKey]; }
+    if (visible.length === 0) {
+      if (!isHoliday(dateKey)) sub.textContent = dayAll.length ? "Alle " + dayAll.length + " Termine dieses Tages sind durch den Filter ausgeblendet." : "Keine Termine an diesem Tag.";
+      listContainer.innerHTML = dayAll.length ? '<div class="empty-note">Mit „Alle Formate“ sind die ausgeblendeten Termine wieder sichtbar.</div>' : '<div class="empty-note">Keine Einträge an diesem Tag. Tag steht für operatives Tagesgeschäft zur Verfügung.</div>';
+    } else {
+      var hrs = 0; visible.forEach(function(e) { hrs += e.duration; });
+      sub.textContent = visible.length + " Termin(e), " + (Math.round(hrs / 6) / 10).toLocaleString("de-DE") + " h – Klick öffnet den Fokusmodus.";
+      visible.forEach(function(ev) {
+        var card = document.createElement("div");
+        card.className = "detail-card"; card.style.borderLeftColor = ev.color;
+        card.setAttribute("role", "button"); card.setAttribute("tabindex", "0");
+        card.innerHTML = '<div class="detail-title">' + escapeHtml(ev.title) + (ev.placeholder ? ' <span class="tag warn">Platzhalter</span>' : '') + '</div><div class="detail-meta">' + escapeHtml(ev.time) + ' · ' + escapeHtml(typeLabels[ev.type] || ev.type) + '</div>';
+        card.addEventListener("click", function() { openFocus(dateKey, "day"); });
+        card.addEventListener("keydown", function(e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openFocus(dateKey, "day"); } });
+        listContainer.appendChild(card);
+      });
+    }
+  }
+  function escapeHtml(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;"); }
+
+  // ================= Rückgängig =================
+  var undoStack = [];
+  var snapPending = false;
+  var skipNextAutosave = false;
+  // Vor jeder Änderung aufrufen. Pro Änderung zählt nur der erste Aufruf (afterChange setzt zurück).
+  function snapshot(reason) {
+    if (snapPending) return;
+    snapPending = true;
+    undoStack.unshift({ reason: reason, data: JSON.stringify(serialize({ noChangelog: true })) });
+    if (undoStack.length > CONFIG.UNDO_MAX) undoStack.pop();
+    updateUndoButton();
+  }
+  function updateUndoButton() {
+    var b = document.getElementById("btnUndo");
+    if (!b) return;
+    b.disabled = !undoStack.length;
+    b.title = undoStack.length ? "Rückgängig: " + undoStack[0].reason + " (" + undoStack.length + " Schritt(e), Strg+Z)" : "Nichts zum Rückgängigmachen";
+  }
+  function undo() {
+    var prev = undoStack.shift();
+    if (!prev) return false;
+    deserialize(JSON.parse(prev.data));
+    afterChange("Rückgängig: " + prev.reason);
+    return true;
+  }
+
+  // ================= Fokusmodus =================
+  var focus = { dateKey: null, mode: "day" };
+  function openFocus(dateKey, mode) {
+    focus.dateKey = dateKey; focus.mode = mode || focus.mode || "day";
+    renderFocus();
+    document.getElementById("focusOverlay").classList.add("active");
+  }
+  function closeFocus() { document.getElementById("focusOverlay").classList.remove("active"); }
+  function afterChange(reason) {
+    snapPending = false;
+    if (reason) logChange(reason);
+    recomputeViolations();
+    renderCalendar();
+    if (selectedDateKey) selectDate(selectedDateKey);
+    if (document.getElementById("focusOverlay").classList.contains("active")) renderFocus();
+    renderFormatList();
+    updateFilterUI();
+    updateUndoButton();
+    autosave();
+  }
+
+  function renderFocus() {
+    ["fmDay", "fmWeek", "fmMonth"].forEach(function(id) { document.getElementById(id).classList.remove("active"); });
+    document.getElementById(focus.mode === "day" ? "fmDay" : focus.mode === "week" ? "fmWeek" : "fmMonth").classList.add("active");
+    var hint = document.getElementById("focusHint");
+    if (focus.mode === "day") { hint.textContent = "Bausteine per Drag & Drop aufeinander ziehen, um Zeiten zu tauschen. „Bearbeiten“ öffnet das Formular (Titel, Tag, Zeit, Dauer, Typ), „Löschen“ entfernt den Termin. Regelprüfung läuft bei jeder Änderung."; renderDayFocus(); }
+    else if (focus.mode === "week") { hint.textContent = isMobileView() ? "Tippen auf einen Termin öffnet „Bearbeiten“. Tippen auf den Tag öffnet den Tagesfokus." : "Termin in eine andere Spalte oder an eine andere Höhe ziehen (Maus oder Touch) = Tag/Beginn verschieben (15-Min.-Raster, 07:00–18:00). Klick = „Bearbeiten“."; renderWeekFocus(); }
+    else { hint.textContent = "Klick auf einen Tag öffnet den Tagesfokus."; renderMonthFocus(); }
+  }
+  function isMobileView() { return !!(window.matchMedia && window.matchMedia("(max-width: " + CONFIG.MOBILE_MAX_PX + "px)").matches); }
+
+  function summaryFor(results, label) {
+    var summaryEl = document.getElementById("focusSummary");
+    var hiddenCount = 0;
+    if (filterActive()) { var vis = results.filter(function(r) { return passesFilter(r.ev); }); hiddenCount = results.length - vis.length; results = vis; }
+    var note = hiddenCount ? "<br><em>Filter aktiv: " + hiddenCount + " weitere Termine ausgeblendet.</em>" : "";
+    var bad = results.filter(function(r) { return !r.ok; });
+    var hints = []; results.forEach(function(r) { r.hints.forEach(function(h) { if (h.indexOf("Platzhalter") === 0 || h.indexOf("Arbeitsannahme") === 0) hints.push(r.ev.title + ": " + h); }); });
+    if (bad.length === 0 && !results.length) { summaryEl.className = "focus-summary ok"; summaryEl.innerHTML = "Keine Termine " + escapeHtml(label) + "." + note; return; }
+    if (bad.length === 0) {
+      summaryEl.className = "focus-summary " + (hints.length ? "warn" : "ok");
+      summaryEl.innerHTML = "<strong>Regelprüfung: alle " + results.length + " Bausteine " + escapeHtml(label) + " regelkonform.</strong>" + (hints.length ? "<br>" + hints.length + " Hinweis(e): " + escapeHtml(hints.slice(0, 4).join(" · ")) + (hints.length > 4 ? " …" : "") : "") + note;
+    } else {
+      var lines = []; bad.forEach(function(r) { r.messages.forEach(function(m) { lines.push("<b>" + escapeHtml(r.ev.title) + "</b> (" + escapeHtml(r.ev.time) + "): " + escapeHtml(m)); }); });
+      summaryEl.className = "focus-summary bad";
+      summaryEl.innerHTML = "<strong>Regelprüfung: " + bad.length + " Baustein(e) mit Verstoß " + escapeHtml(label) + ".</strong><br>• " + lines.join("<br>• ") + note;
+    }
+  }
+
+  // ---- Tagesfokus ----
+  function renderDayFocus() {
+    var dateKey = focus.dateKey;
+    document.getElementById("focusTitle").textContent = "Tagesfokus – " + fmtDateLong(dateKey) + " (KW " + pad2(getISOWeek(parseDateKey(dateKey)).week) + ")" + (isHoliday(dateKey) ? " – Feiertag: " + HOLIDAYS[dateKey] : "");
+    document.getElementById("fmNew").style.display = "";
+    var results = checkPlausibility(dateKey);
+    summaryFor(results, "an diesem Tag");
+    var body = document.getElementById("focusBody");
+    body.innerHTML = "";
+    var all = eventsData[dateKey] || [];
+    var events = all.filter(passesFilter).sort(byStart);
+    if (!events.length) { body.innerHTML = all.length ? '<div class="empty-note">Alle ' + all.length + ' Termine dieses Tages sind durch den Filter ausgeblendet.</div>' : '<div class="empty-note">Keine Termine. Über „Neuer Termin an diesem Tag“ anlegen oder im Wochenfokus einen Termin hierher ziehen.</div>'; return; }
+    events.forEach(function(ev) {
+      var res = results.filter(function(r) { return r.ev.uid === ev.uid; })[0];
+      var card = document.createElement("div");
+      card.className = "baustein-card" + (res && !res.ok ? " violation" : "") + (ev.placeholder ? " placeholder" : "");
+      card.style.borderLeftColor = ev.color;
+      card.setAttribute("draggable", "true");
+      card.setAttribute("data-uid", ev.uid);
+      var head = document.createElement("div"); head.className = "baustein-head";
+      var timeSpan = document.createElement("span"); timeSpan.className = "baustein-time"; timeSpan.textContent = ev.time;
+      var titleSpan = document.createElement("span"); titleSpan.className = "baustein-title";
+      titleSpan.innerHTML = escapeHtml(ev.title) + ' <span class="tag grey">' + escapeHtml(typeLabels[ev.type] || ev.type) + '</span>' + (ev.placeholder ? ' <span class="tag warn">Platzhalter</span>' : '') + (ev.assumption ? ' <span class="tag cyan">Annahme</span>' : '') + (ev.deviation ? ' <span class="tag warn">Abweichung</span>' : '') + (ev.source === "manuell" ? ' <span class="tag ok">manuell</span>' : '');
+      var actions = document.createElement("div"); actions.className = "baustein-actions";
+      var editBtn = document.createElement("button"); editBtn.type = "button"; editBtn.className = "icon-btn"; editBtn.title = "Bearbeiten"; editBtn.textContent = "✎ Bearbeiten";
+      var delBtn = document.createElement("button"); delBtn.type = "button"; delBtn.className = "icon-btn del"; delBtn.title = "Löschen"; delBtn.textContent = "✕ Löschen";
+      actions.appendChild(editBtn); actions.appendChild(delBtn);
+      head.appendChild(timeSpan); head.appendChild(titleSpan); head.appendChild(actions);
+      card.appendChild(head);
+      var desc = document.createElement("div"); desc.className = "baustein-desc"; desc.textContent = (ev.ort ? ev.ort + " · " : "") + (ev.desc || ""); card.appendChild(desc);
+      if (ev.rule) {
+        var r = ev.rule, parts = [];
+        if (r.allowedDays) parts.push("Wochentag: " + r.allowedDays.join("/"));
+        if (r.turnus) parts.push("Turnus: " + r.turnus);
+        if (r.fixedTime) parts.push("Festes Fenster: " + r.fixedTime + (r.altTimes && r.altTimes.length ? " (alternativ zulässig: " + r.altTimes.join(", ") + ")" : ""));
+        if (r.duration) parts.push("Regeldauer: " + r.duration + " Min.");
+        if (r.couplingForbiddenWith) parts.push("Kopplungsverbot mit " + (RULES[r.couplingForbiddenWith] ? RULES[r.couplingForbiddenWith].label : r.couplingForbiddenWith));
+        if (r.notSplittable) parts.push("Nicht trennbar: " + r.subslots);
+        if (r.editable === false) parts.push("Gesperrtes Format");
+        if (r.note) parts.push(r.note);
+        var rd = document.createElement("div"); rd.className = "baustein-rule"; rd.textContent = parts.join(" · "); card.appendChild(rd);
+      }
+      if (res && !res.ok) { var vm = document.createElement("div"); vm.className = "baustein-violation-msg"; vm.innerHTML = res.messages.map(escapeHtml).join("<br>"); card.appendChild(vm); }
+      if (res && res.hints.length) { var hm = document.createElement("div"); hm.className = "baustein-hint-msg"; hm.textContent = res.hints.join(" · "); card.appendChild(hm); }
+
+      card.addEventListener("dragstart", function(e) { e.dataTransfer.setData("text/plain", this.getAttribute("data-uid")); this.classList.add("dragging"); });
+      card.addEventListener("dragend", function() { this.classList.remove("dragging"); });
+      card.addEventListener("dragover", function(e) { e.preventDefault(); this.classList.add("dropready"); });
+      card.addEventListener("dragleave", function() { this.classList.remove("dropready"); });
+      card.addEventListener("drop", function(e) {
+        e.preventDefault(); this.classList.remove("dropready");
+        var dragged = e.dataTransfer.getData("text/plain"), target = this.getAttribute("data-uid");
+        if (dragged && dragged !== target) swapEventTimes(dateKey, dragged, target);
+      });
+      editBtn.addEventListener("click", function(e) { e.stopPropagation(); openForm(dateKey, ev.uid); });
+      delBtn.addEventListener("click", function(e) { e.stopPropagation(); deleteEvent(dateKey, ev.uid); });
+      body.appendChild(card);
+    });
+  }
+
+  // Tausch: der spätere Termin rückt an den Beginn der gemeinsamen Spanne, der frühere ans Ende. Dauern bleiben, der Abstand dazwischen bleibt.
+  function swapEventTimes(dateKey, uidA, uidB) {
+    var evs = eventsData[dateKey] || [];
+    var a = evs.filter(function(x) { return x.uid === uidA; })[0], b = evs.filter(function(x) { return x.uid === uidB; })[0];
+    if (!a || !b) return;
+    if (a.blockKey || b.blockKey) {
+      showDialog({ title: "Tausch nicht möglich", text: "Teile eines nicht trennbaren Blocks lassen sich nicht einzeln tauschen. Den Block bitte im Wochenfokus als Ganzes verschieben." });
+      return;
+    }
+    snapshot("Zeiten getauscht: " + a.title + " ↔ " + b.title);
+    var first = toMin(a.start) <= toMin(b.start) ? a : b, second = (first === a) ? b : a;
+    var spanStart = toMin(first.start), spanEnd = toMin(second.start) + second.duration;
+    second.start = fromMin(spanStart);
+    first.start = fromMin(Math.max(0, spanEnd - first.duration));
+    touch(a); touch(b); refreshTime(a); refreshTime(b); sortDay(dateKey);
+    afterChange("Zeiten getauscht am " + fmtDateDE(dateKey) + ": " + a.title + " ↔ " + b.title);
+  }
+
+  function deleteEvent(dateKey, uid) {
+    var evs = eventsData[dateKey] || [];
+    var ev = evs.filter(function(x) { return x.uid === uid; })[0];
+    if (!ev) return;
+    var msg = "„" + ev.title + "“ (" + ev.time + ") am " + fmtDateDE(dateKey) + " endgültig löschen?";
+    if (ev.blockKey && ev.rule && ev.rule.notSplittable) msg += "\nHinweis: Teil eines nicht trennbaren Blocks – die Regelprüfung meldet danach einen unvollständigen Block.";
+    msg += "\nDie Aktion lässt sich mit „Rückgängig“ zurücknehmen.";
+    confirmDialog("Termin löschen", msg, function() {
+      snapshot("Gelöscht: " + ev.title);
+      var cur = eventsData[dateKey] || [];
+      eventsData[dateKey] = cur.filter(function(x) { return x.uid !== uid; });
+      if (!eventsData[dateKey].length) delete eventsData[dateKey];
+      pruneRules();
+      afterChange("Gelöscht: " + ev.title + " am " + fmtDateDE(dateKey));
+    }, "Löschen");
+  }
+
+  // Verschiebt einen Termin (Block immer als Ganzes). opts.clampGrid: Drag im Wochenraster (15-Min.-Raster, 07:00–18:00).
+  // Ohne clampGrid begrenzt nur der Tag (00:00–24:00), damit ein Block nie auseinanderfällt.
+  function moveEvent(fromKey, uid, toKey, newStart, opts) {
+    opts = opts || {};
+    var evs = eventsData[fromKey] || [];
+    var ev = evs.filter(function(x) { return x.uid === uid; })[0];
+    if (!ev) return;
+    var moved = [ev];
+    if (ev.blockKey) moved = evs.filter(function(x) { return x.blockKey === ev.blockKey; });
+    var minS = Infinity, maxE = 0;
+    moved.forEach(function(x) { minS = Math.min(minS, toMin(x.start)); maxE = Math.max(maxE, toMin(x.start) + x.duration); });
+    var delta = (newStart !== null && newStart !== undefined) ? toMin(newStart) - toMin(ev.start) : 0;
+    if (opts.clampGrid) {
+      var g = CONFIG.GRID_SNAP_MIN, lo = CONFIG.DAY_START * 60;
+      var hi = Math.floor((CONFIG.DAY_END * 60 - (maxE - minS)) / g) * g;
+      if (hi < lo) hi = lo;
+      var anchor = Math.round((minS + delta) / g) * g;
+      anchor = Math.max(lo, Math.min(hi, anchor));
+      delta = anchor - minS;
+    } else {
+      delta = Math.max(-minS, Math.min(1440 - maxE, delta));
+    }
+    snapshot("Verschoben: " + ev.title);
+    eventsData[fromKey] = evs.filter(function(x) { return moved.indexOf(x) === -1; });
+    if (!eventsData[fromKey].length) delete eventsData[fromKey];
+    if (!eventsData[toKey]) eventsData[toKey] = [];
+    moved.forEach(function(x) { x.start = fromMin(toMin(x.start) + delta); refreshTime(x); touch(x); eventsData[toKey].push(x); });
+    sortDay(toKey);
+    afterChange("Verschoben: " + ev.title + " von " + fmtDateDE(fromKey) + " nach " + fmtDateDE(toKey) + " " + ev.time + (moved.length > 1 ? " (Block, " + moved.length + " Teile)" : ""));
+  }
+
+  // ---- Wochenfokus ----
+  var HOUR_PX = CONFIG.HOUR_PX, DAY_START = CONFIG.DAY_START, DAY_END = CONFIG.DAY_END;
+  function renderWeekFocus() {
+    var d = parseDateKey(focus.dateKey);
+    var mon = mondayOfWeek(d);
+    var iso = getISOWeek(d);
+    var fri = addDays(mon, 4);
+    document.getElementById("focusTitle").textContent = "Wochenfokus – KW " + pad2(iso.week) + " (" + pad2(mon.getDate()) + "." + pad2(mon.getMonth() + 1) + ". – " + pad2(fri.getDate()) + "." + pad2(fri.getMonth() + 1) + "." + fri.getFullYear() + ")";
+    document.getElementById("fmNew").style.display = "";
+    var results = [], perDay = {};
+    var dayKeys = [];
+    for (var i = 0; i < 7; i++) { var dk = dateToKey(addDays(mon, i)); dayKeys.push(dk); perDay[dk] = eventsData[dk] ? checkPlausibility(dk) : []; results = results.concat(perDay[dk]); }
+    summaryFor(results, "in KW " + pad2(iso.week));
+    var body = document.getElementById("focusBody");
+    body.innerHTML = "";
+    var showWeekend = dayKeys.slice(5).some(function(k) { return eventsData[k] && eventsData[k].length; });
+    var cols = showWeekend ? 7 : 5;
+    if (isMobileView()) { renderWeekList(body, dayKeys, perDay, cols); return; }
+    var grid = document.createElement("div"); grid.className = "week-grid";
+    grid.style.gridTemplateColumns = "52px repeat(" + cols + ", 1fr)";
+    grid.style.setProperty("--hourpx", HOUR_PX + "px");
+    var corner = document.createElement("div"); corner.className = "week-head"; corner.textContent = ""; grid.appendChild(corner);
+    for (i = 0; i < cols; i++) {
+      var hk = dayKeys[i]; var hd = parseDateKey(hk);
+      var h = document.createElement("div"); h.className = "week-head" + (isHoliday(hk) ? " holiday" : "");
+      h.innerHTML = WEEKDAY_SHORT[hd.getDay()] + " " + pad2(hd.getDate()) + "." + pad2(hd.getMonth() + 1) + ".<small>" + (isHoliday(hk) ? escapeHtml(HOLIDAYS[hk]) : ((eventsData[hk] || []).filter(passesFilter).length + " Termine")) + "</small>";
+      (function(k) {
+        h.style.cursor = "pointer"; h.title = "Tagesfokus"; h.setAttribute("role", "button"); h.setAttribute("tabindex", "0");
+        h.addEventListener("click", function() { focus.dateKey = k; focus.mode = "day"; renderFocus(); });
+        h.addEventListener("keydown", function(e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); focus.dateKey = k; focus.mode = "day"; renderFocus(); } });
+      })(hk);
+      grid.appendChild(h);
+    }
+    var totalH = (DAY_END - DAY_START) * HOUR_PX;
+    var times = document.createElement("div"); times.className = "week-times"; times.style.height = totalH + "px";
+    for (var hr = DAY_START; hr <= DAY_END; hr++) { var t = document.createElement("div"); t.style.top = ((hr - DAY_START) * HOUR_PX) + "px"; t.textContent = pad2(hr) + ":00"; times.appendChild(t); }
+    grid.appendChild(times);
+    for (i = 0; i < cols; i++) {
+      (function(dk) {
+        var col = document.createElement("div"); col.className = "week-col" + (isHoliday(dk) ? " holiday" : ""); col.style.height = totalH + "px";
+        col.setAttribute("data-date", dk);
+        col.addEventListener("dragover", function(e) { e.preventDefault(); this.classList.add("dragover"); });
+        col.addEventListener("dragleave", function() { this.classList.remove("dragover"); });
+        col.addEventListener("drop", function(e) {
+          e.preventDefault(); this.classList.remove("dragover");
+          var data = e.dataTransfer.getData("text/plain"); if (!data) return;
+          var p = data.split("|"); var fromKey = p[0], uid = p[1], grabOffset = parseInt(p[2] || "0", 10);
+          var rect = this.getBoundingClientRect();
+          var y = e.clientY - rect.top - grabOffset;
+          var mins = DAY_START * 60 + Math.round((y / HOUR_PX) * 60 / CONFIG.GRID_SNAP_MIN) * CONFIG.GRID_SNAP_MIN;
+          moveEvent(fromKey, uid, dk, fromMin(Math.max(DAY_START * 60, mins)), { clampGrid: true });
+        });
+        var evs = (eventsData[dk] || []).slice().sort(byStart);
+        var res = perDay[dk];
+        var shownBefore = [];
+        evs.forEach(function(ev) {
+          if (!passesFilter(ev)) return;
+          var st = toMin(ev.start), en = st + ev.duration;
+          var top = Math.max(0, (st - DAY_START * 60) / 60 * HOUR_PX);
+          var height = Math.max(16, (Math.min(en, DAY_END * 60) - Math.max(st, DAY_START * 60)) / 60 * HOUR_PX - 2);
+          var r = res.filter(function(x) { return x.ev.uid === ev.uid; })[0];
+          var el = document.createElement("div");
+          el.className = "week-ev" + (r && !r.ok ? " violation" : "") + (ev.placeholder ? " placeholder" : "");
+          var overlapped = shownBefore.some(function(o) { return overlaps(o, ev) && !(ev.blockKey && o.blockKey === ev.blockKey); });
+          shownBefore.push(ev);
+          if (overlapped) el.classList.add("overlapped");
+          el.style.top = top + "px"; el.style.height = height + "px"; el.style.background = ev.color;
+          el.innerHTML = "<b>" + escapeHtml(ev.title) + "</b>" + (height > 26 ? escapeHtml(ev.time) : "");
+          el.title = ev.time + " " + ev.title + (r && !r.ok ? "\n" + r.messages.join("\n") : "");
+          el.setAttribute("role", "button"); el.setAttribute("tabindex", "0");
+          el.setAttribute("aria-label", ev.title + ", " + ev.time + (r && !r.ok ? ", Regelverstoß" : "") + ", Enter öffnet Bearbeiten");
+          el.setAttribute("draggable", "true");
+          el.addEventListener("dragstart", function(e) { var rr = this.getBoundingClientRect(); e.dataTransfer.setData("text/plain", dk + "|" + ev.uid + "|" + Math.round(e.clientY - rr.top)); });
+          var suppressClick = false;
+          el.addEventListener("click", function(e) { e.stopPropagation(); if (suppressClick) { suppressClick = false; return; } openForm(dk, ev.uid); });
+          el.addEventListener("keydown", function(e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); e.stopPropagation(); openForm(dk, ev.uid); } });
+          // Touch/Stift: gleiche Minutenrechnung wie beim Maus-Drop (HTML5-Drag feuert auf Touch nicht)
+          el.addEventListener("pointerdown", function(e) {
+            if (e.pointerType === "mouse") return;
+            el.setAttribute("draggable", "false"); // kein natives HTML5-Drag bei Touch (Langdruck)
+            var sx = e.clientX, sy = e.clientY, movedFlag = false, grab = e.clientY - el.getBoundingClientRect().top, pid = e.pointerId;
+            try { el.setPointerCapture(pid); } catch (err) {}
+            var onMove = function(m) {
+              var dx = m.clientX - sx, dy = m.clientY - sy;
+              if (!movedFlag && Math.abs(dx) + Math.abs(dy) < 8) return;
+              movedFlag = true; el.style.transform = "translate(" + dx + "px," + dy + "px)"; el.style.zIndex = 20; el.style.opacity = "0.8";
+            };
+            var done = function(u, commit) {
+              el.removeEventListener("pointermove", onMove); el.removeEventListener("pointerup", onUp); el.removeEventListener("pointercancel", onCancel);
+              el.style.transform = ""; el.style.zIndex = ""; el.style.opacity = "";
+              el.setAttribute("draggable", "true");
+              if (!movedFlag) return;
+              suppressClick = true;
+              if (!commit) return;
+              el.style.visibility = "hidden";
+              var under = document.elementFromPoint(u.clientX, u.clientY);
+              el.style.visibility = "";
+              var tc = under && under.closest ? under.closest(".week-col") : null;
+              if (!tc) return;
+              var rect = tc.getBoundingClientRect();
+              var mins = DAY_START * 60 + Math.round(((u.clientY - rect.top - grab) / HOUR_PX) * 60 / CONFIG.GRID_SNAP_MIN) * CONFIG.GRID_SNAP_MIN;
+              moveEvent(dk, ev.uid, tc.getAttribute("data-date"), fromMin(Math.max(DAY_START * 60, mins)), { clampGrid: true });
+            };
+            var onUp = function(u) { done(u, true); };
+            var onCancel = function(u) { done(u, false); };
+            el.addEventListener("pointermove", onMove); el.addEventListener("pointerup", onUp); el.addEventListener("pointercancel", onCancel);
+          });
+          col.appendChild(el);
+        });
+        grid.appendChild(col);
+      })(dayKeys[i]);
+    }
+    var wrap = document.createElement("div"); wrap.style.overflowX = "auto"; wrap.appendChild(grid); body.appendChild(wrap);
+    var sum = document.createElement("div"); sum.style.cssText = "font-size:0.78rem;color:var(--muted);margin-top:8px";
+    var wh = 0, wn = 0; dayKeys.forEach(function(k) { (eventsData[k] || []).filter(passesFilter).forEach(function(e) { wh += e.duration; wn++; }); });
+    sum.textContent = wn + " Termine, " + (Math.round(wh / 6) / 10).toLocaleString("de-DE") + " h Terminzeit in dieser Woche.";
+    body.appendChild(sum);
+  }
+
+  // Unter 768 px: Tagesliste statt Wochenraster
+  function renderWeekList(body, dayKeys, perDay, cols) {
+    var list = document.createElement("div"); list.className = "month-list week-list";
+    var n = 0, hrs = 0;
+    for (var i = 0; i < cols; i++) {
+      var dk = dayKeys[i];
+      var evs = (eventsData[dk] || []).filter(passesFilter).sort(byStart);
+      var res = perDay[dk] || [];
+      var bad = res.filter(function(r) { return !r.ok && passesFilter(r.ev); }).length;
+      var box = document.createElement("div"); box.className = "month-day week-list-day" + (bad ? " violation" : "");
+      var dh = 0; evs.forEach(function(e) { dh += e.duration; n++; }); hrs += dh;
+      var h4 = document.createElement("h4");
+      h4.innerHTML = "<span>" + escapeHtml(fmtDateDE(dk)) + (isHoliday(dk) ? " · " + escapeHtml(HOLIDAYS[dk]) : "") + "</span><span>" + (Math.round(dh / 6) / 10).toLocaleString("de-DE") + " h" + (bad ? ' <span class="tag bad">' + bad + ' Verstoß</span>' : "") + "</span>";
+      (function(k) { h4.style.cursor = "pointer"; h4.setAttribute("role", "button"); h4.setAttribute("tabindex", "0"); h4.addEventListener("click", function() { focus.dateKey = k; focus.mode = "day"; renderFocus(); }); h4.addEventListener("keydown", function(e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); focus.dateKey = k; focus.mode = "day"; renderFocus(); } }); })(dk);
+      box.appendChild(h4);
+      if (!evs.length) { var em = document.createElement("div"); em.className = "empty-note"; em.textContent = "Keine Termine."; box.appendChild(em); }
+      evs.forEach(function(ev) {
+        var r = res.filter(function(x) { return x.ev.uid === ev.uid; })[0];
+        var row = document.createElement("div"); row.className = "row" + (r && !r.ok ? " bad" : (ev.placeholder ? " ph" : ""));
+        row.setAttribute("role", "button"); row.setAttribute("tabindex", "0");
+        row.innerHTML = '<span class="dot" style="background:' + escapeHtml(ev.color) + '"></span><span class="t">' + escapeHtml(ev.time) + '</span><span>' + escapeHtml(ev.title) + (ev.placeholder ? " (Platzhalter)" : "") + '</span>';
+        row.addEventListener("click", function() { openForm(dk, ev.uid); });
+        row.addEventListener("keydown", function(e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openForm(dk, ev.uid); } });
+        box.appendChild(row);
+      });
+      list.appendChild(box);
+    }
+    body.appendChild(list);
+    var sum = document.createElement("div"); sum.style.cssText = "font-size:0.78rem;color:var(--muted);margin-top:8px";
+    sum.textContent = n + " Termine, " + (Math.round(hrs / 6) / 10).toLocaleString("de-DE") + " h Terminzeit in dieser Woche.";
+    body.appendChild(sum);
+  }
+
+  // ---- Monatsfokus ----
+  function renderMonthFocus() {
+    var d = parseDateKey(focus.dateKey); var m = d.getMonth();
+    document.getElementById("focusTitle").textContent = "Monatsfokus – " + monthNames[m] + " " + YEAR;
+    document.getElementById("fmNew").style.display = "";
+    var results = []; var daysInMonth = new Date(YEAR, m + 1, 0).getDate();
+    var body = document.getElementById("focusBody"); body.innerHTML = "";
+    var list = document.createElement("div"); list.className = "month-list";
+    var n = 0, hrs = 0, ctx = CTX();
+    for (var day = 1; day <= daysInMonth; day++) {
+      var dk = formatYMD(YEAR, m, day);
+      var evs = eventsData[dk]; if (!evs || !evs.length) continue;
+      var res = checkPlausibility(dk, ctx); results = results.concat(res);
+      var shown = evs.filter(passesFilter);
+      if (!shown.length) continue;
+      var bad = res.filter(function(r) { return !r.ok && passesFilter(r.ev); }).length;
+      var box = document.createElement("div"); box.className = "month-day" + (bad ? " violation" : "");
+      box.setAttribute("role", "button"); box.setAttribute("tabindex", "0");
+      var dh = 0; shown.forEach(function(e) { dh += e.duration; n++; }); hrs += dh;
+      box.innerHTML = "<h4><span>" + escapeHtml(fmtDateDE(dk)) + "</span><span>" + (Math.round(dh / 6) / 10).toLocaleString("de-DE") + " h" + (bad ? ' <span class="tag bad">' + bad + ' Verstoß</span>' : "") + "</span></h4>";
+      shown.slice().sort(byStart).forEach(function(ev) {
+        var r = res.filter(function(x) { return x.ev.uid === ev.uid; })[0];
+        var row = document.createElement("div"); row.className = "row" + (r && !r.ok ? " bad" : (ev.placeholder ? " ph" : ""));
+        row.innerHTML = '<span class="dot" style="background:' + escapeHtml(ev.color) + '"></span><span class="t">' + escapeHtml(ev.time) + '</span><span>' + escapeHtml(ev.title) + (ev.placeholder ? " (Platzhalter)" : "") + '</span>';
+        box.appendChild(row);
+      });
+      (function(k) {
+        box.addEventListener("click", function() { focus.dateKey = k; focus.mode = "day"; renderFocus(); });
+        box.addEventListener("keydown", function(e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); focus.dateKey = k; focus.mode = "day"; renderFocus(); } });
+      })(dk);
+      list.appendChild(box);
+    }
+    summaryFor(results, "im " + monthNames[m]);
+    if (!n) list.innerHTML = '<div class="empty-note">Keine Termine in diesem Monat' + (filterActive() ? " (Filter aktiv)" : "") + '.</div>';
+    body.appendChild(list);
+    var sum = document.createElement("div"); sum.style.cssText = "font-size:0.78rem;color:var(--muted);margin-top:10px";
+    sum.textContent = n + " Termine, " + Math.round(hrs / 60) + " h Terminzeit im " + monthNames[m] + ".";
+    body.appendChild(sum);
+  }
+
+  function focusNav(dir) {
+    var d = parseDateKey(focus.dateKey);
+    if (focus.mode === "day") d = addDays(d, dir);
+    else if (focus.mode === "week") d = addDays(d, 7 * dir);
+    else { d = new Date(d.getFullYear(), d.getMonth() + dir, 1); }
+    if (d.getFullYear() !== YEAR) return;
+    focus.dateKey = dateToKey(d);
+    renderFocus();
+  }
+
+  // ================= Formular (Anlegen / Bearbeiten) =================
+  // Regeln sind gemeinsame Objekte. Eine Änderung schreibt deshalb nie ins Original, sondern in eine Kopie
+  // (nur für diesen Termin oder – mit Serienhäkchen – eine Kopie für die ganze Serie).
+  function cloneRule(rule, key) {
+    var copy = {}, k;
+    for (k in rule) copy[k] = rule[k];
+    copy.baseId = ruleBaseId(rule);
+    copy.id = copy.baseId + "--" + key;
+    copy.editable = true;
+    return copy;
+  }
+  // Kopien, auf die kein Termin mehr zeigt, werden entfernt.
+  function pruneRules() {
+    var used = {};
+    allEventsFlat().forEach(function(x) { if (x.ev.rule) used[x.ev.rule.id] = 1; });
+    for (var id in RULES) if (RULES[id].baseId && !used[id]) delete RULES[id];
+  }
+  function setRuleTurnus(ev, turnus, wholeSeries) {
+    if (!ev.rule) { ev.rule = { id: "frei-" + ev.uid, turnus: turnus, editable: true, label: ev.title }; RULES[ev.rule.id] = ev.rule; return; }
+    if (wholeSeries && ev.seriesId) {
+      var sc = cloneRule(ev.rule, ev.seriesId); sc.turnus = turnus; RULES[sc.id] = sc;
+      findEventsBySeries(ev.seriesId).forEach(function(x) { x.ev.rule = sc; touch(x.ev); });
+    } else {
+      var oc = cloneRule(ev.rule, ev.uid); oc.turnus = turnus; RULES[oc.id] = oc; ev.rule = oc;
+    }
+    pruneRules();
+  }
+
+  var formState = { dateKey: null, uid: null, locked: false, blockPart: false };
+  function applyFormLock() {
+    var dev = document.getElementById("fDeviate").checked;
+    var ruleLock = formState.locked && !dev;
+    document.getElementById("fTitle").readOnly = ruleLock;
+    document.getElementById("fTurnus").readOnly = ruleLock;
+    document.getElementById("fStart").readOnly = ruleLock || formState.blockPart;
+    document.getElementById("fDuration").readOnly = ruleLock || formState.blockPart;
+  }
+  function openForm(dateKey, uid) {
+    var ev = uid ? (eventsData[dateKey] || []).filter(function(x) { return x.uid === uid; })[0] : null;
+    formState = { dateKey: dateKey, uid: uid || null, locked: !!(ev && ev.rule && ev.rule.editable === false), blockPart: !!(ev && ev.blockKey) };
+    document.getElementById("formTitle").textContent = ev ? "Termin bearbeiten" : "Neuen Termin anlegen";
+    document.getElementById("fTitle").value = ev ? ev.title : "";
+    document.getElementById("fDate").value = dateKey;
+    document.getElementById("fType").value = ev ? ev.type : "JF";
+    document.getElementById("fStart").value = ev ? ev.start : "09:00";
+    document.getElementById("fDuration").value = ev ? ev.duration : 50;
+    document.getElementById("fTurnus").value = ev ? ((ev.rule && ev.rule.turnus) || "") : "";
+    document.getElementById("fOrt").value = ev ? (ev.ort || "") : "";
+    document.getElementById("fDesc").value = ev ? (ev.desc || "") : "";
+    document.getElementById("fPlaceholder").checked = ev ? !!ev.placeholder : false;
+    document.getElementById("fAssumption").checked = ev ? !!ev.assumption : false;
+    document.getElementById("fAssumptionRow").style.display = (ev && ev.assumption) ? "" : "none";
+    document.getElementById("fDeviate").checked = !!(ev && ev.deviation);
+    document.getElementById("fDeviateRow").style.display = formState.locked ? "" : "none";
+    var seriesBox = document.getElementById("fSeries"); seriesBox.checked = false;
+    var sCount = ev && ev.seriesId ? findEventsBySeries(ev.seriesId).length : 0;
+    seriesBox.parentNode.style.display = sCount > 1 ? "" : "none";
+    seriesBox.nextElementSibling.textContent = "Titel/Dauer/Turnus/Beschreibung/Annahme auf alle " + sCount + " Termine derselben Reihe übertragen";
+    var ri = document.getElementById("fRuleInfo");
+    if (ev && ev.rule) {
+      var r = ev.rule, parts = [];
+      if (r.allowedDays) parts.push("zulässige Wochentage " + r.allowedDays.join("/"));
+      if (r.fixedTime) parts.push("festes Zeitfenster " + r.fixedTime + (r.altTimes && r.altTimes.length ? " (alternativ " + r.altTimes.join(", ") + ")" : ""));
+      if (r.duration) parts.push("Regeldauer " + r.duration + " Min.");
+      if (r.notSplittable) parts.push("nicht trennbarer Block (" + r.subslots + ")");
+      if (r.couplingForbiddenWith) parts.push("Kopplungsverbot mit " + (RULES[r.couplingForbiddenWith] || {}).label);
+      ri.style.display = ""; ri.textContent = "Hinterlegte Regel: " + parts.join(", ") + ". Bearbeitbar heißt nicht automatisch zulässig – Abweichungen werden nach dem Speichern als Verstoß markiert."
+        + (formState.locked ? " Gesperrtes Format: Titel, Beginn, Dauer und Turnus sind schreibgeschützt, bis „Abweichung von der Vorgabe“ gesetzt ist." : "")
+        + (formState.blockPart ? " Teil eines nicht trennbaren Blocks: Beginn und Dauer ändern sich nur über das Verschieben des ganzen Blocks (Wochenfokus)." : "");
+    } else { ri.style.display = "none"; }
+    applyFormLock();
+    document.getElementById("fWarn").style.display = "none";
+    document.getElementById("fDelete").style.display = ev ? "" : "none";
+    document.getElementById("formOverlay").classList.add("active");
+    document.getElementById("fTitle").focus();
+  }
+  function closeForm() { document.getElementById("formOverlay").classList.remove("active"); }
+  function saveForm() {
+    var title = document.getElementById("fTitle").value.trim();
+    var date = document.getElementById("fDate").value;
+    var type = document.getElementById("fType").value;
+    var start = document.getElementById("fStart").value;
+    var dur = parseInt(document.getElementById("fDuration").value, 10);
+    var turnus = document.getElementById("fTurnus").value.trim();
+    var ort = document.getElementById("fOrt").value.trim();
+    var desc = document.getElementById("fDesc").value.trim();
+    var ph = document.getElementById("fPlaceholder").checked;
+    var assum = document.getElementById("fAssumption").checked;
+    var deviate = document.getElementById("fDeviate").checked;
+    var series = document.getElementById("fSeries").checked;
+    var warn = document.getElementById("fWarn");
+    var fail = function(text) { warn.style.display = ""; warn.textContent = text; };
+    var ev = formState.uid ? (eventsData[formState.dateKey] || []).filter(function(x) { return x.uid === formState.uid; })[0] : null;
+    if (formState.uid && !ev) return;
+    if (ev && formState.locked && !deviate) { title = ev.title; start = ev.start; dur = ev.duration; turnus = (ev.rule && ev.rule.turnus) || ""; }
+    if (ev && ev.blockKey) { start = ev.start; dur = ev.duration; }
+    if (!title || !date || !start || !(dur > 0) || date.substr(0, 4) !== String(YEAR)) { fail("Titel, Datum (" + YEAR + "), Beginn und Dauer sind Pflichtfelder."); return; }
+    if (title.length > 200) { fail("Der Titel darf höchstens 200 Zeichen lang sein."); return; }
+    if (!isDateKey(date)) { fail("Das Datum ist ungültig."); return; }
+    if (!isTimeStr(start)) { fail("Der Beginn ist ungültig (HH:MM)."); return; }
+    if (dur < CONFIG.DURATION_MIN || dur > CONFIG.DURATION_MAX) { fail("Die Dauer muss zwischen " + CONFIG.DURATION_MIN + " und " + CONFIG.DURATION_MAX + " Minuten liegen."); return; }
+    if (toMin(start) + dur > 1440) { fail("Beginn plus Dauer darf den Tag (24:00) nicht überschreiten."); return; }
+    if (ev) {
+      snapshot("Bearbeitet: " + ev.title);
+      var old = ev.title + " " + fmtDateDE(formState.dateKey) + " " + ev.time;
+      var locked = !!(ev.rule && ev.rule.editable === false);
+      ev.title = title; ev.type = type; ev.duration = dur; ev.ort = ort; ev.desc = desc; ev.placeholder = ph; ev.assumption = assum; ev.source = "manuell";
+      if (locked) ev.deviation = deviate;
+      if (turnus !== ((ev.rule && ev.rule.turnus) || "") && (!locked || deviate)) setRuleTurnus(ev, turnus, series);
+      if (series && ev.seriesId) {
+        findEventsBySeries(ev.seriesId).forEach(function(x) {
+          if (x.ev.uid !== ev.uid && !x.ev.blockKey) {
+            x.ev.title = title; x.ev.duration = dur; x.ev.desc = desc; x.ev.ort = ort; x.ev.type = type; x.ev.assumption = assum; x.ev.source = "manuell";
+            if (x.ev.rule && x.ev.rule.editable === false) x.ev.deviation = deviate;
+            refreshTime(x.ev); touch(x.ev);
+          }
+        });
+      }
+      touch(ev);
+      if (date !== formState.dateKey || start !== ev.start) {
+        ev.start = start; refreshTime(ev);
+        if (date !== formState.dateKey) { moveEvent(formState.dateKey, ev.uid, date, start); closeForm(); return; }
+      }
+      refreshTime(ev); sortDay(formState.dateKey);
+      closeForm();
+      afterChange("Bearbeitet: " + old + " → " + ev.title + " " + ev.time + (series ? " (Reihe)" : ""));
+    } else {
+      snapshot("Neu angelegt: " + title);
+      var nev = addEvent(date, title, type, start, dur, desc, turnus ? { id: "frei-" + uidCounter, turnus: turnus, editable: true, label: title } : null, { placeholder: ph, ort: ort, source: "manuell", seriesId: null });
+      if (nev.rule) RULES[nev.rule.id] = nev.rule;
+      nev.assumption = assum;
+      sortDay(date);
+      closeForm();
+      afterChange("Neu angelegt: " + nev.title + " am " + fmtDateDE(date) + " " + nev.time);
+      if (document.getElementById("focusOverlay").classList.contains("active") && focus.mode === "day") { focus.dateKey = date; renderFocus(); }
+    }
+  }
+
+
+  // ================= Seiteneigene Dialoge (confirm/alert sind im Viewer nicht verfügbar) =================
+  function showDialog(opt) {
+    var ov = document.getElementById("dlgOverlay");
+    document.getElementById("dlgTitle").textContent = opt.title || "Hinweis";
+    document.getElementById("dlgText").textContent = opt.text || "";
+    var ta = document.getElementById("dlgArea");
+    if (opt.textarea !== undefined) { ta.style.display = ""; ta.value = opt.textarea; } else { ta.style.display = "none"; ta.value = ""; }
+    var footer = document.getElementById("dlgFooter"); footer.innerHTML = "";
+    (opt.buttons || [{ label: "OK", primary: true }]).forEach(function(b) {
+      var btn = document.createElement("button"); btn.type = "button";
+      btn.className = "btn " + (b.primary ? "cyan" : b.danger ? "danger" : "secondary");
+      btn.textContent = b.label;
+      btn.addEventListener("click", function() { var keep = b.onClick && b.onClick(btn) === true; if (!keep) ov.classList.remove("active"); });
+      footer.appendChild(btn);
+    });
+    ov.classList.add("active");
+    var first = footer.querySelector(".btn.cyan") || footer.querySelector(".btn"); if (first) first.focus();
+  }
+  function confirmDialog(title, text, onYes, yesLabel) {
+    showDialog({ title: title, text: text, buttons: [{ label: "Abbrechen" }, { label: yesLabel || "Ja, ausführen", danger: true, onClick: onYes }] });
+  }
+
+  // ================= Prüfprotokoll gesamt =================
+  function openAudit() {
+    recomputeViolations();
+    var body = document.getElementById("auditBody"); body.innerHTML = "";
+    if (generationConflicts.length) {
+      var info = document.createElement("div"); info.className = "form-rule"; info.style.marginBottom = "8px";
+      info.textContent = "Ausweichkonflikte bei der Erzeugung (" + generationConflicts.length + "): " + generationConflicts.join(" · ");
+      body.appendChild(info);
+    }
+    var keys = Object.keys(violationCache).sort();
+    if (!keys.length) { var en = document.createElement("div"); en.className = "empty-note"; en.textContent = "Keine Regelverstöße im gesamten Jahr " + YEAR + "."; body.appendChild(en); }
+    keys.forEach(function(dk) {
+      violationCache[dk].forEach(function(r) {
+        if (r.ok) return;
+        var row = document.createElement("div"); row.className = "row";
+        row.setAttribute("role", "button"); row.setAttribute("tabindex", "0");
+        row.innerHTML = '<span class="d">' + escapeHtml(fmtDateDE(dk)) + '</span><span><b>' + escapeHtml(r.ev.title) + '</b> (' + escapeHtml(r.ev.time) + ')<br>' + r.messages.map(escapeHtml).join("<br>") + '</span>';
+        var go = function() { document.getElementById("auditOverlay").classList.remove("active"); selectDate(dk); openFocus(dk, "day"); };
+        row.addEventListener("click", go);
+        row.addEventListener("keydown", function(e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); } });
+        body.appendChild(row);
+      });
+    });
+    document.getElementById("auditOverlay").classList.add("active");
+  }
+
+  // ================= Änderungsprotokoll =================
+  var currentUser = "lokal"; // später: angemeldeter Benutzer
+  function logChange(text) {
+    changelog.unshift({ ts: nowISO(), text: text, user: currentUser });
+    renderChangelog();
+  }
+  function renderChangelog() {
+    var el = document.getElementById("changelog");
+    if (!changelog.length) { el.innerHTML = '<div style="color:var(--muted)">Noch keine Änderungen in dieser Sitzung.</div>'; return; }
+    el.innerHTML = changelog.slice(0, 40).map(function(c) { var d = new Date(c.ts); return "<div><time>" + pad2(d.getDate()) + "." + pad2(d.getMonth() + 1) + ". " + pad2(d.getHours()) + ":" + pad2(d.getMinutes()) + "</time>" + escapeHtml(c.text) + "</div>"; }).join("");
+  }
+
+  // ================= Datenformat (Version 4) und Validierung =================
+  // Regeln stehen einmal in "rules", Termine verweisen per ruleId. Abgeleitete Felder (time, color) werden nicht gespeichert.
+  var DAY_CODES = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"];
+  var ID_RE = /^[A-Za-z0-9_.:\-]{1,80}$/;
+  var WINDOW_RE = /^\d\d:\d\d – \d\d:\d\d$/;
+  function isInt(n) { return typeof n === "number" && isFinite(n) && Math.floor(n) === n; }
+  function isStr(s, max) { return typeof s === "string" && s.length <= (max || 500); }
+  function isTimeStr(s) { return typeof s === "string" && /^([01]\d|2[0-3]):[0-5]\d$/.test(s); }
+  function isDateKey(s) {
+    if (typeof s !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(s)) return false;
+    var d = parseDateKey(s);
+    return dateToKey(d) === s && d.getFullYear() === YEAR;
+  }
+  function cleanRule(r, where, errs) {
+    var bad = function(msg) { errs.push(where + ": " + msg); };
+    if (!r || typeof r !== "object" || Array.isArray(r)) { bad("keine Regel"); return null; }
+    if (typeof r.id !== "string" || !ID_RE.test(r.id)) { bad("ungültige Regel-ID"); return null; }
+    var c = { id: r.id };
+    var strField = function(name, max) { if (r[name] === undefined || r[name] === null) return; if (!isStr(r[name], max)) bad("Feld „" + name + "“ ungültig"); else c[name] = r[name]; };
+    var idField = function(name) { if (r[name] === undefined || r[name] === null) return; if (typeof r[name] !== "string" || !ID_RE.test(r[name])) bad("Feld „" + name + "“ ungültig"); else c[name] = r[name]; };
+    var intField = function(name) { if (r[name] === undefined || r[name] === null) return; if (!isInt(r[name]) || r[name] < 0 || r[name] > 1440) bad("Feld „" + name + "“ ungültig"); else c[name] = r[name]; };
+    strField("label", 200); strField("turnus", 80); strField("note", 1000); strField("subslots", 300);
+    idField("baseId"); idField("coupledAfter"); idField("couplingForbiddenWith");
+    intField("duration"); intField("totalDuration"); intField("coupledMaxGapMin");
+    if (r.allowedDays !== undefined) {
+      if (!Array.isArray(r.allowedDays) || r.allowedDays.some(function(d) { return DAY_CODES.indexOf(d) < 0; })) bad("Feld „allowedDays“ ungültig"); else c.allowedDays = r.allowedDays.slice();
+    }
+    if (r.blockParts !== undefined) {
+      if (!Array.isArray(r.blockParts) || !r.blockParts.length || r.blockParts.some(function(n) { return !isInt(n) || n < 1 || n > 1440; })) bad("Feld „blockParts“ ungültig"); else c.blockParts = r.blockParts.slice();
+    }
+    if (r.fixedTime !== undefined && r.fixedTime !== null) { if (typeof r.fixedTime !== "string" || !WINDOW_RE.test(r.fixedTime)) bad("Feld „fixedTime“ ungültig"); else c.fixedTime = r.fixedTime; }
+    if (r.altTimes !== undefined) {
+      if (!Array.isArray(r.altTimes) || r.altTimes.some(function(t) { return typeof t !== "string" || !WINDOW_RE.test(t); })) bad("Feld „altTimes“ ungültig"); else c.altTimes = r.altTimes.slice();
+    }
+    c.editable = r.editable === false ? false : true;
+    if (r.notSplittable) c.notSplittable = true;
+    if (r.pendingClarification) c.pendingClarification = true;
+    return c;
+  }
+  // Prüft eine Datei vollständig, ohne den Bestand anzufassen. Ergebnis: bereinigte Regeln/Termine und die Fehlerliste.
+  function validateData(obj) {
+    var errs = [], out = { errors: errs, events: [], rules: {}, changelog: null };
+    if (!obj || typeof obj !== "object" || Array.isArray(obj)) { errs.push("Die Datei enthält kein gültiges Kalenderobjekt."); return out; }
+    if (obj.year !== YEAR) { errs.push("Datei passt nicht zum Jahreskalender " + YEAR + "."); return out; }
+    if (!Array.isArray(obj.events)) { errs.push("Das Feld „events“ fehlt oder ist keine Liste."); return out; }
+    if (obj.events.length > CONFIG.MAX_EVENTS) { errs.push("Zu viele Termine (" + obj.events.length + ", erlaubt " + CONFIG.MAX_EVENTS + ")."); return out; }
+    var ver = obj.version === undefined ? 3 : obj.version;
+    if (!isInt(ver) || ver < 3 || ver > CONFIG.DATA_VERSION) errs.push("Format-Version " + obj.version + " wird nicht unterstützt (erlaubt 3 bis " + CONFIG.DATA_VERSION + ").");
+    var rules = out.rules, id, cr;
+    if (obj.rules !== undefined) {
+      if (!obj.rules || typeof obj.rules !== "object" || Array.isArray(obj.rules)) errs.push("Das Feld „rules“ ist ungültig.");
+      else for (id in obj.rules) {
+        cr = cleanRule(obj.rules[id], "Regel „" + id + "“", errs);
+        if (cr) { if (cr.id !== id) errs.push("Regel „" + id + "“: Schlüssel und ID stimmen nicht überein."); else rules[id] = cr; }
+      }
+    }
+    var seen = {};
+    obj.events.forEach(function(e, i) {
+      var who = "Termin " + (i + 1) + (e && typeof e.title === "string" ? " („" + e.title.slice(0, 40) + "“)" : "");
+      var bad = function(msg) { errs.push(who + ": " + msg); };
+      if (!e || typeof e !== "object" || Array.isArray(e)) { bad("kein Objekt"); return; }
+      if (!isDateKey(e.date)) bad("Datum fehlt oder ist ungültig (JJJJ-MM-TT im Jahr " + YEAR + ")");
+      if (typeof e.title !== "string" || !e.title.trim() || e.title.length > 200) bad("Titel fehlt oder ist zu lang (höchstens 200 Zeichen)");
+      if (!typeColors.hasOwnProperty(e.type)) bad("Typ „" + e.type + "“ unbekannt");
+      if (!isTimeStr(e.start)) bad("Beginn fehlt oder ist ungültig (HH:MM)");
+      if (!isInt(e.duration) || e.duration < CONFIG.DURATION_MIN || e.duration > CONFIG.DURATION_MAX) bad("Dauer fehlt oder liegt außerhalb " + CONFIG.DURATION_MIN + "–" + CONFIG.DURATION_MAX + " Minuten");
+      else if (isTimeStr(e.start) && toMin(e.start) + e.duration > 1440) bad("Beginn plus Dauer überschreitet 24:00");
+      if (e.uid !== undefined && e.uid !== null) { if (typeof e.uid !== "string" || !ID_RE.test(e.uid)) bad("ungültige uid"); else if (seen[e.uid]) bad("uid „" + e.uid + "“ kommt doppelt vor"); else seen[e.uid] = 1; }
+      ["desc", "ort"].forEach(function(f) { if (e[f] !== undefined && e[f] !== null && !isStr(e[f], 2000)) bad("Feld „" + f + "“ ungültig"); });
+      ["blockKey", "seriesId"].forEach(function(f) { if (e[f] !== undefined && e[f] !== null && (typeof e[f] !== "string" || e[f].length > 200)) bad("Feld „" + f + "“ ungültig"); });
+      ["placeholder", "assumption", "deviation"].forEach(function(f) { if (e[f] !== undefined && e[f] !== null && typeof e[f] !== "boolean") bad("Feld „" + f + "“ ist kein Wahrheitswert"); });
+      if (e.version !== undefined && e.version !== null && (!isInt(e.version) || e.version < 1)) bad("Feld „version“ ungültig");
+      if (e.updatedAt !== undefined && e.updatedAt !== null && !isStr(e.updatedAt, 40)) bad("Feld „updatedAt“ ungültig");
+      if (e.baseline !== undefined && e.baseline !== null && (typeof e.baseline !== "object" || !isStr(e.baseline.title, 200) || !isTimeStr(e.baseline.start) || !isInt(e.baseline.duration))) bad("Feld „baseline“ ungültig");
+      var rid = null;
+      if (e.ruleId !== undefined && e.ruleId !== null) rid = e.ruleId;
+      else if (e.rule) {   // Version 3: Regel steckt im Termin
+        var inl = cleanRule(e.rule, who + ", Regel", errs);
+        if (inl) { if (!rules[inl.id]) rules[inl.id] = inl; rid = inl.id; }
+      }
+      if (rid !== null && (typeof rid !== "string" || !rules[rid])) bad("Regel „" + rid + "“ ist nicht definiert");
+      out.events.push({ raw: e, ruleId: rid });
+    });
+    if (Array.isArray(obj.changelog)) {
+      out.changelog = obj.changelog.slice(0, 200).filter(function(c) { return c && isStr(c.text, 500) && isStr(c.ts, 40); }).map(function(c) { return { ts: c.ts, text: c.text, user: isStr(c.user, 60) ? c.user : "" }; });
+    }
+    if (errs.length > CONFIG.MAX_ERRORS) { var more = errs.length - CONFIG.MAX_ERRORS; errs.length = CONFIG.MAX_ERRORS; errs.push("… und " + more + " weitere Fehler."); }
+    return out;
+  }
+  function serialize(opts) {
+    opts = opts || {};
+    var events = allEventsFlat().map(function(x) {
+      var e = x.ev;
+      var o = { date: x.dateKey, uid: e.uid, title: e.title, type: e.type, start: e.start, duration: e.duration, desc: e.desc, ort: e.ort,
+        placeholder: e.placeholder, assumption: e.assumption, blockKey: e.blockKey, seriesId: e.seriesId, source: e.source, ruleId: e.rule ? e.rule.id : null, version: e.version || 1 };
+      // Standardwerte bleiben weg, damit die Datei schlank ist (beim Einlesen gelten dieselben Vorgaben)
+      if (e.deviation) o.deviation = true;
+      if (e.baseline) o.baseline = e.baseline;
+      if (e.updatedAt) o.updatedAt = e.updatedAt;
+      return o;
+    }).sort(function(a, b) { return a.date < b.date ? -1 : a.date > b.date ? 1 : (toMin(a.start) - toMin(b.start)) || (a.uid < b.uid ? -1 : 1); });
+    var rules = {}; for (var id in RULES) rules[id] = RULES[id];
+    var obj = { app: "GF Jahreskalender 2027 – Fokusmodus", version: CONFIG.DATA_VERSION, year: YEAR, exported: nowISO(), rules: rules, events: events };
+    if (!opts.noChangelog) obj.changelog = changelog;
+    return obj;
+  }
+  function deserialize(obj) {
+    var v = validateData(obj);
+    if (v.errors.length) {
+      var err = new Error(v.errors.slice(0, 8).join("\n") + (v.errors.length > 8 ? "\n… und " + (v.errors.length - 8) + " weitere Meldungen." : ""));
+      err.errors = v.errors;
+      throw err;
+    }
+    // Ab hier ist die Datei geprüft; der Bestand wird erst jetzt ersetzt.
+    eventsData = {}; RULES = {}; uidCounter = 1;
+    var id;
+    for (id in v.rules) RULES[id] = v.rules[id];
+    v.events.forEach(function(x) { var n = /^ev(\d+)$/.exec(x.raw.uid || ""); if (n && parseInt(n[1], 10) >= uidCounter) uidCounter = parseInt(n[1], 10) + 1; });
+    v.events.forEach(function(x) {
+      var e = x.raw, rule = x.ruleId ? RULES[x.ruleId] : null;
+      if (!eventsData[e.date]) eventsData[e.date] = [];
+      eventsData[e.date].push({
+        uid: e.uid || ("ev" + (uidCounter++)), title: e.title.trim(), type: e.type, start: e.start, duration: e.duration, time: rangeStr(e.start, e.duration),
+        desc: e.desc || "", color: typeColors[e.type], rule: rule, placeholder: !!e.placeholder, assumption: !!e.assumption,
+        ort: e.ort || "", blockKey: e.blockKey || null, seriesId: e.seriesId || null, source: e.source === "manuell" || e.source === "generiert" ? e.source : "import",
+        version: e.version || 1, updatedAt: e.updatedAt || null, deviation: !!e.deviation,
+        baseline: (rule && rule.editable === false) ? (e.baseline ? { title: e.baseline.title, start: e.baseline.start, duration: e.baseline.duration } : { title: e.title.trim(), start: e.start, duration: e.duration }) : null
+      });
+    });
+    for (var dk in eventsData) sortDay(dk);
+    if (v.changelog) changelog = v.changelog;
+    renderChangelog();
+  }
+
+  // ================= Speicher-Schnittstelle =================
+  // Alle Zugriffe auf den Speicher laufen hier durch. Ein späteres Backend ersetzt load/save/clear.
+  var Store = {
+    load: function() { try { var s = window.localStorage.getItem(CONFIG.STORAGE_KEY); return s ? JSON.parse(s) : null; } catch (e) { return null; } },
+    save: function(obj) { try { window.localStorage.setItem(CONFIG.STORAGE_KEY, JSON.stringify(obj)); return true; } catch (e) { return false; } },
+    clear: function() { try { window.localStorage.removeItem(CONFIG.STORAGE_KEY); } catch (e) { /* nicht verfügbar */ } }
+  };
+  function autosave() {
+    if (skipNextAutosave) { skipNextAutosave = false; return; }
+    Store.save(serialize());
+  }
+  function checkRestore() {
+    var obj = Store.load();
+    if (!obj || !obj.exported || !obj.changelog || !obj.changelog.length) return;
+    if (validateData(obj).errors.length) return;
+    var banner = document.getElementById("restoreBanner");
+    var d = new Date(obj.exported);
+    document.getElementById("restoreInfo").textContent = pad2(d.getDate()) + "." + pad2(d.getMonth() + 1) + "." + d.getFullYear() + " " + pad2(d.getHours()) + ":" + pad2(d.getMinutes()) + ", " + obj.changelog.length + " Änderungen";
+    banner.style.display = "";
+    document.getElementById("restoreYes").onclick = function() {
+      snapshot("Wiederherstellen des Arbeitsstands");
+      try { deserialize(obj); } catch (e) { showDialog({ title: "Wiederherstellen fehlgeschlagen", text: e.message }); }
+      banner.style.display = "none"; afterChange(null);
+    };
+    document.getElementById("restoreNo").onclick = function() { banner.style.display = "none"; Store.clear(); };
+  }
+
+  // ================= Export / Import =================
+  function downloadText(name, data, mime) {
+    try {
+      var blob = new Blob([data], { type: mime });
+      var a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name;
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      setTimeout(function() { URL.revokeObjectURL(a.href); }, 1000);
+    } catch (e) { /* Download nicht möglich – Textfeld im Dialog */ }
+  }
+  function copyButton(label) {
+    return { label: label, primary: true, onClick: function(btn) {
+      var ta = document.getElementById("dlgArea");
+      var done = function() { btn.textContent = "Kopiert"; };
+      try { navigator.clipboard.writeText(ta.value).then(done, function() { ta.select(); done(); }); } catch (e) { ta.select(); done(); }
+      return true;
+    } };
+  }
+  function exportJSON() {
+    var obj = serialize();
+    var data = JSON.stringify(obj, null, 2);
+    var name = "jahreskalender-2027-fritsch-stand-" + nowISO().substr(0, 10) + ".json";
+    downloadText(name, data, "application/json");
+    showDialog({
+      title: "Export JSON – " + obj.events.length + " Termine, " + Object.keys(obj.rules).length + " Regeln",
+      text: "Die Datei „" + name + "“ wurde zum Download angeboten. Falls der Browser keinen Download zulässt: Inhalt kopieren und als .json-Datei speichern. Der Import liest genau dieses Format (Version " + CONFIG.DATA_VERSION + ") sowie ältere Exporte der Version 3.",
+      textarea: data, buttons: [{ label: "Schließen" }, copyButton("In Zwischenablage kopieren")]
+    });
+    logChange("Export JSON erstellt (" + obj.events.length + " Termine)");
+  }
+  function importJSON(file) {
+    if (file.size > CONFIG.MAX_IMPORT_BYTES) { showDialog({ title: "Import abgelehnt", text: "Die Datei ist größer als " + Math.round(CONFIG.MAX_IMPORT_BYTES / 1048576) + " MB." }); return; }
+    var reader = new FileReader();
+    reader.onload = function() {
+      var obj;
+      try { obj = JSON.parse(reader.result); } catch (e) { showDialog({ title: "Import fehlgeschlagen", text: "Die Datei ist keine gültige JSON-Datei." }); return; }
+      var v = validateData(obj);
+      if (v.errors.length) { showDialog({ title: "Import abgelehnt – der Bestand bleibt unverändert", text: v.errors.slice(0, 12).join("\n") + (v.errors.length > 12 ? "\n… und " + (v.errors.length - 12) + " weitere Meldungen." : "") }); return; }
+      var cur = allEventsFlat().length;
+      confirmDialog("Import bestätigen", "Die Datei „" + file.name + "“ enthält " + v.events.length + " Termine und " + Object.keys(v.rules).length + " Regeln.\nSie ersetzt den aktuellen Stand (" + cur + " Termine). Mit „Rückgängig“ lässt sich der bisherige Stand wiederholen.", function() {
+        snapshot("Import " + file.name);
+        try { deserialize(obj); afterChange("Import JSON: " + file.name); }
+        catch (e) { setTimeout(function() { showDialog({ title: "Import fehlgeschlagen", text: e.message }); }, 0); }
+      }, "Importieren und ersetzen");
+    };
+    reader.readAsText(file);
+  }
+
+  // ---- ICS (Austauschformat für Kalenderprogramme) ----
+  function icsEscape(t) { return String(t).replace(/\\/g, "\\\\").replace(/;/g, "\;").replace(/,/g, "\\,").replace(/\r?\n/g, "\\n"); }
+  function icsFold(line) {
+    var enc = typeof TextEncoder !== "undefined" ? new TextEncoder() : null;
+    var out = [], cur = "", bytes = 0;
+    Array.from(line).forEach(function(ch) {
+      var b = enc ? enc.encode(ch).length : ch.length;
+      if (bytes + b > 75) { out.push(cur); cur = " "; bytes = 1; }
+      cur += ch; bytes += b;
+    });
+    out.push(cur);
+    return out.join("\r\n");
+  }
+  function icsLocal(dateKey, minutes) {
+    var d = parseDateKey(dateKey); d = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 0, minutes);
+    return d.getFullYear() + pad2(d.getMonth() + 1) + pad2(d.getDate()) + "T" + pad2(d.getHours()) + pad2(d.getMinutes()) + "00";
+  }
+  // includePlaceholders=false lässt unbestätigte Platzhalter aus. Regelobjekte stehen nicht in der Datei, nur ihr Hinweistext.
+  function buildICS(includePlaceholders) {
+    var n = new Date();
+    var stamp = n.getUTCFullYear() + pad2(n.getUTCMonth() + 1) + pad2(n.getUTCDate()) + "T" + pad2(n.getUTCHours()) + pad2(n.getUTCMinutes()) + pad2(n.getUTCSeconds()) + "Z";
+    var flat = allEventsFlat().filter(function(x) { return includePlaceholders || !x.ev.placeholder; }).sort(function(a, b) {
+      return a.dateKey < b.dateKey ? -1 : a.dateKey > b.dateKey ? 1 : (toMin(a.ev.start) - toMin(b.ev.start)) || (a.ev.uid < b.ev.uid ? -1 : 1);
+    });
+    var L = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Diakonie Ruhr//GF Jahreskalender " + YEAR + "//DE", "CALSCALE:GREGORIAN", "METHOD:PUBLISH",
+      "X-WR-CALNAME:GF Jahreskalender " + YEAR, "X-WR-TIMEZONE:Europe/Berlin",
+      "BEGIN:VTIMEZONE", "TZID:Europe/Berlin",
+      "BEGIN:STANDARD", "DTSTART:19701025T030000", "TZOFFSETFROM:+0200", "TZOFFSETTO:+0100", "TZNAME:CET", "RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU", "END:STANDARD",
+      "BEGIN:DAYLIGHT", "DTSTART:19700329T020000", "TZOFFSETFROM:+0100", "TZOFFSETTO:+0200", "TZNAME:CEST", "RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=-1SU", "END:DAYLIGHT",
+      "END:VTIMEZONE"];
+    flat.forEach(function(x) {
+      var e = x.ev, st = toMin(e.start), descParts = [];
+      if (e.desc) descParts.push(e.desc);
+      if (e.rule && e.rule.note) descParts.push("Regel: " + e.rule.note);
+      if (e.placeholder) descParts.push("Platzhalter – Termin unbestätigt.");
+      if (e.assumption) descParts.push("Arbeitsannahme – Slot nicht bestätigt.");
+      L.push("BEGIN:VEVENT", "UID:" + e.uid + "@gf-jahreskalender-" + YEAR, "DTSTAMP:" + stamp,
+        "DTSTART;TZID=Europe/Berlin:" + icsLocal(x.dateKey, st), "DTEND;TZID=Europe/Berlin:" + icsLocal(x.dateKey, st + e.duration),
+        "SUMMARY:" + icsEscape(e.title));
+      if (descParts.length) L.push("DESCRIPTION:" + icsEscape(descParts.join("\n")));
+      if (e.ort) L.push("LOCATION:" + icsEscape(e.ort));
+      L.push("CATEGORIES:" + icsEscape(typeLabels[e.type] || e.type), "STATUS:" + ((e.placeholder || e.assumption) ? "TENTATIVE" : "CONFIRMED"), "END:VEVENT");
+    });
+    L.push("END:VCALENDAR");
+    return { text: L.map(icsFold).join("\r\n") + "\r\n", count: flat.length };
+  }
+  function exportICS(includePlaceholders) {
+    var r = buildICS(includePlaceholders);
+    var name = "jahreskalender-2027-fritsch-" + nowISO().substr(0, 10) + ".ics";
+    downloadText(name, r.text, "text/calendar");
+    showDialog({ title: "Export ICS – " + r.count + " Termine", text: "Die Datei „" + name + "“ wurde zum Download angeboten (Zeitzone Europe/Berlin, " + (includePlaceholders ? "inklusive" : "ohne") + " unbestätigte Platzhalter). Falls der Browser keinen Download zulässt: Inhalt kopieren und als .ics-Datei speichern.", textarea: r.text, buttons: [{ label: "Schließen" }, copyButton("In Zwischenablage kopieren")] });
+    logChange("Export ICS erstellt (" + r.count + " Termine" + (includePlaceholders ? ", mit Platzhaltern" : ", ohne Platzhalter") + ")");
+  }
+  function askICS() {
+    showDialog({ title: "Export ICS", text: "Welche Termine sollen in die Kalenderdatei?\nBestätigte Termine und Arbeitsannahmen sind immer enthalten. Unbestätigte Platzhalter lassen sich auslassen.",
+      buttons: [{ label: "Abbrechen" }, { label: "Ohne Platzhalter", primary: true, onClick: function() { setTimeout(function() { exportICS(false); }, 0); } }, { label: "Mit Platzhaltern", onClick: function() { setTimeout(function() { exportICS(true); }, 0); } }] });
+  }
+
+  // ================= Formatliste (aus Serien und Regeln erzeugt) =================
+  var PARTNER_IM = ["JF Zittlau", "JF Konter", "JF Rojano-Marin", "JF Röper", "JF Weisang", "JF Pernak", "JF MAV IM", "JF Möller/Hagenbrock"];
+  var PARTNER_LEWO = ["JF Lahn", "JF Rethfeldt (MiR)", "JF Raatz", "JF Malcher (Bau)", "JF Sonnenschein (Immobilien)"];
+  var GBL_JF = ["JF Melzig", "JF Moreira", "JF Kutlu", "JF Bradtke", "JF Eull", "JF Frerich/Culina", "JF Rieckert"];
+  var REFERAT_JF = ["JF Wirtschaft & Finanzen", "JF Marketing & Vertrieb"];
+  function sids(prefix, names) { return names.map(function(n) { return prefix + n; }); }
+  // Nur die Gruppierung steht hier. Titel, Rhythmus, Dauer, Slot und Status kommen aus den Terminen.
+  var FORMAT_GROUPS = [
+    { name: "Innere Mission", items: [
+      { series: sids("partner-", PARTNER_IM) }, { series: ["imk"] }, { series: ["vorstand-im"] }, { series: ["verwaltungsrat-im"] }, { series: ["ag-wohlfahrt", "ag-fw"] }] },
+    { name: "Diakonie Ruhr", items: [
+      { series: ["lk-sozialwirtschaft"] }, { series: ["klausur-sw"] },
+      { series: ["steuerungsgruppe-uk-dr", "steuerungsgruppe-personal", "steuerungsgruppe-digitalisierung"], label: "Steuerungsgruppen UK DR / Personal / Digitalisierung", rhythm: "Do-Rotation" }] },
+    { name: "EVAR", items: [{ series: ["ekl"] }, { series: ["machleit-ebner"] }] },
+    { name: "SBO", items: [
+      { series: ["wirtschaftsausschuss"] }, { series: ["ar-gv-sbo"] }, { series: ["mav-br-sbo"] },
+      { fixed: ["Monatsgespräch SBO · Betriebsversammlung SBO", "—", "—", "—", "gestrichen"] }] },
+    { name: "LeWo", items: [
+      { series: sids("partner-", PARTNER_LEWO) }, { series: ["jahndorf"] },
+      { fixed: ["JF Mala (eigener Termin)", "—", "—", "Teilslot in JF Personal", "gestrichen"] }] },
+    { name: "Gesellschafter", items: [{ series: ["gvv-dadul"] }, { series: ["gvv-pflege"] }, { series: ["ag-dadul"] }] },
+    { name: "GBL", countLabel: "Einzel-JF", items: [
+      { series: sids("gbl-", GBL_JF.slice(0, 5)) }, { series: ["gbl-JF Frerich/Culina"] }, { series: ["gbl-JF Rieckert"] }] },
+    { name: "Referate", countLabel: "Einzel-JF", suffix: " + A³", items: [
+      { series: ["jf-personal"] }, { series: sids("referat-", REFERAT_JF).reverse() }, { series: ["jf-qm"] }, { series: ["jf-a3"], noCount: true }] },
+    { name: "Steuerkreise (GBL-Ebene)", items: [
+      { series: ["sk-wifi"] }, { series: ["sk-qm"] },
+      { fixed: ["Steuerkreis Personal · Steuerkreis Marketing & Vertrieb", "offen", "—", "ohne GF, kein GF-Termin", "ohne GF"] }] },
+    { name: "Klausuren, Blocker, offene Formate", items: [
+      { series: ["gbl-klausur"] }, { series: ["fuehrung-dialog"] }, { series: ["klausur-strategie"] },
+      { series: ["lk-ambulant", "lk-stationaer"] }, { series: ["wochengespraech"] }, { series: ["pufferslot"] },
+      { series: ["fokuszeit-mo", "fokuszeit-fr"], label: "Fokuszeit-Blocker" }, { series: ["projektarbeit"] }] }
+  ];
+  function fmtDurMin(d) { return (d >= 60 && d % 60 === 0) ? (d / 60) + " Std." : d + " Min."; }
+  function rangeText(cluster) {
+    var a = parseDateKey(cluster[0]), b = parseDateKey(cluster[cluster.length - 1]);
+    return a.getMonth() === b.getMonth() ? pad2(a.getDate()) + ".–" + pad2(b.getDate()) + "." + pad2(b.getMonth() + 1) + "." : pad2(a.getDate()) + "." + pad2(a.getMonth() + 1) + ".–" + pad2(b.getDate()) + "." + pad2(b.getMonth() + 1) + ".";
+  }
+  function formatRow(it, evs, missing) {
+    var seriesTitles = [], seen = {};
+    it.series.forEach(function(id) {
+      var first = evs.filter(function(x) { return x.ev.seriesId === id; })[0];
+      if (first && !seen[first.ev.title]) { seen[first.ev.title] = 1; seriesTitles.push(first.ev.title.replace(/\s*\(Tag \d+\)$/, "").replace(/^JF Personal – .*$/, "JF Personal")); }
+    });
+    var label = it.label || (seriesTitles.length ? seriesTitles.join(" · ") : it.series.join(" · "));
+    if (!evs.length) return { cells: [label, "—", "—", "—", "fehlt im Kalender"], status: "fehlt im Kalender" };
+    var rules = {}, r0 = null;
+    evs.forEach(function(x) { if (x.ev.rule) { rules[x.ev.rule.turnus || ""] = 1; if (!r0) r0 = x.ev.rule; } });
+    var rhythm = it.rhythm || Object.keys(rules).filter(Boolean).join(" / ") || "—";
+    var dates = occurrenceDates(evs), clusters = clustersOf(dates), dur = "";
+    var blocks = {};
+    evs.forEach(function(x) { if (x.ev.blockKey) (blocks[x.ev.blockKey] = blocks[x.ev.blockKey] || []).push(x.ev); });
+    var bk = Object.keys(blocks)[0];
+    if (bk) { var parts = blocks[bk].slice().sort(byStart); dur = parts.reduce(function(s, p) { return s + p.duration; }, 0) + " Min. (" + parts.map(function(p) { return p.duration; }).join("+") + ")"; }
+    else if (clusters.some(function(c) { return c.length > 1; })) {
+      var maxDays = Math.max.apply(null, clusters.map(function(c) { return c.length; }));
+      var minsBy = clusters.filter(function(c) { return c.length === maxDays; })[0].map(function(k) { return evs.filter(function(x) { return x.dateKey === k; }).reduce(function(s, x) { return s + x.ev.duration; }, 0); });
+      dur = maxDays + " Tage, " + Math.round(minsBy.reduce(function(a, b) { return a + b; }, 0) / 6) / 10 + " Std.";
+    } else {
+      var ds = {}; evs.forEach(function(x) { ds[x.ev.duration] = 1; });
+      dur = Object.keys(ds).map(Number).sort(function(a, b) { return a - b; }).map(fmtDurMin).join(" / ");
+    }
+    var wdSet = {}, nthSet = {}, timeSet = {};
+    dates.forEach(function(k) { var d = parseDateKey(k); wdSet[d.getDay()] = 1; nthSet[Math.ceil(d.getDate() / 7)] = 1; });
+    evs.forEach(function(x) { timeSet[x.ev.time.replace(/ – /g, "–")] = 1; });
+    var wdText = [1, 2, 3, 4, 5, 6, 0].filter(function(w) { return wdSet[w]; }).map(function(w) { return WEEKDAY_SHORT[w]; }).join("/");
+    var spec = r0 ? parseTurnus(r0.turnus) : { kind: "open" };
+    var slot;
+    if (clusters.some(function(c) { return c.length > 1; })) slot = clusters.slice(0, 4).map(rangeText).join(" / ") + " (" + wdText + ")";
+    else {
+      var times = Object.keys(timeSet);
+      var nthText = (Object.keys(nthSet).length === 1 && (spec.kind === "monthly" || spec.kind === "interval") && evs.length >= 3) ? Object.keys(nthSet)[0] + ". " : "";
+      slot = nthText + wdText + " " + (times.length === 1 ? times[0] : "wechselnde Zeiten");
+    }
+    var ph = evs.filter(function(x) { return x.ev.placeholder; }).length, as = evs.filter(function(x) { return x.ev.assumption; }).length;
+    var status = "im Kalender";
+    if (missing) status = "unvollständig";
+    else if (ph === evs.length) status = "Platzhalter";
+    else if (ph) status = "teilw. Platzhalter";
+    else if (r0 && r0.pendingClarification) status = "bis Klärung";
+    else if (as) status = "Annahme";
+    else { var mm = /^Regel (\d(?:\+\d)?)/.exec(r0 && r0.note || ""); if (mm) status = "Regel " + mm[1]; }
+    return { cells: [label, rhythm, dur, slot, status], status: status };
+  }
+  function buildFormatList() {
+    var by = {}, covered = {};
+    allEventsFlat().forEach(function(x) { if (x.ev.seriesId) (by[x.ev.seriesId] = by[x.ev.seriesId] || []).push(x); });
+    var groups = FORMAT_GROUPS.map(function(g) {
+      var n = 0;
+      var rows = g.items.map(function(it) {
+        if (it.fixed) return { cells: it.fixed, status: it.fixed[4] };
+        var evs = [], missing = 0, present = 0;
+        it.series.forEach(function(id) { covered[id] = 1; if (by[id]) { present++; evs = evs.concat(by[id]); } else missing++; });
+        if (!it.noCount) n += present;
+        return formatRow(it, evs, present ? missing : 0);
+      });
+      return { title: g.name + (g.countLabel ? " (" + n + " " + g.countLabel + ")" : "") + (g.suffix || ""), rows: rows };
+    });
+    var extra = Object.keys(by).filter(function(id) { return !covered[id]; });
+    if (extra.length) groups.push({ title: "Weitere Serien (keiner Gruppe zugeordnet)", rows: extra.map(function(id) { return formatRow({ series: [id] }, by[id], 0); }) });
+    var manual = allEventsFlat().filter(function(x) { return !x.ev.seriesId; });
+    if (manual.length) groups.push({ title: "Einzeltermine ohne Serie", rows: [{ cells: ["Manuell angelegte Termine (" + manual.length + ")", "—", "—", "—", "im Kalender"], status: "im Kalender" }] });
+    return groups;
+  }
+  function renderFormatList() {
+    var tagFor = function(s) { var c = (s === "gestrichen" || s === "fehlt im Kalender" || s === "unvollständig") ? "bad" : (s === "Platzhalter" || s === "teilw. Platzhalter") ? "warn" : (s === "ohne GF" || s === "bis Klärung") ? "grey" : (s === "Annahme" || s.indexOf("Regel") === 0) ? "cyan" : "ok"; return '<span class="tag ' + c + '">' + escapeHtml(s) + "</span>"; };
+    var html = '<table class="fl-table"><thead><tr><th>Format (Bezeichnung)</th><th>Rhythmus</th><th>Dauer</th><th>Slot 2027</th><th>Status</th></tr></thead><tbody>';
+    buildFormatList().forEach(function(g) {
+      html += '<tr class="group"><td colspan="5">' + escapeHtml(g.title) + "</td></tr>";
+      g.rows.forEach(function(r) { html += "<tr><td>" + escapeHtml(r.cells[0]) + "</td><td>" + escapeHtml(r.cells[1]) + "</td><td>" + escapeHtml(r.cells[2]) + "</td><td>" + escapeHtml(r.cells[3]) + "</td><td>" + tagFor(r.cells[4]) + "</td></tr>"; });
+    });
+    html += "</tbody></table>";
+    document.getElementById("formatListContainer").innerHTML = html;
+  }
+
+  // ================= Modale Dialoge: Fokus-Käfig, Fokus zurück =================
+  var MODALS = ["dlgOverlay", "formOverlay", "auditOverlay", "focusOverlay"]; // von oben nach unten
+  var modalOpeners = {};
+  var lastFocus = null; // zuletzt fokussiertes Element außerhalb eines noch nicht registrierten Dialogs
+  var FOCUSABLE = 'button:not([disabled]),[href],input:not([disabled]):not([type="hidden"]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
+  function visibleFocusables(root) {
+    return Array.prototype.filter.call(root.querySelectorAll(FOCUSABLE), function(el) { return el.offsetParent !== null || el === document.activeElement; });
+  }
+  function initModals() {
+    document.addEventListener("focusin", function(e) {
+      var ov = e.target.closest ? e.target.closest(".focus-overlay,.form-overlay") : null;
+      if (ov && ov.classList.contains("active") && !modalOpeners[ov.id]) return;
+      lastFocus = e.target;
+    });
+    MODALS.forEach(function(id) {
+      var overlay = document.getElementById(id), box = overlay.firstElementChild;
+      box.setAttribute("tabindex", "-1");
+      new MutationObserver(function() {
+        var active = overlay.classList.contains("active");
+        if (active && !modalOpeners[id]) {
+          var op = lastFocus;
+          modalOpeners[id] = { el: op, date: (op && op.getAttribute) ? op.getAttribute("data-date") : null };
+          if (!overlay.contains(document.activeElement)) { var f = visibleFocusables(box)[0]; (f || box).focus(); }
+        } else if (!active && modalOpeners[id]) {
+          var o = modalOpeners[id]; delete modalOpeners[id];
+          var back = (o.el && document.contains(o.el)) ? o.el : (o.date ? document.querySelector('.cell[data-date="' + o.date + '"]') : null);
+          if (back && back.focus) back.focus();
+        }
+      }).observe(overlay, { attributes: true, attributeFilter: ["class"] });
+    });
+    document.addEventListener("keydown", function(e) {
+      if (e.key !== "Tab") return;
+      for (var i = 0; i < MODALS.length; i++) {
+        var overlay = document.getElementById(MODALS[i]);
+        if (!overlay.classList.contains("active")) continue;
+        var box = overlay.firstElementChild, items = visibleFocusables(box);
+        if (!items.length) { e.preventDefault(); box.focus(); return; }
+        var first = items[0], last = items[items.length - 1];
+        if (!overlay.contains(document.activeElement)) { e.preventDefault(); first.focus(); }
+        else if (e.shiftKey && (document.activeElement === first || document.activeElement === box)) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+        return;
+      }
+    });
+  }
+
+  // ================= Verdrahtung =================
+  function isTypingTarget(t) { return !!(t && t.tagName && /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)); }
+  function anyModalOpen() { return MODALS.some(function(id) { return document.getElementById(id).classList.contains("active"); }); }
+  function wire() {
+    var filterButtons = document.querySelectorAll(".filter-btn");
+    for (var b = 0; b < filterButtons.length; b++) {
+      filterButtons[b].addEventListener("click", function() {
+        var f = this.getAttribute("data-filter");
+        if (f === "all") { activeTypes = {}; onlyPlaceholder = false; searchTerm = ""; document.getElementById("searchInput").value = ""; }
+        else if (f === "Platzhalter") onlyPlaceholder = !onlyPlaceholder;
+        else activeTypes[f] = !activeTypes[f];
+        refreshAfterFilter();
+      });
+    }
+    document.getElementById("searchInput").addEventListener("input", debounce(function() {
+      searchTerm = document.getElementById("searchInput").value.trim().toLowerCase();
+      refreshAfterFilter();
+    }, CONFIG.SEARCH_DEBOUNCE_MS));
+    document.getElementById("focusCloseBtn").addEventListener("click", closeFocus);
+    document.getElementById("focusOverlay").addEventListener("click", function(e) { if (e.target === this) closeFocus(); });
+    document.getElementById("fmDay").addEventListener("click", function() { focus.mode = "day"; renderFocus(); });
+    document.getElementById("fmWeek").addEventListener("click", function() { focus.mode = "week"; renderFocus(); });
+    document.getElementById("fmMonth").addEventListener("click", function() { focus.mode = "month"; renderFocus(); });
+    document.getElementById("fmPrev").addEventListener("click", function() { focusNav(-1); });
+    document.getElementById("fmNext").addEventListener("click", function() { focusNav(1); });
+    document.getElementById("fmNew").addEventListener("click", function() { openForm(focus.dateKey, null); });
+    document.getElementById("btnNewGlobal").addEventListener("click", function() { openForm(selectedDateKey || formatYMD(YEAR, 0, 4), null); });
+    document.getElementById("fCancel").addEventListener("click", closeForm);
+    document.getElementById("fSave").addEventListener("click", saveForm);
+    document.getElementById("fDeviate").addEventListener("change", applyFormLock);
+    document.getElementById("fDelete").addEventListener("click", function() { if (formState.uid) { closeForm(); deleteEvent(formState.dateKey, formState.uid); } });
+    document.getElementById("formOverlay").addEventListener("click", function(e) { if (e.target === this) closeForm(); });
+    document.getElementById("btnAudit").addEventListener("click", openAudit);
+    document.getElementById("auditClose").addEventListener("click", function() { document.getElementById("auditOverlay").classList.remove("active"); });
+    document.getElementById("auditOverlay").addEventListener("click", function(e) { if (e.target === this) this.classList.remove("active"); });
+    document.getElementById("btnUndo").addEventListener("click", undo);
+    document.getElementById("btnExport").addEventListener("click", exportJSON);
+    document.getElementById("btnIcs").addEventListener("click", askICS);
+    document.getElementById("btnImport").addEventListener("click", function() { document.getElementById("importFile").click(); });
+    document.getElementById("importFile").addEventListener("change", function() { if (this.files && this.files[0]) importJSON(this.files[0]); this.value = ""; });
+    document.getElementById("btnReset").addEventListener("click", function() {
+      confirmDialog("Ausgangsstand laden", "Alle Änderungen verwerfen und den generierten Ausgangsstand laden?\nMit „Rückgängig“ lässt sich der bisherige Stand wiederholen. Der gespeicherte Browserstand wird gelöscht, bis Sie wieder etwas ändern.", function() {
+        snapshot("Ausgangsstand geladen");
+        buildInitialData(); changelog = []; renderChangelog();
+        Store.clear();
+        skipNextAutosave = true;
+        afterChange(null);
+      }, "Verwerfen und neu laden");
+    });
+    document.addEventListener("keydown", function(e) {
+      if (e.key === "Escape") {
+        if (document.getElementById("dlgOverlay").classList.contains("active")) document.getElementById("dlgOverlay").classList.remove("active");
+        else if (document.getElementById("formOverlay").classList.contains("active")) closeForm();
+        else if (document.getElementById("auditOverlay").classList.contains("active")) document.getElementById("auditOverlay").classList.remove("active");
+        else closeFocus();
+      }
+      if ((e.ctrlKey || e.metaKey) && !e.shiftKey && (e.key === "z" || e.key === "Z") && !isTypingTarget(e.target) && !anyModalOpen()) { e.preventDefault(); undo(); return; }
+      if (document.getElementById("focusOverlay").classList.contains("active") && !document.getElementById("formOverlay").classList.contains("active") && !document.getElementById("dlgOverlay").classList.contains("active") && !document.getElementById("auditOverlay").classList.contains("active") && !isTypingTarget(e.target)) {
+        if (e.key === "ArrowLeft") focusNav(-1);
+        if (e.key === "ArrowRight") focusNav(1);
+      }
+    });
+    var mq = window.matchMedia ? window.matchMedia("(max-width: " + CONFIG.MOBILE_MAX_PX + "px)") : null;
+    var onMq = function() { if (focus.mode === "week" && document.getElementById("focusOverlay").classList.contains("active")) renderFocus(); };
+    if (mq) { if (mq.addEventListener) mq.addEventListener("change", onMq); else if (mq.addListener) mq.addListener(onMq); }
+  }
+
+  // ================= Init =================
+  buildInitialData();
+  renderFormatList();
+  initModals();
+  wire();
+  recomputeViolations();
+  renderCalendar();
+  selectDate(formatYMD(YEAR, 0, 4));
+  updateFilterUI();
+  updateUndoButton();
+  checkRestore();
+
+  // Test-/Automationsschnittstelle (kein UI-Bestandteil)
+  window.GFKAL = {
+    CONFIG: CONFIG, Store: Store,
+    eventsData: function() { return eventsData; }, RULES: function() { return RULES; }, allEventsFlat: allEventsFlat,
+    checkPlausibility: checkPlausibility, recomputeViolations: recomputeViolations, parseTurnus: parseTurnus, generationConflicts: function() { return generationConflicts; },
+    openFocus: openFocus, openForm: openForm, saveForm: saveForm, deleteEvent: deleteEvent, moveEvent: moveEvent, swapEventTimes: swapEventTimes,
+    serialize: serialize, deserialize: deserialize, validateData: validateData, afterChange: afterChange, addEvent: addEvent, buildInitialData: buildInitialData,
+    undo: undo, undoDepth: function() { return undoStack.length; }, snapshot: snapshot, setFilter: setFilter, passesFilter: passesFilter,
+    buildICS: buildICS, buildFormatList: buildFormatList, findSlot: findSlot, placeOnDay: placeOnDay, importJSON: importJSON
+  };
+})();
+</script>
+</body>
+</html>

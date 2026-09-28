@@ -1,0 +1,1624 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GF Jahreskalender 2027</title>
+<meta name="description" content="Interaktiver Jahreskalender 2027 für GF Jens Fritsch (Diakonie Ruhr) mit Fokusmodus Tag/Woche/Monat, Regelprüfung und Export.">
+<style>
+  :root {
+    --primary: #5A2572;
+    --primary-light: #f3ecf6;
+    --secondary: #009BDC;
+    --text: #212529;
+    --muted: #6c757d;
+    --border: #dee2e6;
+    --bg: #f8f9fa;
+    --card: #ffffff;
+    --c-jf: #1976d2;
+    --c-sk: #7b1fa2;
+    --c-gremium: #00796b;
+    --c-fokus: #2e7d32;
+    --c-projekt: #ef6c00;
+    --c-klausur: #c2185b;
+    --warn: #b7791f;
+    --warn-bg: #fff6e0;
+    --bad: #c0392b;
+    --bad-bg: #fdecea;
+    --ok: #2e7d32;
+    --ok-bg: #e8f5e9;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--bg); }
+  body {
+    font-family: "Helvetica Neue", Helvetica, Arial, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    color: var(--text);
+    padding: 16px;
+    line-height: 1.4;
+  }
+  button { font-family: inherit; }
+
+  header.top {
+    background: var(--card);
+    border-left: 6px solid var(--primary);
+    padding: 18px 22px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  header.top h1 { font-size: 1.4rem; color: var(--primary); }
+  header.top p { font-size: 0.86rem; color: var(--muted); margin-top: 4px; }
+  .head-right { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .pill { font-size: 0.8rem; background: #eee; padding: 6px 12px; border-radius: 20px; }
+  .pill.cyan { background: var(--secondary); color: #fff; font-weight: 600; }
+  .pill.status-ok { background: var(--ok-bg); color: var(--ok); font-weight: 600; }
+  .pill.status-bad { background: var(--bad-bg); color: var(--bad); font-weight: 600; }
+  .pill.status-warn { background: var(--warn-bg); color: var(--warn); font-weight: 600; }
+
+  .filter-row {
+    background: var(--card);
+    padding: 12px 18px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    margin-bottom: 16px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .filter-btn {
+    border: 1px solid var(--border);
+    background: #ffffff;
+    color: var(--text);
+    padding: 7px 14px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    font-weight: 500;
+  }
+  .filter-btn:hover { background: #e9ecef; }
+  .filter-btn.active { background: var(--primary); color: #ffffff; border-color: var(--primary); }
+  .legend { margin-left: auto; display: flex; gap: 12px; flex-wrap: wrap; font-size: 0.78rem; }
+  .legend-item { display: flex; align-items: center; gap: 5px; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+  .dot.ph { box-shadow: 0 0 0 2px #fff, 0 0 0 3.5px var(--warn); }
+
+  .layout { display: grid; grid-template-columns: 2.2fr 1fr; gap: 16px; }
+  @media (max-width: 1024px) { .layout { grid-template-columns: 1fr; } }
+
+  .panel {
+    background: var(--card);
+    border-radius: 8px;
+    padding: 18px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    margin-bottom: 16px;
+  }
+  .panel-h2 {
+    font-size: 1.1rem; font-weight: 700; color: var(--primary);
+    margin-bottom: 12px; border-bottom: 2px solid var(--primary-light); padding-bottom: 6px;
+    display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap;
+  }
+  .panel-h2 .sub { font-size: 0.75rem; color: var(--muted); font-weight: 400; }
+
+  /* Kalender-Raster (Jahresübersicht, unverändertes Grundlayout) */
+  .months-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+  .month-card { border: 1px solid var(--border); border-radius: 6px; overflow: hidden; background: #ffffff; }
+  .month-title {
+    background: var(--primary-light); color: var(--primary); font-weight: 700; font-size: 0.9rem; padding: 7px 12px;
+    display: flex; justify-content: space-between; align-items: center; cursor: pointer;
+  }
+  .month-title:hover { background: #ebdff0; }
+  .month-title small { font-weight: 500; font-size: 0.7rem; color: var(--muted); }
+  .days-head { display: grid; grid-template-columns: repeat(7, 1fr); background: #f1f3f5; text-align: center; font-size: 0.7rem; font-weight: 600; color: var(--muted); padding: 4px 0; }
+  .days-grid { display: grid; grid-template-columns: repeat(7, 1fr); }
+  .cell {
+    min-height: 46px; border-right: 1px solid #f1f3f5; border-bottom: 1px solid #f1f3f5; padding: 3px;
+    cursor: pointer; position: relative; background: #ffffff; display: flex; flex-direction: column; justify-content: flex-start;
+  }
+  .cell:nth-child(7n) { border-right: none; }
+  .cell.empty { background: #fafbfc; cursor: default; }
+  .cell.weekend { background: #fdfafc; }
+  .cell.holiday { background: #f6f6f6; }
+  .cell.holiday .day-num { color: #adb5bd; }
+  .cell:hover:not(.empty) { background: #f1f8ff; }
+  .cell.selected { outline: 2px solid var(--primary); outline-offset: -2px; background: #faeefd !important; }
+  .cell.has-violation::before {
+    content: ""; position: absolute; top: 0; right: 0; width: 0; height: 0;
+    border-top: 9px solid var(--bad); border-left: 9px solid transparent;
+  }
+  .cell.has-placeholder::after {
+    content: ""; position: absolute; bottom: 0; right: 0; width: 0; height: 0;
+    border-bottom: 9px solid var(--warn); border-left: 9px solid transparent;
+  }
+  .day-num { font-size: 0.72rem; color: #495057; font-weight: 600; margin-bottom: 2px; }
+  .dot-row { display: flex; gap: 3px; flex-wrap: wrap; align-items: center; }
+  .termin-dot { width: 7px; height: 7px; border-radius: 50%; }
+  .termin-dot.ph { box-shadow: 0 0 0 1.5px #fff, 0 0 0 2.5px var(--warn); }
+  .more { font-size: 0.6rem; color: var(--muted); font-weight: 600; }
+
+  /* Rechte Spalte */
+  .details-box { position: sticky; top: 16px; }
+  .kpi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+  .kpi { background: #f8f9fa; border-radius: 6px; padding: 8px 10px; border-left: 4px solid var(--primary); }
+  .kpi .v { font-size: 1.15rem; font-weight: 700; color: var(--primary); font-variant-numeric: tabular-nums; }
+  .kpi .l { font-size: 0.68rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.03em; }
+  .kpi.bad { border-left-color: var(--bad); } .kpi.bad .v { color: var(--bad); }
+  .kpi.warn { border-left-color: var(--warn); } .kpi.warn .v { color: var(--warn); }
+  .detail-card { border-left: 4px solid var(--primary); background: #f8f9fa; padding: 8px 10px; border-radius: 4px; margin-bottom: 8px; font-size: 0.85rem; cursor: pointer; }
+  .detail-card:hover { background: #f1f3f5; }
+  .detail-title { font-weight: 700; color: var(--text); }
+  .detail-meta { font-size: 0.76rem; color: var(--muted); margin-top: 2px; }
+  .empty-note { font-size: 0.86rem; color: var(--muted); font-style: italic; padding: 10px 0; }
+  .btn-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+  .btn { padding: 7px 12px; border-radius: 6px; border: 1px solid var(--primary); background: var(--primary); color: #fff; font-size: 0.8rem; cursor: pointer; font-weight: 600; }
+  .btn.secondary { background: #fff; color: var(--primary); }
+  .btn.cyan { background: var(--secondary); border-color: var(--secondary); }
+  .btn.danger { background: #fff; color: var(--bad); border-color: var(--bad); }
+  .btn.small { padding: 4px 9px; font-size: 0.74rem; }
+  .btn:hover { filter: brightness(0.95); }
+  .info-rule { font-size: 0.8rem; background: var(--ok-bg); color: #1b5e20; padding: 10px; border-radius: 6px; margin-top: 12px; line-height: 1.45; }
+  .info-rule.warn { background: var(--warn-bg); color: #6b4a00; }
+  .changelog { font-size: 0.76rem; max-height: 180px; overflow: auto; border: 1px solid var(--border); border-radius: 6px; padding: 6px 8px; margin-top: 8px; background: #fff; }
+  .changelog div { padding: 3px 0; border-bottom: 1px dashed #eee; }
+  .changelog div:last-child { border-bottom: none; }
+  .changelog time { color: var(--muted); margin-right: 6px; font-variant-numeric: tabular-nums; }
+  .banner { display: flex; justify-content: space-between; align-items: center; gap: 10px; background: #eef8fd; border: 1px solid var(--secondary); border-left: 5px solid var(--secondary); padding: 8px 14px; border-radius: 6px; margin-bottom: 12px; font-size: 0.84rem; flex-wrap: wrap; }
+
+  /* Formatliste */
+  details.fl { margin-top: 4px; }
+  details.fl summary { cursor: pointer; font-weight: 700; color: var(--primary); font-size: 0.95rem; padding: 6px 0; }
+  table.fl-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; margin-top: 8px; }
+  table.fl-table th, table.fl-table td { border-bottom: 1px solid #eee; padding: 5px 6px; text-align: left; vertical-align: top; }
+  table.fl-table th { background: var(--primary-light); color: var(--primary); font-weight: 700; }
+  table.fl-table tr.group td { background: #f8f9fa; font-weight: 700; color: var(--primary); }
+  .tag { display: inline-block; font-size: 0.68rem; font-weight: 700; padding: 1px 7px; border-radius: 10px; margin-left: 4px; vertical-align: middle; }
+  .tag.ok { background: var(--ok-bg); color: var(--ok); }
+  .tag.warn { background: var(--warn-bg); color: var(--warn); }
+  .tag.bad { background: var(--bad-bg); color: var(--bad); }
+  .tag.grey { background: #eceff1; color: #546e7a; }
+  .tag.cyan { background: #e1f3fb; color: #006a99; }
+  ul.open-list { font-size: 0.82rem; padding-left: 18px; line-height: 1.5; }
+
+  /* ===== Fokusmodus (Overlay) ===== */
+  .focus-overlay { position: fixed; inset: 0; background: rgba(33, 18, 44, 0.62); display: none; z-index: 1000; align-items: center; justify-content: center; padding: 16px; }
+  .focus-overlay.active { display: flex; }
+  .focus-modal { background: #fff; border-radius: 10px; width: min(1180px, 100%); max-height: 94vh; display: flex; flex-direction: column; box-shadow: 0 12px 40px rgba(0,0,0,0.35); overflow: hidden; }
+  .focus-modal-header { background: var(--primary); color: #fff; padding: 12px 18px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .focus-modal-header h2 { font-size: 1.05rem; flex: 1; min-width: 200px; }
+  .focus-nav { display: flex; gap: 4px; align-items: center; }
+  .focus-nav button, .focus-close-btn { background: rgba(255,255,255,0.14); border: 1px solid rgba(255,255,255,0.4); color: #fff; border-radius: 6px; padding: 5px 10px; cursor: pointer; font-size: 0.8rem; font-weight: 600; }
+  .focus-nav button.active { background: var(--secondary); border-color: var(--secondary); }
+  .focus-nav button:hover, .focus-close-btn:hover { background: rgba(255,255,255,0.28); }
+  .focus-close-btn { font-size: 1rem; padding: 4px 10px; }
+  .focus-summary { padding: 10px 18px; font-size: 0.84rem; border-bottom: 1px solid var(--border); line-height: 1.45; max-height: 140px; overflow: auto; }
+  .focus-summary.ok { background: var(--ok-bg); color: #1b5e20; }
+  .focus-summary.bad { background: var(--bad-bg); color: #7a1f14; }
+  .focus-summary.warn { background: var(--warn-bg); color: #6b4a00; }
+  .focus-toolbar { display: flex; gap: 8px; padding: 8px 18px; border-bottom: 1px solid var(--border); font-size: 0.78rem; color: var(--muted); align-items: center; flex-wrap: wrap; }
+  .focus-toolbar .spacer { flex: 1; }
+  .focus-body { padding: 14px 18px; overflow: auto; flex: 1; }
+
+  /* Tagesfokus: Baustein-Karten */
+  .baustein-card { border: 1px solid var(--border); border-left: 6px solid var(--primary); border-radius: 6px; padding: 10px 12px; margin-bottom: 10px; background: #fff; cursor: grab; position: relative; }
+  .baustein-card.dragging { opacity: 0.5; }
+  .baustein-card.dropready { outline: 2px dashed var(--secondary); outline-offset: 2px; }
+  .baustein-card.violation { border-color: var(--bad); box-shadow: 0 0 0 2px var(--bad); background: #fff8f7; }
+  .baustein-card.placeholder { border-style: dashed; background: #fffdf5; }
+  .baustein-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .baustein-time { font-weight: 700; font-variant-numeric: tabular-nums; min-width: 110px; color: var(--primary); }
+  .baustein-title { font-weight: 700; flex: 1; }
+  .baustein-actions { display: flex; gap: 4px; }
+  .icon-btn { border: 1px solid var(--border); background: #fff; border-radius: 5px; padding: 3px 8px; cursor: pointer; font-size: 0.8rem; color: var(--text); }
+  .icon-btn:hover { background: #f1f3f5; }
+  .icon-btn.del { color: var(--bad); border-color: #f1c4bf; }
+  .baustein-desc { font-size: 0.8rem; color: #444; margin-top: 4px; }
+  .baustein-rule { font-size: 0.74rem; color: var(--primary); background: var(--primary-light); border-radius: 4px; padding: 4px 8px; margin-top: 6px; display: inline-block; }
+  .baustein-violation-msg { font-size: 0.78rem; color: var(--bad); font-weight: 600; margin-top: 6px; }
+  .baustein-hint-msg { font-size: 0.76rem; color: #6b4a00; margin-top: 4px; }
+
+  /* Wochenfokus */
+  .week-grid { display: grid; grid-template-columns: 52px repeat(5, 1fr); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; min-width: 760px; }
+  .week-head { background: var(--primary-light); color: var(--primary); font-weight: 700; font-size: 0.8rem; text-align: center; padding: 6px 4px; border-bottom: 1px solid var(--border); border-right: 1px solid #eee; }
+  .week-head.holiday { color: #adb5bd; }
+  .week-head small { display: block; font-weight: 500; color: var(--muted); font-size: 0.68rem; }
+  .week-times { position: relative; border-right: 1px solid #eee; }
+  .week-times div { position: absolute; left: 0; right: 4px; font-size: 0.66rem; color: var(--muted); text-align: right; transform: translateY(-50%); }
+  .week-col { position: relative; border-right: 1px solid #eee; background: repeating-linear-gradient(to bottom, #fff 0, #fff calc(var(--hourpx) - 1px), #f1f3f5 calc(var(--hourpx) - 1px), #f1f3f5 var(--hourpx)); }
+  .week-col.holiday { background: repeating-linear-gradient(to bottom, #f6f6f6 0, #f6f6f6 calc(var(--hourpx) - 1px), #e9e9e9 calc(var(--hourpx) - 1px), #e9e9e9 var(--hourpx)); }
+  .week-col.dragover { background-color: #e6f4fb; box-shadow: inset 0 0 0 2px var(--secondary); }
+  .week-ev { position: absolute; left: 3px; right: 3px; border-radius: 4px; padding: 3px 5px; font-size: 0.68rem; line-height: 1.2; color: #fff; overflow: hidden; cursor: grab; border: 1px solid rgba(0,0,0,0.15); box-shadow: 0 1px 2px rgba(0,0,0,0.15); }
+  .week-ev b { display: block; font-size: 0.7rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .week-ev.violation { outline: 2px solid var(--bad); outline-offset: 1px; }
+  .week-ev.placeholder { border: 2px dashed #fff; }
+  .week-ev.overlapped { left: 45%; }
+  .week-ev:hover { filter: brightness(1.08); z-index: 5; }
+
+  /* Monatsfokus */
+  .month-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 10px; }
+  .month-day { border: 1px solid var(--border); border-radius: 6px; padding: 8px 10px; cursor: pointer; background: #fff; }
+  .month-day:hover { background: #f8f4fa; }
+  .month-day.violation { border-color: var(--bad); }
+  .month-day h4 { font-size: 0.82rem; color: var(--primary); margin-bottom: 4px; display: flex; justify-content: space-between; }
+  .month-day .row { font-size: 0.74rem; display: flex; gap: 6px; align-items: center; padding: 1px 0; }
+  .month-day .row .t { font-variant-numeric: tabular-nums; color: var(--muted); min-width: 92px; }
+  .month-day .row.ph { color: #6b4a00; }
+  .month-day .row.bad { color: var(--bad); font-weight: 600; }
+
+  /* Bearbeitungsformular */
+  .form-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.35); display: none; z-index: 1100; align-items: center; justify-content: center; padding: 16px; }
+  .form-overlay.active { display: flex; }
+  .form-modal { background: #fff; border-radius: 10px; width: min(560px, 100%); box-shadow: 0 12px 40px rgba(0,0,0,0.35); overflow: hidden; max-height: 94vh; display: flex; flex-direction: column; }
+  .form-modal header { background: var(--secondary); color: #fff; padding: 10px 16px; font-weight: 700; font-size: 0.95rem; }
+  .form-modal .body { padding: 14px 16px; overflow: auto; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .form-grid .full { grid-column: 1 / -1; }
+  .form-modal label { display: block; font-size: 0.72rem; color: var(--muted); font-weight: 600; margin-bottom: 2px; }
+  .form-modal input, .form-modal select, .form-modal textarea { width: 100%; padding: 6px 8px; border: 1px solid var(--border); border-radius: 5px; font-size: 0.84rem; font-family: inherit; }
+  .form-modal .check { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; margin-top: 6px; }
+  .form-modal .check input { width: auto; }
+  .form-modal footer { padding: 10px 16px; border-top: 1px solid var(--border); display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; }
+  .form-rule { font-size: 0.74rem; background: var(--primary-light); color: var(--primary); padding: 6px 8px; border-radius: 5px; margin-top: 8px; }
+  .form-warn { font-size: 0.76rem; color: var(--bad); font-weight: 600; margin-top: 6px; display: none; }
+
+  /* Prüfprotokoll */
+  .audit-list { font-size: 0.8rem; }
+  .audit-list .row { padding: 6px 8px; border-bottom: 1px solid #eee; cursor: pointer; display: flex; gap: 10px; align-items: flex-start; }
+  .audit-list .row:hover { background: #f8f4fa; }
+  .audit-list .d { min-width: 110px; font-weight: 700; color: var(--primary); font-variant-numeric: tabular-nums; }
+
+  @media print {
+    body { padding: 0; }
+    .filter-row, .details-box .btn-row, .focus-overlay, .form-overlay { display: none !important; }
+    .layout { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div>
+    <h1>GF Jahresplanung 2027 – Diakonie Ruhr</h1>
+    <p>Jahresübersicht mit Fokusmodus (Tag / Woche / Monat), Regelprüfung nach den 7 GF-Korrekturregeln, Formatliste Stand 27.09.2026. Modell A1.</p>
+  </div>
+  <div class="head-right">
+    <span class="pill" id="pillStatus">Prüfung läuft</span>
+    <span class="pill">Geschäftsführung: Jens Fritsch</span>
+    <span class="pill cyan">Stand 28.09.2026</span>
+  </div>
+</header>
+
+<div class="filter-row">
+  <button type="button" class="filter-btn active" data-filter="all">Alle Formate</button>
+  <button type="button" class="filter-btn" data-filter="JF">Jour Fixe</button>
+  <button type="button" class="filter-btn" data-filter="Steuerkreis">Steuerkreise</button>
+  <button type="button" class="filter-btn" data-filter="Gremium">Gremien / Puffer</button>
+  <button type="button" class="filter-btn" data-filter="Blocker">Blocker &amp; Klausur</button>
+  <button type="button" class="filter-btn" data-filter="Platzhalter">Nur Platzhalter</button>
+
+  <div class="legend">
+    <div class="legend-item"><span class="dot" style="background:var(--c-jf)"></span> JF</div>
+    <div class="legend-item"><span class="dot" style="background:var(--c-sk)"></span> Steuerkreis</div>
+    <div class="legend-item"><span class="dot" style="background:var(--c-gremium)"></span> Gremium / Puffer</div>
+    <div class="legend-item"><span class="dot" style="background:var(--c-fokus)"></span> Fokuszeit</div>
+    <div class="legend-item"><span class="dot" style="background:var(--c-projekt)"></span> Projektzeit</div>
+    <div class="legend-item"><span class="dot" style="background:var(--c-klausur)"></span> Klausur</div>
+    <div class="legend-item"><span class="dot ph" style="background:#bbb"></span> Platzhalter (unbestätigt)</div>
+    <div class="legend-item"><span class="dot" style="background:var(--bad);border-radius:0;width:8px;height:8px"></span> Regelverstoß am Tag</div>
+  </div>
+</div>
+
+<div class="layout">
+  <div>
+    <div class="panel">
+      <div id="restoreBanner" class="banner" style="display:none">
+        <div><strong>Gespeicherter Arbeitsstand gefunden</strong> (<span id="restoreInfo"></span>). Wiederherstellen oder mit dem Ausgangsstand weiterarbeiten?</div>
+        <div style="display:flex;gap:6px">
+          <button type="button" class="btn small cyan" id="restoreYes">Wiederherstellen</button>
+          <button type="button" class="btn small secondary" id="restoreNo">Verwerfen</button>
+        </div>
+      </div>
+      <h2 class="panel-h2"><span>Jahresübersicht 2027 (12 Monate)</span><span class="sub">Klick auf einen Tag öffnet den Fokusmodus. Klick auf den Monatstitel öffnet den Monatsfokus.</span></h2>
+      <div id="calendarContainer" class="months-container"></div>
+    </div>
+
+    <div class="panel">
+      <details class="fl">
+        <summary>Formatliste 2027 (Stand 27.09.2026) – Bezeichnungen, Rhythmus, Slot, Status</summary>
+        <div id="formatListContainer"></div>
+      </details>
+    </div>
+
+    <div class="panel">
+      <details class="fl">
+        <summary>Offene Punkte (zu klären mit Sandra Merino-Kesting / Kerstin Tomnitz / GF)</summary>
+        <ul class="open-list" style="margin-top:8px">
+          <li><strong>Wochengespräch mit GF-Beteiligung:</strong> Wochentag bestätigen. Im Tool als Arbeitsannahme auf dem 2. Donnerstag, 14:00–16:00 Uhr.</li>
+          <li><strong>Fokuszeit-Blocker Montag:</strong> 07:30–09:00 oder 09:00–10:30? Im Tool: 07:30–09:00 (Regelfassung); die Alternative ist am Baustein vermerkt.</li>
+          <li><strong>Dienstags-JF:</strong> Verteilung der 13 monatlichen Partner-JF (IM/LeWo) und der 13 GBL-/Referate-/A³-Formate auf die Dienstage ist eine gekennzeichnete Arbeitsannahme (bis zu 7 Slots je Dienstag, 50 Min., 10 Min. Wechsel). Keine bestätigte Einzelzuordnung.</li>
+          <li><strong>JF-Dauer:</strong> 50 Min. lt. SEK-Liste; Arbeitsdatei rechnet vorsorglich mit 75 Min. Im Tool: 50 Min. je JF (SEK-Vorgabe), Dauer je Baustein editierbar.</li>
+          <li><strong>Platzhalter:</strong> Vorstandssitzung IM, Verwaltungsrat IM, AG Wohlfahrt / AG-FW, LK ambulant / LK stationär, Klausur Strategie, Gesellschafterversammlungen und AG DADuL sind als unbestätigt markiert (gestrichelter Ring, Ecke unten rechts).</li>
+          <li><strong>Steuerungsgruppen UK DR / Personal / Digitalisierung:</strong> Do-Rotation bis zur Klärung mit den neuen Steuerkreisen beibehalten.</li>
+          <li><strong>Steuerkreis Personal, Steuerkreis Marketing &amp; Vertrieb:</strong> ohne GF, Rhythmus offen – blockieren keine GF-Ressource, daher nicht im Kalender.</li>
+          <li><strong>Persistenz:</strong> Änderungen werden als JSON exportiert/importiert; zusätzlich Autosave im Browser (sofern verfügbar). Endgültiges Speicherkonzept offen.</li>
+        </ul>
+      </details>
+    </div>
+  </div>
+
+  <div>
+    <div class="panel details-box">
+      <h2 class="panel-h2" id="detailHeading">Tagesübersicht</h2>
+      <div class="kpi-grid" id="kpiGrid"></div>
+      <p id="detailSub" style="font-size:0.84rem; color:var(--muted); margin-bottom:10px;">Klicken Sie auf ein Datum im Kalender.</p>
+      <div id="detailList"><div class="empty-note">Kein Tag ausgewählt.</div></div>
+
+      <div class="btn-row">
+        <button type="button" class="btn small" id="btnNewGlobal">Neuer Termin</button>
+        <button type="button" class="btn small cyan" id="btnAudit">Prüfprotokoll gesamt</button>
+        <button type="button" class="btn small secondary" id="btnExport">Export JSON</button>
+        <button type="button" class="btn small secondary" id="btnImport">Import JSON</button>
+        <button type="button" class="btn small danger" id="btnReset">Ausgangsstand</button>
+        <input type="file" id="importFile" accept=".json,application/json" style="display:none">
+      </div>
+
+      <div style="margin-top:12px;font-size:0.8rem;font-weight:700;color:var(--primary)">Änderungsprotokoll</div>
+      <div class="changelog" id="changelog"><div style="color:var(--muted)">Noch keine Änderungen in dieser Sitzung.</div></div>
+
+      <div class="info-rule">
+        <strong>Angewendete GF-Korrekturregeln:</strong><br>
+        1. JF Jahndorf: alle 6–8 Wochen, 50 Min. (nicht monatlich).<br>
+        2. JF Mala: kein eigener Termin, Teilslot innerhalb JF Personal.<br>
+        3. JF Personal: 75 Min. = 50 Referat + 20 Poolspringer Frau Mala + 5 Wechselpuffer, Block nicht trennbar.<br>
+        4. GBL-Klausur (18.–19.11.) und Leistungsklausur Sozialwirtschaft (03.–04.05., 08.–09.11.) nie in derselben ISO-Woche.<br>
+        5. Fokuszeit-Blocker: Montag und Freitag, je inkl. 0,5 Std. Abstimmung Assistenz GF.<br>
+        6. Projektarbeit-Blocker GF: wöchentlich Mittwoch 13:30–15:30.<br>
+        7. Wochengespräch mit GF-Beteiligung: monatlich, 2 Std., 14:00–16:00 (Wochentag offen).
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Fokusmodus -->
+<div class="focus-overlay" id="focusOverlay">
+  <div class="focus-modal">
+    <div class="focus-modal-header">
+      <h2 id="focusTitle">Fokusmodus</h2>
+      <div class="focus-nav">
+        <button type="button" id="fmPrev" title="Zurück">&lsaquo;</button>
+        <button type="button" id="fmDay" class="active">Tag</button>
+        <button type="button" id="fmWeek">Woche</button>
+        <button type="button" id="fmMonth">Monat</button>
+        <button type="button" id="fmNext" title="Weiter">&rsaquo;</button>
+      </div>
+      <button type="button" class="focus-close-btn" id="focusCloseBtn" title="Schließen (Esc)">&#x2715;</button>
+    </div>
+    <div class="focus-summary" id="focusSummary"></div>
+    <div class="focus-toolbar" id="focusToolbar">
+      <span id="focusHint">Bausteine per Drag &amp; Drop aufeinander ziehen, um Zeiten zu tauschen. Stift = vollständig bearbeiten, Kreuz = löschen. Die Regelprüfung läuft bei jeder Änderung.</span>
+      <span class="spacer"></span>
+      <button type="button" class="btn small" id="fmNew">Neuer Termin an diesem Tag</button>
+    </div>
+    <div class="focus-body" id="focusBody"></div>
+  </div>
+</div>
+
+<!-- Bearbeitungsformular -->
+<div class="form-overlay" id="formOverlay">
+  <div class="form-modal">
+    <header id="formTitle">Termin bearbeiten</header>
+    <div class="body">
+      <div class="form-grid">
+        <div class="full"><label>Titel (Bezeichnung des Formats)</label><input type="text" id="fTitle"></div>
+        <div><label>Datum</label><input type="date" id="fDate" min="2027-01-01" max="2027-12-31"></div>
+        <div><label>Typ / Kategorie</label>
+          <select id="fType">
+            <option value="JF">JF</option>
+            <option value="Steuerkreis">Steuerkreis</option>
+            <option value="Gremium">Gremium / Puffer</option>
+            <option value="Blocker">Fokuszeit (Blocker)</option>
+            <option value="Projekt">Projektzeit</option>
+            <option value="Klausur">Klausur</option>
+          </select>
+        </div>
+        <div><label>Beginn</label><input type="time" id="fStart" step="300"></div>
+        <div><label>Dauer (Minuten)</label><input type="number" id="fDuration" min="5" max="720" step="5"></div>
+        <div><label>Turnus (Serieninformation)</label><input type="text" id="fTurnus" placeholder="z. B. monatlich, alle 6-8 Wochen"></div>
+        <div><label>Ort / Träger</label><input type="text" id="fOrt" placeholder="optional"></div>
+        <div class="full"><label>Beschreibung / Hinweis</label><textarea id="fDesc" rows="3"></textarea></div>
+        <div class="full">
+          <div class="check"><input type="checkbox" id="fPlaceholder"><label for="fPlaceholder" style="margin:0">Platzhalter – Termin noch nicht bestätigt</label></div>
+          <div class="check"><input type="checkbox" id="fSeries"><label for="fSeries" style="margin:0">Änderung von Titel/Dauer/Turnus/Beschreibung auf alle Termine derselben Reihe übertragen</label></div>
+        </div>
+      </div>
+      <div class="form-rule" id="fRuleInfo" style="display:none"></div>
+      <div class="form-warn" id="fWarn"></div>
+    </div>
+    <footer>
+      <button type="button" class="btn danger small" id="fDelete" style="margin-right:auto">Termin löschen</button>
+      <button type="button" class="btn secondary" id="fCancel">Abbrechen</button>
+      <button type="button" class="btn cyan" id="fSave">Speichern &amp; prüfen</button>
+    </footer>
+  </div>
+</div>
+
+<!-- Dialog (Bestätigung / Hinweis / Export) -->
+<div class="form-overlay" id="dlgOverlay" style="z-index:1200">
+  <div class="form-modal" style="width:min(640px,100%)">
+    <header id="dlgTitle">Hinweis</header>
+    <div class="body">
+      <div id="dlgText" style="font-size:0.88rem;line-height:1.5;white-space:pre-line"></div>
+      <textarea id="dlgArea" rows="10" style="display:none;margin-top:10px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:0.74rem"></textarea>
+    </div>
+    <footer id="dlgFooter"></footer>
+  </div>
+</div>
+
+<!-- Prüfprotokoll -->
+<div class="form-overlay" id="auditOverlay">
+  <div class="form-modal" style="width:min(820px,100%)">
+    <header>Prüfprotokoll gesamt – alle Regelverstöße 2027</header>
+    <div class="body audit-list" id="auditBody"></div>
+    <footer><button type="button" class="btn secondary" id="auditClose">Schließen</button></footer>
+  </div>
+</div>
+
+<script>
+(function() {
+  "use strict";
+  var YEAR = 2027;
+  var STORAGE_KEY = "gf-jahreskalender-2027-fokusmodus";
+  var monthNames = ["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
+  var dayShorts = ["Mo","Di","Mi","Do","Fr","Sa","So"];
+  var WEEKDAY_SHORT = ["So","Mo","Di","Mi","Do","Fr","Sa"];
+  var WEEKDAY_LONG = ["Sonntag","Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag"];
+
+  // NRW-Feiertage 2027
+  var HOLIDAYS = {
+    "2027-01-01": "Neujahr", "2027-03-26": "Karfreitag", "2027-03-29": "Ostermontag", "2027-05-01": "Tag der Arbeit",
+    "2027-05-06": "Christi Himmelfahrt", "2027-05-17": "Pfingstmontag", "2027-05-27": "Fronleichnam",
+    "2027-10-03": "Tag der Deutschen Einheit", "2027-11-01": "Allerheiligen", "2027-12-25": "1. Weihnachtstag", "2027-12-26": "2. Weihnachtstag"
+  };
+
+  var typeColors = {
+    JF: "#1976d2", Steuerkreis: "#7b1fa2", Gremium: "#00796b", Blocker: "#2e7d32", Projekt: "#ef6c00", Klausur: "#c2185b"
+  };
+  var typeLabels = { JF: "JF", Steuerkreis: "Steuerkreis", Gremium: "Gremium / Puffer", Blocker: "Fokuszeit", Projekt: "Projektzeit", Klausur: "Klausur" };
+
+  // ================= Zeit-Helfer =================
+  function pad2(n) { return n < 10 ? "0" + n : "" + n; }
+  function toMin(hhmm) { if (!hhmm) return 0; var p = hhmm.split(":"); return parseInt(p[0], 10) * 60 + parseInt(p[1], 10); }
+  function fromMin(m) { return pad2(Math.floor(m / 60)) + ":" + pad2(m % 60); }
+  function rangeStr(start, dur) { return start + " – " + fromMin(toMin(start) + dur); }
+  function formatYMD(year, monthIndex, day) { return year + "-" + pad2(monthIndex + 1) + "-" + pad2(day); }
+  function parseDateKey(dateKey) { var p = dateKey.split("-"); return new Date(parseInt(p[0], 10), parseInt(p[1], 10) - 1, parseInt(p[2], 10)); }
+  function dateToKey(d) { return formatYMD(d.getFullYear(), d.getMonth(), d.getDate()); }
+  function addDays(d, n) { var x = new Date(d.getTime()); x.setDate(x.getDate() + n); return x; }
+  function fmtDateDE(dateKey) { var d = parseDateKey(dateKey); return WEEKDAY_SHORT[d.getDay()] + " " + pad2(d.getDate()) + "." + pad2(d.getMonth() + 1) + "." + d.getFullYear(); }
+  function fmtDateLong(dateKey) { var d = parseDateKey(dateKey); return WEEKDAY_LONG[d.getDay()] + ", " + d.getDate() + ". " + monthNames[d.getMonth()] + " " + d.getFullYear(); }
+  function isHoliday(dateKey) { return !!HOLIDAYS[dateKey]; }
+  function isWeekend(dateKey) { var g = parseDateKey(dateKey).getDay(); return g === 0 || g === 6; }
+
+  function getISOWeek(date) {
+    var d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+    var dayNum = (d.getUTCDay() + 6) % 7;
+    d.setUTCDate(d.getUTCDate() - dayNum + 3);
+    var firstThursday = new Date(Date.UTC(d.getUTCFullYear(), 0, 4));
+    var weekNum = 1 + Math.round(((d - firstThursday) / 86400000 - 3 + ((firstThursday.getUTCDay() + 6) % 7)) / 7);
+    return { year: d.getUTCFullYear(), week: weekNum };
+  }
+  function getISOWeekKey(date) { var w = getISOWeek(date); return w.year + "-W" + pad2(w.week); }
+  function mondayOfWeek(date) { var d = new Date(date.getTime()); var wd = (d.getDay() + 6) % 7; d.setDate(d.getDate() - wd); return d; }
+
+  function getNthWeekdayOfMonth(year, monthIndex, weekdayTarget, nth) {
+    var count = 0; var d = new Date(year, monthIndex, 1);
+    while (d.getMonth() === monthIndex) {
+      if (d.getDay() === weekdayTarget) { count++; if (count === nth) return new Date(d); }
+      d.setDate(d.getDate() + 1);
+    }
+    return null;
+  }
+  function getAllWeekdaysOfMonth(year, monthIndex, weekdayTarget) {
+    var dates = []; var d = new Date(year, monthIndex, 1);
+    while (d.getMonth() === monthIndex) { if (d.getDay() === weekdayTarget) dates.push(new Date(d)); d.setDate(d.getDate() + 1); }
+    return dates;
+  }
+  // Feiertagsausweichen: +7 Tage im selben Monat, sonst -7 Tage
+  function shiftIfHoliday(d) {
+    var key = dateToKey(d);
+    if (!isHoliday(key)) return { date: d, shifted: false };
+    var plus = addDays(d, 7);
+    if (plus.getMonth() === d.getMonth() && !isHoliday(dateToKey(plus))) return { date: plus, shifted: true, from: key };
+    var minus = addDays(d, -7);
+    return { date: minus, shifted: true, from: key };
+  }
+
+  // ================= Datenbestand =================
+  var eventsData = {};
+  var uidCounter = 1;
+  var changelog = [];
+  var RULES = {};
+
+  function defRule(r) { RULES[r.id] = r; return r; }
+
+  function addEvent(dateStr, title, type, start, duration, desc, rule, opts) {
+    opts = opts || {};
+    if (!eventsData[dateStr]) eventsData[dateStr] = [];
+    var ev = {
+      uid: "ev" + (uidCounter++),
+      title: title, type: type, start: start, duration: duration,
+      time: rangeStr(start, duration),
+      desc: desc || "", color: typeColors[type] || "#333333",
+      rule: rule || null,
+      placeholder: !!opts.placeholder, assumption: !!opts.assumption,
+      ort: opts.ort || "", blockKey: opts.blockKey || null, seriesId: opts.seriesId || (rule ? rule.id : null),
+      source: opts.source || "generiert"
+    };
+    eventsData[dateStr].push(ev);
+    return ev;
+  }
+  function refreshTime(ev) { ev.time = rangeStr(ev.start, ev.duration); ev.color = typeColors[ev.type] || "#333333"; }
+
+  // Slot-Allokator: findet ab preferredStart das erste freie Fenster am Tag (10 Min. Wechselpuffer, 5-Min.-Raster, bis 18:00)
+  function placeOnDay(dateKey, title, type, preferredStart, duration, desc, rule, opts) {
+    opts = opts || {};
+    var evs = eventsData[dateKey] || [];
+    var gap = (opts.gap === undefined) ? 10 : opts.gap;
+    var s = toMin(preferredStart);
+    var limit = 18 * 60;
+    var tries = 0;
+    while (tries < 200) {
+      var e = s + duration;
+      var clash = false;
+      for (var i = 0; i < evs.length; i++) {
+        if (opts.blockKey && evs[i].blockKey === opts.blockKey) continue;
+        var os = toMin(evs[i].start), oe = os + evs[i].duration;
+        if (s < oe + gap && os < e + gap) { clash = true; s = oe + gap; break; }
+      }
+      if (!clash) break;
+      tries++;
+    }
+    if (s + duration > limit && !opts.force) {
+      s = toMin(preferredStart); // kein Fenster: an Wunschzeit setzen, Prüfung meldet Überschneidung
+    }
+    s = Math.ceil(s / 15) * 15;
+    return addEvent(dateKey, title, type, fromMin(s), duration, desc, rule, opts);
+  }
+  // Klausur-/Feiertagsausweichen: +7 Tage im selben Monat, sonst -7 Tage
+  function avoidKlausur(d) {
+    var key = dateToKey(d);
+    if (!hasKlausur(key) && !isHoliday(key)) return { date: d, shifted: false };
+    for (var w = 1; w <= 3; w++) {
+      var plus = addDays(d, 7 * w);
+      if (plus.getMonth() === d.getMonth() && !hasKlausur(dateToKey(plus)) && !isHoliday(dateToKey(plus))) return { date: plus, shifted: true, from: key };
+    }
+    var minus = addDays(d, -7);
+    return { date: minus, shifted: true, from: key };
+  }
+  function shiftNote(r) { return r.shifted ? " Verschoben von " + fmtDateDE(r.from) + " (Feiertag/Klausur)." : ""; }
+
+  function hasKlausur(dateKey) {
+    var evs = eventsData[dateKey] || [];
+    for (var i = 0; i < evs.length; i++) if (evs[i].type === "Klausur") return true;
+    return false;
+  }
+
+  // Intervalltermine (alle 6–8 Wochen = 7-Wochen-Takt) an einem Wochentag
+  function intervalDates(startKey, weeks) {
+    var out = []; var d = parseDateKey(startKey);
+    while (d.getFullYear() === YEAR) { out.push(dateToKey(d)); d = addDays(d, weeks * 7); }
+    return out;
+  }
+
+  function buildInitialData() {
+    eventsData = {}; uidCounter = 1; RULES = {};
+
+    // ---- Regeln (Kern: 7 GF-Korrekturregeln + Strukturregeln) ----
+    var rFokusMo = defRule({ id: "fokuszeit-mo", label: "Fokuszeit-Blocker (Mo)", allowedDays: ["Mo"], turnus: "wöchentlich", duration: 90, fixedTime: "07:30 – 09:00", note: "Regel 5: inkl. 0,5 Std. Abstimmung Assistenz GF. Alternative 09:00–10:30 noch offen.", editable: true });
+    var rFokusFr = defRule({ id: "fokuszeit-fr", label: "Fokuszeit-Blocker (Fr)", allowedDays: ["Fr"], turnus: "wöchentlich", duration: 120, fixedTime: "09:00 – 11:00", note: "Regel 5: inkl. 0,5 Std. Abstimmung Assistenz GF.", editable: true });
+    var rProjekt = defRule({ id: "projektarbeit", label: "Projektarbeit-Blocker GF", allowedDays: ["Mi"], turnus: "wöchentlich", duration: 120, fixedTime: "13:30 – 15:30", note: "Regel 6: fest auf Mittwoch.", editable: true });
+    var rWG = defRule({ id: "wochengespraech", label: "Wochengespräch mit GF-Beteiligung", allowedDays: ["Mo","Di","Mi","Do","Fr"], turnus: "monatlich", duration: 120, fixedTime: "14:00 – 16:00", note: "Regel 7: Wochentag noch nicht bestätigt (Arbeitsannahme 2. Donnerstag).", editable: true });
+    var rPuffer = defRule({ id: "pufferslot", label: "Pufferslot Gremien", allowedDays: ["Do"], turnus: "monatlich", duration: 90, note: "Schutzslot für kurzfristige Gremienbelange.", editable: true });
+    var rLK = defRule({ id: "lk-sozialwirtschaft", label: "Leitungskonferenz Sozialwirtschaft", allowedDays: ["Mo"], turnus: "monatlich", duration: 120, note: "1. Montag, 2 Std. (ehemals Betriebsleitungskonferenz).", editable: false });
+    var rEKL = defRule({ id: "ekl", label: "Erweiterte Konzernleitung (eKL)", allowedDays: ["Mo"], turnus: "monatlich", duration: 180, note: "3. Montag, 3 Std. (EVAR).", editable: false });
+    var rMachleit = defRule({ id: "machleit-ebner", label: "JF Machleit Ebner", allowedDays: ["Mo"], turnus: "quartalsweise", duration: 50, note: "Quartalsweise direkt nach der eKL, ab 01/2027.", editable: true });
+    var rWA = defRule({ id: "wirtschaftsausschuss", label: "Wirtschaftsausschuss SBO", allowedDays: ["Di"], turnus: "monatlich", duration: 120, fixedTime: "15:00 – 17:00", note: "4. Dienstag, 2 Std. (Modell A1).", editable: false });
+    var rMAVBR = defRule({ id: "mav-br-sbo", label: "JF MAV+BR SBO", allowedDays: ["Do"], turnus: "alle 2 Monate", duration: 50, note: "Ersetzt Monatsgespräch SBO und Betriebsversammlung SBO (beide gestrichen).", editable: true });
+    var rJahndorf = defRule({ id: "jahndorf", label: "JF Jahndorf", allowedDays: ["Di"], turnus: "alle 6-8 Wochen", duration: 50, note: "Regel 1: alle 6–8 Wochen, nicht monatlich.", editable: true });
+    var rPersonal = defRule({ id: "jf-personal", label: "JF Personal", allowedDays: ["Di"], turnus: "alle 6-8 Wochen", totalDuration: 75, notSplittable: true, subslots: "50 Min. Referat + 20 Min. Poolspringer Frau Mala + 5 Min. Wechselpuffer", note: "Regeln 2+3: Mala-Teilslot im Block, Block nicht trennbar.", editable: true });
+    var rQM = defRule({ id: "jf-qm", label: "JF QM & Regulatorik", allowedDays: ["Di"], turnus: "alle 6-8 Wochen", duration: 50, editable: true });
+    var rA3 = defRule({ id: "jf-a3", label: "JF A³-Team", allowedDays: ["Di"], turnus: "monatlich", duration: 90, note: "90 Min., abweichend von der 50-Min.-Norm.", editable: true });
+    var rGBL = defRule({ id: "jf-gbl", label: "JF GBL (Di-Mittagsband)", allowedDays: ["Di"], turnus: "monatlich", duration: 50, note: "GBL-JF liegen auf dem Dienstag-Mittagsband.", editable: true });
+    var rReferat = defRule({ id: "jf-referat", label: "JF Referat (Di-Mittagsband)", allowedDays: ["Di"], turnus: "monatlich", duration: 50, editable: true });
+    var rPartner = defRule({ id: "jf-partner", label: "JF Partner (Di)", allowedDays: ["Di"], turnus: "monatlich", duration: 50, note: "Dienstag = JF-Tag (Arbeitsannahme Slotverteilung).", editable: true });
+    var rSKWF = defRule({ id: "sk-wifi", label: "Steuerkreis Wirtschaft & Finanzen", allowedDays: ["Do"], turnus: "monatlich", duration: 90, note: "Teil 1 Doppelpack in derselben Einrichtung, GF dabei.", editable: true });
+    var rSKQM = defRule({ id: "sk-qm", label: "Steuerkreis QM & Regulatorik", allowedDays: ["Do"], turnus: "alle 2 Monate", duration: 90, note: "Teil 2 Doppelpack direkt im Anschluss, gleiche Einrichtung.", editable: true, coupledAfter: "sk-wifi" });
+    var rSG = defRule({ id: "steuerungsgruppe", label: "Steuerungsgruppen DR (Rotation)", allowedDays: ["Do"], turnus: "monatlich", duration: 120, note: "Alte Steuerungsgruppen UK DR / Personal / Digitalisierung, Do-Rotation bis zur Klärung.", editable: true });
+    var rKlausurSW = defRule({ id: "klausur-sw", label: "Leistungsklausur Sozialwirtschaft", allowedDays: ["Mo","Di"], turnus: "2x jährlich", couplingForbiddenWith: "gbl-klausur", note: "Regel 4: nie in derselben ISO-Woche wie die GBL-Klausur.", editable: true });
+    var rGBLKlausur = defRule({ id: "gbl-klausur", label: "GBL-Klausur", allowedDays: ["Do","Fr"], turnus: "jährlich (November)", couplingForbiddenWith: "klausur-sw", note: "Regel 4: nie in derselben ISO-Woche wie die Leistungsklausur Sozialwirtschaft.", editable: true });
+    var rFiD = defRule({ id: "fuehrung-dialog", label: "Führung im Dialog", allowedDays: ["Do","Fr"], turnus: "jährlich (Feb/März)", editable: true });
+    var rStrategie = defRule({ id: "klausur-strategie", label: "Klausur Strategie", turnus: "halbjährlich", editable: true });
+    var rIMK = defRule({ id: "imk", label: "IMK", allowedDays: ["Mi"], turnus: "quartalsweise", duration: 180, editable: true });
+    var rExtern = defRule({ id: "extern-im", label: "Externe Gremien IM / Stadt", allowedDays: ["Mi"], turnus: "unregelmäßig", editable: true });
+    var rGVV = defRule({ id: "gesellschafter", label: "Gesellschafter / AR", allowedDays: ["Do"], turnus: "2-3x jährlich", editable: true });
+    var rLKamb = defRule({ id: "lk-ambulant-stationaer", label: "LK ambulant / LK stationär", allowedDays: ["Do"], turnus: "offen", editable: true });
+
+    var m, i, k;
+
+    // ---- 1. Klausuren (zuerst, damit Blocker ausweichen) ----
+    addEvent("2027-05-03", "Leistungsklausur Sozialwirtschaft (Tag 1)", "Klausur", "09:00", 540, "2-Tage-Block Mo+Di, 1. von 2×/Jahr (Datum lt. Arbeitsdatei 27.09.).", rKlausurSW, { seriesId: "klausur-sw" });
+    addEvent("2027-05-04", "Leistungsklausur Sozialwirtschaft (Tag 2)", "Klausur", "09:00", 360, "Fortsetzung Dienstag.", rKlausurSW, { seriesId: "klausur-sw" });
+    addEvent("2027-11-08", "Leistungsklausur Sozialwirtschaft (Tag 1)", "Klausur", "09:00", 540, "2-Tage-Block Mo+Di, 2. von 2×/Jahr – KW 45, eine Woche vor der GBL-Klausur (KW 46).", rKlausurSW, { seriesId: "klausur-sw" });
+    addEvent("2027-11-09", "Leistungsklausur Sozialwirtschaft (Tag 2)", "Klausur", "09:00", 360, "Fortsetzung Dienstag.", rKlausurSW, { seriesId: "klausur-sw" });
+    addEvent("2027-11-18", "GBL-Klausur (Tag 1)", "Klausur", "09:00", 540, "Jährlich im November, 1,5 Tage Do–Fr. Regel 4: nicht mit der Leistungsklausur Sozialwirtschaft gekoppelt.", rGBLKlausur, { seriesId: "gbl-klausur" });
+    addEvent("2027-11-19", "GBL-Klausur (Tag 2)", "Klausur", "09:00", 240, "Fortsetzung bis Freitagmittag.", rGBLKlausur, { seriesId: "gbl-klausur" });
+    addEvent("2027-02-04", "Führung im Dialog (Tag 1)", "Klausur", "09:00", 540, "Jährlich Feb/März, 1,5 Tage Do–Fr, Gesamtführung (Datum lt. Arbeitsdatei 27.09.).", rFiD, { seriesId: "fuehrung-dialog" });
+    addEvent("2027-02-05", "Führung im Dialog (Tag 2)", "Klausur", "09:00", 240, "Fortsetzung bis Freitagmittag.", rFiD, { seriesId: "fuehrung-dialog" });
+    addEvent("2027-04-08", "Klausur Strategie (Tag 1)", "Klausur", "09:00", 480, "Platzhalter: Halbjahrestakt, Termin noch offen lt. Merino-Kesting.", rStrategie, { placeholder: true, seriesId: "klausur-strategie" });
+    addEvent("2027-04-09", "Klausur Strategie (Tag 2)", "Klausur", "09:00", 240, "Platzhalter: Tag 2 von 2.", rStrategie, { placeholder: true, seriesId: "klausur-strategie" });
+    addEvent("2027-09-30", "Klausur Strategie (Tag 1)", "Klausur", "09:00", 480, "Platzhalter: Halbjahrestakt, 2. Termin, noch offen.", rStrategie, { placeholder: true, seriesId: "klausur-strategie" });
+    addEvent("2027-10-01", "Klausur Strategie (Tag 2)", "Klausur", "09:00", 240, "Platzhalter: Tag 2 von 2.", rStrategie, { placeholder: true, seriesId: "klausur-strategie" });
+
+    // ---- 2. Blocker (Regel 5 + 6) ----
+    for (m = 0; m < 12; m++) {
+      var mondays = getAllWeekdaysOfMonth(YEAR, m, 1);
+      for (i = 0; i < mondays.length; i++) {
+        k = dateToKey(mondays[i]); if (isHoliday(k) || hasKlausur(k)) continue;
+        addEvent(k, "Fokuszeit-Blocker (Mo)", "Blocker", "07:30", 90, "Wissensmanagement, Selbstorganisation, Vor-/Nachbereitung – inkl. 0,5 Std. Abstimmung mit Assistenz GF.", rFokusMo);
+      }
+      var fridays = getAllWeekdaysOfMonth(YEAR, m, 5);
+      for (i = 0; i < fridays.length; i++) {
+        k = dateToKey(fridays[i]); if (isHoliday(k) || hasKlausur(k)) continue;
+        addEvent(k, "Fokuszeit-Blocker (Fr)", "Blocker", "09:00", 120, "Wissensmanagement, Selbstorganisation, Vor-/Nachbereitung – inkl. 0,5 Std. Abstimmung mit Assistenz GF.", rFokusFr);
+      }
+      var weds = getAllWeekdaysOfMonth(YEAR, m, 3);
+      for (i = 0; i < weds.length; i++) {
+        k = dateToKey(weds[i]); if (isHoliday(k) || hasKlausur(k)) continue;
+        addEvent(k, "Projektarbeit-Blocker GF", "Projekt", "13:30", 120, "Statusmeetings, Telefonate, operative Klärung – fest Mittwoch (Regel 6).", rProjekt);
+      }
+    }
+
+    // ---- 3. Montags-Anker ----
+    for (m = 0; m < 12; m++) {
+      var mo3 = avoidKlausur(getNthWeekdayOfMonth(YEAR, m, 1, 3));
+      k = dateToKey(mo3.date);
+      var ekl = placeOnDay(k, "Erweiterte Konzernleitung (eKL)", "Gremium", "12:00", 180, "Monatlicher Montag-Anker (EVAR), 3. Montag, 3 Std." + shiftNote(mo3), rEKL, { ort: "EVAR" });
+      if (m % 3 === 0) {
+        placeOnDay(k, "JF Machleit Ebner", "JF", fromMin(toMin(ekl.start) + ekl.duration + 15), 50, "Quartalsweise direkt im Anschluss an die eKL, ab 01/2027 (EVAR), 50 Min.", rMachleit, { ort: "EVAR" });
+      }
+      var mo1 = avoidKlausur(getNthWeekdayOfMonth(YEAR, m, 1, 1));
+      k = dateToKey(mo1.date);
+      placeOnDay(k, "Leitungskonferenz Sozialwirtschaft", "Gremium", "14:00", 120, "Monatlicher Montag-Anker (Diakonie Ruhr), 1. Montag, 2 Std." + shiftNote(mo1), rLK, { ort: "Westring" });
+    }
+
+    // ---- 4. Dienstag = JF-Tag (Arbeitsannahme Slotverteilung) ----
+    var partnerIM = ["JF Zittlau", "JF Konter", "JF Rojano-Marin", "JF Röper", "JF Weisang", "JF Pernak", "JF MAV IM", "JF Möller/Hagenbrock"];
+    var partnerLeWo = ["JF Lahn", "JF Rethfeldt (MiR)", "JF Raatz", "JF Malcher (Bau)", "JF Sonnenschein (Immobilien)"];
+    var tueGroups = {
+      1: { partner: ["JF Zittlau", "JF Konter", "JF Rojano-Marin", "JF Röper"], gbl: ["JF Melzig", "JF Frerich/Culina"], referat: ["JF Wirtschaft & Finanzen"] },
+      2: { partner: ["JF Weisang", "JF Pernak", "JF MAV IM", "JF Möller/Hagenbrock"], gbl: ["JF Moreira"], referat: ["JF Marketing & Vertrieb"] },
+      3: { partner: ["JF Lahn", "JF Rethfeldt (MiR)", "JF Raatz"], gbl: ["JF Kutlu", "JF Rieckert"], referat: [] },
+      4: { partner: ["JF Malcher (Bau)", "JF Sonnenschein (Immobilien)"], gbl: ["JF Bradtke", "JF Eull"], referat: [] }
+    };
+    // Intervalltermine: Klausurtage werden um eine Woche verschoben
+    var avoidTue = function(list) { return list.map(function(k0) { var kk = k0; while (hasKlausur(kk) || isHoliday(kk)) kk = dateToKey(addDays(parseDateKey(kk), 7)); return kk; }); };
+    var jahndorfDates = avoidTue(intervalDates("2027-01-19", 7));
+    var personalDates = avoidTue(intervalDates("2027-01-12", 7));
+    var qmDates = avoidTue(intervalDates("2027-01-26", 7));
+    var traeger = function(name) { return partnerIM.indexOf(name) >= 0 ? "Innere Mission" : (partnerLeWo.indexOf(name) >= 0 ? "LeWo" : ""); };
+    var countDay = function(kk) { return (eventsData[kk] || []).length; };
+
+    for (m = 0; m < 12; m++) {
+      var tuesdays = getAllWeekdaysOfMonth(YEAR, m, 2).map(dateToKey);
+      var freeTuesdays = tuesdays.filter(function(kk) { return !hasKlausur(kk) && !isHoliday(kk); });
+      // Zielt auf den Dienstag des Monats mit der geringsten Belegung, wenn der Stamm-Dienstag ausfällt
+      var target = function(kk) {
+        if (freeTuesdays.indexOf(kk) >= 0) return { key: kk, moved: false };
+        var best = freeTuesdays[0];
+        freeTuesdays.forEach(function(c) { if (countDay(c) < countDay(best)) best = c; });
+        return { key: best, moved: true, from: kk };
+      };
+      var movedNote = function(t) { return t.moved ? " Verschoben von " + fmtDateDE(t.from) + " (Klausur/Feiertag)." : ""; };
+
+      // Reihenfolge: reguläre Dienstage zuerst, ausfallende (Klausur/Feiertag) zuletzt, damit deren Formate auf die am wenigsten belegten Dienstage verteilt werden
+      var order = []; for (i = 0; i < tuesdays.length; i++) order.push(i);
+      order.sort(function(a, b) { return (freeTuesdays.indexOf(tuesdays[a]) < 0 ? 1 : 0) - (freeTuesdays.indexOf(tuesdays[b]) < 0 ? 1 : 0) || a - b; });
+      for (var oi = 0; oi < order.length; oi++) {
+        i = order[oi];
+        k = tuesdays[i];
+        var nth = i + 1;
+        // feste Zeit zuerst: Wirtschaftsausschuss SBO (4. Di)
+        if (nth === 4) {
+          var tw = target(k);
+          addEvent(tw.key, "Wirtschaftsausschuss SBO", "Gremium", "15:00", 120, "Monatlich, 4. Dienstag, 2 Std. (Modell A1)." + movedNote(tw), rWA, { ort: "SBO" });
+        }
+        // Intervalltermine (6–8 Wochen, 7-Wochen-Takt)
+        if (personalDates.indexOf(k) >= 0) {
+          var bk = "jf-personal-" + k;
+          var p1 = placeOnDay(k, "JF Personal", "JF", "09:00", 50, "Referat Personal, 50 Min. – Teil 1 von 3 des unteilbaren 75-Min.-Blocks (Regel 3).", rPersonal, { blockKey: bk, seriesId: "jf-personal" });
+          var p2 = addEvent(k, "JF Personal – Poolspringer-Slot Frau Mala", "JF", fromMin(toMin(p1.start) + 50), 20, "Teilslot für Frau Mala innerhalb JF Personal, 20 Min. – Teil 2 von 3 (Regel 2: kein eigener Termin).", rPersonal, { blockKey: bk, seriesId: "jf-personal" });
+          addEvent(k, "JF Personal – Wechselpuffer", "JF", fromMin(toMin(p2.start) + 20), 5, "Wechselpuffer, 5 Min. – Teil 3 von 3, Block gesamt 75 Min.", rPersonal, { blockKey: bk, seriesId: "jf-personal" });
+        }
+        if (qmDates.indexOf(k) >= 0) {
+          placeOnDay(k, "JF QM & Regulatorik", "JF", "09:00", 50, "Referat QM & Regulatorik, alle 6–8 Wochen, 50 Min.", rQM, { seriesId: "jf-qm" });
+        }
+        if (jahndorfDates.indexOf(k) >= 0) {
+          placeOnDay(k, "JF Jahndorf", "JF", "09:00", 50, "Regel 1: Turnus alle 6–8 Wochen (nicht monatlich), 50 Min. Träger: LeWo.", rJahndorf, { seriesId: "jahndorf", ort: "LeWo" });
+        }
+        var g = tueGroups[nth];
+        if (g) {
+          var j, t;
+          for (j = 0; j < g.partner.length; j++) {
+            t = target(k);
+            placeOnDay(t.key, g.partner[j], "JF", "09:00", 50, "Monatlicher Jour fixe, 50 Min. Träger: " + traeger(g.partner[j]) + ". Slotzuordnung = Arbeitsannahme." + movedNote(t), rPartner, { assumption: true, seriesId: "partner-" + g.partner[j], ort: traeger(g.partner[j]) });
+          }
+          for (j = 0; j < g.gbl.length; j++) {
+            var d = g.gbl[j] === "JF Rieckert" ? "Monatlicher Jour fixe GBL, ambulanter Bereich, 50 Min. (ersetzt die frühere 3-Std.-Sitzung DB/DD). Di-Mittagsband." :
+                    g.gbl[j] === "JF Frerich/Culina" ? "Monatlicher Jour fixe GBL / Tochtergesellschaft Culina, 50 Min. Di-Mittagsband (Takt: monatlich als Obergrenze)." :
+                    "Monatlicher Jour fixe GBL, 50 Min. Di-Mittagsband.";
+            t = target(k);
+            placeOnDay(t.key, g.gbl[j], "JF", "12:00", 50, d + movedNote(t), rGBL, { assumption: true, seriesId: "gbl-" + g.gbl[j] });
+          }
+          for (j = 0; j < g.referat.length; j++) {
+            t = target(k);
+            placeOnDay(t.key, g.referat[j], "JF", "12:00", 50, "Monatlicher Jour fixe Referat " + g.referat[j].replace("JF ", "") + ", 50 Min. Di-Mittagsband." + movedNote(t), rReferat, { assumption: true, seriesId: "referat-" + g.referat[j] });
+          }
+          if (nth === 3) {
+            t = target(k);
+            placeOnDay(t.key, "JF A³-Team", "JF", "14:00", 90, "Strategie & Controlling, 90 Min. monatlich (Leitung Merino-Kesting), Dienstagnachmittag." + movedNote(t), rA3, { seriesId: "jf-a3" });
+          }
+        }
+      }
+    }
+
+    // ---- 5. Mittwoch: Innere Mission / extern ----
+    for (m = 0; m < 12; m += 3) {
+      var mi1 = avoidKlausur(getNthWeekdayOfMonth(YEAR, m, 3, 1)); k = dateToKey(mi1.date);
+      placeOnDay(k, "IMK", "Gremium", "09:00", 180, "Innere Mission Konferenz, quartalsweise, 3 Std., extern." + shiftNote(mi1), rIMK, { ort: "Innere Mission" });
+    }
+    var vsIM = ["2027-02-10", "2027-04-21", "2027-06-23", "2027-09-08", "2027-11-24"];
+    for (i = 0; i < vsIM.length; i++) placeOnDay(vsIM[i], "Vorstandssitzung IM", "Gremium", "09:00", 90, "Platzhalter: ca. 4–5×/Jahr, extern – genaue Termine noch offen.", rExtern, { placeholder: true, seriesId: "vorstand-im", ort: "Innere Mission" });
+    placeOnDay("2027-03-17", "Verwaltungsrat IM", "Gremium", "09:00", 90, "Platzhalter: ca. 2×/Jahr, extern – genaue Termine noch offen.", rExtern, { placeholder: true, seriesId: "verwaltungsrat-im", ort: "Innere Mission" });
+    placeOnDay("2027-10-13", "Verwaltungsrat IM", "Gremium", "09:00", 90, "Platzhalter: ca. 2×/Jahr, extern – genaue Termine noch offen.", rExtern, { placeholder: true, seriesId: "verwaltungsrat-im", ort: "Innere Mission" });
+    placeOnDay("2027-06-16", "AG Wohlfahrt Bochum", "Gremium", "10:00", 90, "Platzhalter: unregelmäßig, extern – Termin noch offen.", rExtern, { placeholder: true, seriesId: "ag-wohlfahrt", ort: "extern" });
+    placeOnDay("2027-09-15", "AG-FW Stadt Bochum", "Gremium", "10:00", 90, "Platzhalter: unregelmäßig, extern – Termin noch offen.", rExtern, { placeholder: true, seriesId: "ag-fw", ort: "Stadt Bochum" });
+
+    // ---- 6. Donnerstag: Steuerung, Gremien, Puffer ----
+    var rotation = ["Steuerungsgruppe UK DR", "Steuerungsgruppe Personal", "Steuerungsgruppe Digitalisierung"];
+    for (m = 0; m < 12; m++) {
+      var do1 = avoidKlausur(getNthWeekdayOfMonth(YEAR, m, 4, 1)); k = dateToKey(do1.date);
+      placeOnDay(k, rotation[m % 3], "Steuerkreis", "09:00", 120, "Alte Steuerungsgruppe, Do-Rotation, 2 Std. – bis zur Klärung mit den neuen Steuerkreisen beibehalten." + shiftNote(do1), rSG, { seriesId: "steuerungsgruppe", ort: "Diakonie Ruhr" });
+      var do2 = avoidKlausur(getNthWeekdayOfMonth(YEAR, m, 4, 2)); k = dateToKey(do2.date);
+      placeOnDay(k, "Wochengespräch mit GF-Beteiligung", "Gremium", "14:00", 120, "Monatlich, 2 Std., 14:00–16:00 Uhr (Regel 7). Wochentag = Arbeitsannahme 2. Donnerstag, noch nicht bestätigt." + shiftNote(do2), rWG, { assumption: true, seriesId: "wochengespraech" });
+      var do3 = avoidKlausur(getNthWeekdayOfMonth(YEAR, m, 4, 3)); k = dateToKey(do3.date);
+      if (m % 2 === 0) placeOnDay(k, "JF MAV+BR SBO", "JF", "14:00", 50, "Alle 2 Monate, 50 Min. Ersetzt Monatsgespräch SBO und Betriebsversammlung SBO (gestrichen)." + shiftNote(do3), rMAVBR, { seriesId: "mav-br-sbo", ort: "SBO" });
+      placeOnDay(k, "Pufferslot Gremien", "Gremium", "16:00", 90, "Fester Schutzslot für kurzfristige Gremienbelange, 3. Donnerstag, 16:00–17:30." + shiftNote(do3), rPuffer, { seriesId: "pufferslot" });
+      var do4 = avoidKlausur(getNthWeekdayOfMonth(YEAR, m, 4, 4)); k = dateToKey(do4.date);
+      var sk1 = placeOnDay(k, "Steuerkreis Wirtschaft & Finanzen", "Steuerkreis", "09:30", 90, "Monatlich – Teil 1 des Doppelpacks in derselben Einrichtung, GF dabei." + shiftNote(do4), rSKWF, { seriesId: "sk-wifi", ort: "Einrichtung (Vor-Ort)" });
+      if (m % 2 === 0) placeOnDay(k, "Steuerkreis QM & Regulatorik", "Steuerkreis", fromMin(toMin(sk1.start) + sk1.duration + 15), 90, "Alle 2 Monate – Teil 2 des Doppelpacks direkt im Anschluss, gleiche Einrichtung, GF dabei.", rSKQM, { seriesId: "sk-qm", ort: "Einrichtung (Vor-Ort)" });
+    }
+    // Gesellschafter / AR (Termine exemplarisch, unbestätigt)
+    placeOnDay("2027-03-11", "AR/GV SBO", "Gremium", "09:00", 180, "Platzhalter: 2×/Jahr (nicht quartalsweise), Termin noch offen.", rGVV, { placeholder: true, seriesId: "ar-gv-sbo", ort: "SBO" });
+    placeOnDay("2027-09-16", "AR/GV SBO", "Gremium", "09:00", 180, "Platzhalter: 2×/Jahr (nicht quartalsweise), Termin noch offen.", rGVV, { placeholder: true, seriesId: "ar-gv-sbo", ort: "SBO" });
+    placeOnDay("2027-03-25", "GVV DADuL", "Gremium", "09:00", 120, "Platzhalter: Gesellschafterversammlung DADuL, 2×/Jahr, Termin noch offen.", rGVV, { placeholder: true, seriesId: "gvv-dadul" });
+    placeOnDay("2027-10-14", "GVV DADuL", "Gremium", "09:00", 120, "Platzhalter: Gesellschafterversammlung DADuL, 2×/Jahr, Termin noch offen.", rGVV, { placeholder: true, seriesId: "gvv-dadul" });
+    placeOnDay("2027-04-15", "GVV Pflege/DfM/Culina", "Gremium", "09:00", 120, "Platzhalter: Gesellschafterversammlung Pflege/DfM/Culina, 2×/Jahr, Termin noch offen.", rGVV, { placeholder: true, seriesId: "gvv-pflege" });
+    placeOnDay("2027-11-04", "GVV Pflege/DfM/Culina", "Gremium", "09:00", 120, "Platzhalter: Gesellschafterversammlung Pflege/DfM/Culina, 2×/Jahr, Termin noch offen.", rGVV, { placeholder: true, seriesId: "gvv-pflege" });
+    placeOnDay("2027-02-18", "AG DADuL (Back, Kirchhoff)", "Gremium", "10:00", 120, "Platzhalter: 3×/Jahr, 2 Std., Termin noch offen.", rGVV, { placeholder: true, seriesId: "ag-dadul" });
+    placeOnDay("2027-06-17", "AG DADuL (Back, Kirchhoff)", "Gremium", "10:00", 120, "Platzhalter: 3×/Jahr, 2 Std., Termin noch offen.", rGVV, { placeholder: true, seriesId: "ag-dadul" });
+    placeOnDay("2027-10-21", "AG DADuL (Back, Kirchhoff)", "Gremium", "10:00", 120, "Platzhalter: 3×/Jahr, 2 Std., Termin noch offen.", rGVV, { placeholder: true, seriesId: "ag-dadul" });
+    // LK ambulant / stationär (offen): gemeinsamer Kopf, getrennte Fachteile direkt nacheinander
+    ["2027-03-04", "2027-09-02"].forEach(function(lk) {
+      var a = placeOnDay(lk, "LK ambulant", "Gremium", "09:00", 90, "Platzhalter: noch offen lt. Merino-Kesting – gemeinsamer Konferenzkopf mit LK stationär, getrennte Fachteile.", rLKamb, { placeholder: true, seriesId: "lk-ambulant" });
+      placeOnDay(lk, "LK stationär", "Gremium", fromMin(toMin(a.start) + a.duration), 90, "Platzhalter: noch offen – gemeinsamer Konferenzkopf mit LK ambulant, getrennte Fachteile.", rLKamb, { placeholder: true, seriesId: "lk-stationaer", gap: 0 });
+    });
+
+    // Tageslisten sortieren
+    for (var dk in eventsData) sortDay(dk);
+  }
+
+  function sortDay(dk) { if (eventsData[dk]) eventsData[dk].sort(function(a, b) { return toMin(a.start) - toMin(b.start) || a.title.localeCompare(b.title); }); }
+
+  // ================= Plausibilitäts-Engine =================
+  function allEventsFlat() {
+    var out = [];
+    for (var dk in eventsData) for (var i = 0; i < eventsData[dk].length; i++) out.push({ dateKey: dk, ev: eventsData[dk][i] });
+    return out;
+  }
+  function findEventsBySeries(seriesId) { return allEventsFlat().filter(function(x) { return x.ev.seriesId === seriesId; }); }
+  function findEventsByRuleId(ruleId) { return allEventsFlat().filter(function(x) { return x.ev.rule && x.ev.rule.id === ruleId; }); }
+  function overlaps(a, b) { var as = toMin(a.start), ae = as + a.duration, bs = toMin(b.start), be = bs + b.duration; return as < be && bs < ae; }
+  function daysBetween(k1, k2) { return Math.round(Math.abs(parseDateKey(k1) - parseDateKey(k2)) / 86400000); }
+
+  function checkPlausibility(dateKey) {
+    var dt = parseDateKey(dateKey);
+    var weekday = WEEKDAY_SHORT[dt.getDay()];
+    var events = eventsData[dateKey] || [];
+    var results = [];
+    var thisWeek = getISOWeekKey(dt);
+    events.forEach(function(ev) {
+      var msgs = [], hints = [];
+      var rule = ev.rule;
+      if (isHoliday(dateKey)) msgs.push("Liegt auf einem Feiertag (" + HOLIDAYS[dateKey] + ").");
+      else if (isWeekend(dateKey)) msgs.push("Liegt am Wochenende.");
+      if (rule) {
+        if (rule.allowedDays && rule.allowedDays.indexOf(weekday) === -1) msgs.push("Wochentag " + weekday + " nicht zulässig – erlaubt: " + rule.allowedDays.join(", ") + ".");
+        if (rule.fixedTime && ev.time !== rule.fixedTime) msgs.push("Zeitfenster " + ev.time + " weicht vom festen Zeitfenster " + rule.fixedTime + " ab.");
+        if (rule.duration && ev.duration !== rule.duration && !ev.blockKey) msgs.push("Dauer " + ev.duration + " Min. weicht von der Regeldauer " + rule.duration + " Min. ab.");
+        if (rule.couplingForbiddenWith) {
+          findEventsByRuleId(rule.couplingForbiddenWith).forEach(function(o) {
+            if (getISOWeekKey(parseDateKey(o.dateKey)) === thisWeek) msgs.push("Kopplungsverbot verletzt: liegt in derselben ISO-Woche (" + thisWeek + ") wie " + o.ev.title + " am " + fmtDateDE(o.dateKey) + ".");
+          });
+        }
+        if (rule.notSplittable && ev.blockKey) {
+          var parts = allEventsFlat().filter(function(x) { return x.ev.blockKey === ev.blockKey; });
+          var otherDay = parts.filter(function(x) { return x.dateKey !== dateKey; });
+          if (otherDay.length) msgs.push("Block nicht trennbar: Teil „" + otherDay[0].ev.title + "“ liegt an einem anderen Tag (" + fmtDateDE(otherDay[0].dateKey) + ").");
+          if (parts.length < 3) msgs.push("Block unvollständig: nur " + parts.length + " von 3 Teilen vorhanden (" + rule.subslots + ").");
+          var sorted = parts.map(function(x) { return x.ev; }).sort(function(a, b) { return toMin(a.start) - toMin(b.start); });
+          var total = 0;
+          for (var s = 0; s < sorted.length; s++) {
+            total += sorted[s].duration;
+            if (s > 0 && toMin(sorted[s].start) !== toMin(sorted[s - 1].start) + sorted[s - 1].duration) { msgs.push("Block nicht zusammenhängend: „" + sorted[s].title + "“ schließt nicht direkt an."); break; }
+          }
+          if (parts.length === 3 && total !== rule.totalDuration) msgs.push("Blockdauer " + total + " Min. statt " + rule.totalDuration + " Min.");
+        }
+        if (rule.coupledAfter) {
+          var prev = events.filter(function(o) { return o.rule && o.rule.id === rule.coupledAfter; });
+          if (!prev.length) msgs.push("Doppelpack: „" + (RULES[rule.coupledAfter] ? RULES[rule.coupledAfter].label : rule.coupledAfter) + "“ fehlt am selben Tag (gleiche Einrichtung, direkt nacheinander).");
+        }
+        // Turnus
+        var t = (rule.turnus || "").toLowerCase();
+        var same = findEventsByRuleId(rule.id).filter(function(x) { return x.ev.uid !== ev.uid && (!ev.blockKey || x.ev.blockKey !== ev.blockKey) && (!ev.seriesId || x.ev.seriesId === ev.seriesId); });
+        if (t.indexOf("wöchentlich") === 0) {
+          var sameWeek = same.filter(function(x) { return getISOWeekKey(parseDateKey(x.dateKey)) === thisWeek; });
+          if (sameWeek.length) msgs.push("Turnus wöchentlich, aber " + (sameWeek.length + 1) + " Termine in " + thisWeek + ".");
+        } else if (t.indexOf("monatlich") === 0) {
+          var sameMonth = same.filter(function(x) { return x.dateKey.substr(0, 7) === dateKey.substr(0, 7); });
+          if (sameMonth.length) msgs.push("Turnus monatlich, aber " + (sameMonth.length + 1) + " Termine im " + monthNames[dt.getMonth()] + ".");
+        } else if (t.indexOf("alle 2 monate") === 0) {
+          same.forEach(function(x) { var db = daysBetween(x.dateKey, dateKey); if (db > 0 && db < 42) msgs.push("Turnus alle 2 Monate, aber nur " + db + " Tage Abstand zum " + fmtDateDE(x.dateKey) + "."); });
+        } else if (t.indexOf("alle 6-8") === 0 || t.indexOf("alle 6–8") === 0) {
+          same.forEach(function(x) { var db = daysBetween(x.dateKey, dateKey); if (db > 0 && db < 42) msgs.push("Turnus alle 6–8 Wochen, aber nur " + db + " Tage Abstand zum " + fmtDateDE(x.dateKey) + "."); });
+        } else if (t.indexOf("quartal") === 0) {
+          same.forEach(function(x) { var db = daysBetween(x.dateKey, dateKey); if (db > 0 && db < 70) msgs.push("Turnus quartalsweise, aber nur " + db + " Tage Abstand zum " + fmtDateDE(x.dateKey) + "."); });
+        } else if (t.indexOf("jährlich") === 0) {
+          var others = same.filter(function(x) { return daysBetween(x.dateKey, dateKey) > 3; });
+          if (others.length) msgs.push("Turnus jährlich, aber weiterer Termin am " + fmtDateDE(others[0].dateKey) + ".");
+        }
+      }
+      // Überschneidungen am Tag
+      events.forEach(function(o) {
+        if (o.uid === ev.uid) return;
+        if (ev.blockKey && o.blockKey === ev.blockKey) return;
+        if (overlaps(ev, o)) msgs.push("Überschneidung mit „" + o.title + "“ (" + o.time + ").");
+      });
+      var st = toMin(ev.start), en = st + ev.duration;
+      if (st < 7 * 60 || en > 18 * 60) hints.push("Außerhalb des Kernzeitfensters 07:00–18:00.");
+      if (ev.placeholder) hints.push("Platzhalter – Termin unbestätigt, mit Sekretariat abzustimmen.");
+      if (ev.assumption) hints.push("Arbeitsannahme (Slot/Wochentag nicht bestätigt).");
+      if (rule && rule.notSplittable) hints.push("Block nicht trennbar: " + rule.subslots + ", gesamt " + rule.totalDuration + " Min.");
+      results.push({ ev: ev, ok: msgs.length === 0, messages: msgs, hints: hints });
+    });
+    return results;
+  }
+
+  var violationCache = {};
+  function recomputeViolations() {
+    violationCache = {};
+    var total = 0;
+    for (var dk in eventsData) {
+      if (!eventsData[dk].length) continue;
+      var res = checkPlausibility(dk);
+      var n = res.filter(function(r) { return !r.ok; }).length;
+      if (n) { violationCache[dk] = res; total += n; }
+    }
+    return total;
+  }
+
+  // ================= Jahresübersicht (Grundlayout unverändert) =================
+  var currentFilter = "all";
+  var selectedDateKey = null;
+  function passesFilter(ev) {
+    if (currentFilter === "all") return true;
+    if (currentFilter === "JF") return ev.type === "JF";
+    if (currentFilter === "Steuerkreis") return ev.type === "Steuerkreis";
+    if (currentFilter === "Gremium") return ev.type === "Gremium";
+    if (currentFilter === "Blocker") return (ev.type === "Blocker" || ev.type === "Projekt" || ev.type === "Klausur");
+    if (currentFilter === "Platzhalter") return !!ev.placeholder;
+    return false;
+  }
+
+  function renderCalendar() {
+    var container = document.getElementById("calendarContainer");
+    container.innerHTML = "";
+    for (var m = 0; m < 12; m++) {
+      var monthCard = document.createElement("div");
+      monthCard.className = "month-card";
+      var mTitle = document.createElement("div");
+      mTitle.className = "month-title";
+      var cnt = 0, hrs = 0;
+      for (var dd = 1; dd <= new Date(YEAR, m + 1, 0).getDate(); dd++) { var l = eventsData[formatYMD(YEAR, m, dd)] || []; l.forEach(function(e) { if (passesFilter(e)) { cnt++; hrs += e.duration; } }); }
+      mTitle.innerHTML = "<span>" + monthNames[m] + " " + YEAR + "</span><small>" + cnt + " Termine · " + (Math.round(hrs / 6) / 10).toLocaleString("de-DE") + " h</small>";
+      mTitle.title = "Monatsfokus öffnen";
+      (function(mm) { mTitle.addEventListener("click", function() { openFocus(formatYMD(YEAR, mm, 1), "month"); }); })(m);
+      monthCard.appendChild(mTitle);
+
+      var dHead = document.createElement("div");
+      dHead.className = "days-head";
+      for (var h = 0; h < 7; h++) { var sp = document.createElement("span"); sp.textContent = dayShorts[h]; dHead.appendChild(sp); }
+      monthCard.appendChild(dHead);
+
+      var dGrid = document.createElement("div");
+      dGrid.className = "days-grid";
+      var firstWd = (new Date(YEAR, m, 1).getDay() + 6) % 7;
+      var daysInMonth = new Date(YEAR, m + 1, 0).getDate();
+      for (var empty = 0; empty < firstWd; empty++) { var ec = document.createElement("div"); ec.className = "cell empty"; dGrid.appendChild(ec); }
+      for (var day = 1; day <= daysInMonth; day++) {
+        var dateKey = formatYMD(YEAR, m, day);
+        var cell = document.createElement("div");
+        cell.className = "cell" + (isWeekend(dateKey) ? " weekend" : "") + (isHoliday(dateKey) ? " holiday" : "") + (selectedDateKey === dateKey ? " selected" : "");
+        cell.setAttribute("data-date", dateKey);
+        if (isHoliday(dateKey)) cell.title = HOLIDAYS[dateKey];
+        var numSpan = document.createElement("span");
+        numSpan.className = "day-num"; numSpan.textContent = day; cell.appendChild(numSpan);
+        var list = (eventsData[dateKey] || []).filter(passesFilter);
+        if (list.length > 0) {
+          var dotRow = document.createElement("div"); dotRow.className = "dot-row";
+          for (var i = 0; i < Math.min(list.length, 4); i++) {
+            var dot = document.createElement("span");
+            dot.className = "termin-dot" + (list[i].placeholder ? " ph" : "");
+            dot.style.background = list[i].color; dot.title = list[i].time + " " + list[i].title;
+            dotRow.appendChild(dot);
+          }
+          if (list.length > 4) { var more = document.createElement("span"); more.className = "more"; more.textContent = "+" + (list.length - 4); dotRow.appendChild(more); }
+          cell.appendChild(dotRow);
+          if (list.some(function(e) { return e.placeholder; })) cell.classList.add("has-placeholder");
+          if (violationCache[dateKey]) cell.classList.add("has-violation");
+        }
+        (function(k) { cell.addEventListener("click", function() { selectDate(k); openFocus(k, "day"); }); })(dateKey);
+        dGrid.appendChild(cell);
+      }
+      monthCard.appendChild(dGrid);
+      container.appendChild(monthCard);
+    }
+    renderKPIs();
+  }
+
+  function renderKPIs() {
+    var flat = allEventsFlat();
+    var total = flat.length, hrs = 0, ph = 0, days = {};
+    flat.forEach(function(x) { hrs += x.ev.duration; if (x.ev.placeholder) ph++; days[x.dateKey] = 1; });
+    var viol = 0; for (var dk in violationCache) viol += violationCache[dk].filter(function(r) { return !r.ok; }).length;
+    var g = document.getElementById("kpiGrid");
+    g.innerHTML = '<div class="kpi"><div class="v">' + total + '</div><div class="l">Termine 2027</div></div>' +
+      '<div class="kpi"><div class="v">' + Math.round(hrs / 60).toLocaleString("de-DE") + ' h</div><div class="l">Terminzeit / ' + Object.keys(days).length + ' Tage</div></div>' +
+      '<div class="kpi warn"><div class="v">' + ph + '</div><div class="l">Platzhalter offen</div></div>' +
+      '<div class="kpi ' + (viol ? "bad" : "") + '"><div class="v">' + viol + '</div><div class="l">Regelverstöße</div></div>';
+    var pill = document.getElementById("pillStatus");
+    if (viol === 0) { pill.className = "pill status-ok"; pill.textContent = "Regelprüfung: keine Verstöße"; }
+    else { pill.className = "pill status-bad"; pill.textContent = "Regelprüfung: " + viol + " Verstöße"; }
+  }
+
+  function selectDate(dateKey) {
+    selectedDateKey = dateKey;
+    var all = document.querySelectorAll(".cell.selected");
+    for (var i = 0; i < all.length; i++) all[i].classList.remove("selected");
+    var target = document.querySelector('.cell[data-date="' + dateKey + '"]');
+    if (target) target.classList.add("selected");
+    document.getElementById("detailHeading").textContent = fmtDateLong(dateKey);
+    var sub = document.getElementById("detailSub");
+    var listContainer = document.getElementById("detailList");
+    var visible = (eventsData[dateKey] || []).filter(passesFilter);
+    listContainer.innerHTML = "";
+    if (isHoliday(dateKey)) { sub.textContent = "Feiertag: " + HOLIDAYS[dateKey]; }
+    if (visible.length === 0) {
+      if (!isHoliday(dateKey)) sub.textContent = "Keine Termine im gewählten Filter.";
+      listContainer.innerHTML = '<div class="empty-note">Keine Einträge an diesem Tag. Tag steht für operatives Tagesgeschäft zur Verfügung.</div>';
+    } else {
+      var hrs = 0; visible.forEach(function(e) { hrs += e.duration; });
+      sub.textContent = visible.length + " Termin(e), " + (Math.round(hrs / 6) / 10).toLocaleString("de-DE") + " h – Fokusmodus geöffnet.";
+      visible.forEach(function(ev) {
+        var card = document.createElement("div");
+        card.className = "detail-card"; card.style.borderLeftColor = ev.color;
+        card.innerHTML = '<div class="detail-title">' + escapeHtml(ev.title) + (ev.placeholder ? ' <span class="tag warn">Platzhalter</span>' : '') + '</div><div class="detail-meta">' + ev.time + ' · ' + typeLabels[ev.type] + '</div>';
+        card.addEventListener("click", function() { openFocus(dateKey, "day"); });
+        listContainer.appendChild(card);
+      });
+    }
+  }
+  function escapeHtml(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+
+  // ================= Fokusmodus =================
+  var focus = { dateKey: null, mode: "day" };
+  function openFocus(dateKey, mode) {
+    focus.dateKey = dateKey; focus.mode = mode || focus.mode || "day";
+    renderFocus();
+    document.getElementById("focusOverlay").classList.add("active");
+  }
+  function closeFocus() { document.getElementById("focusOverlay").classList.remove("active"); }
+  function afterChange(reason) {
+    if (reason) logChange(reason);
+    recomputeViolations();
+    renderCalendar();
+    if (selectedDateKey) selectDate(selectedDateKey);
+    if (document.getElementById("focusOverlay").classList.contains("active")) renderFocus();
+    autosave();
+  }
+
+  function renderFocus() {
+    ["fmDay", "fmWeek", "fmMonth"].forEach(function(id) { document.getElementById(id).classList.remove("active"); });
+    document.getElementById(focus.mode === "day" ? "fmDay" : focus.mode === "week" ? "fmWeek" : "fmMonth").classList.add("active");
+    var hint = document.getElementById("focusHint");
+    if (focus.mode === "day") { hint.textContent = "Bausteine per Drag & Drop aufeinander ziehen, um Zeiten zu tauschen. Stift = vollständig bearbeiten (Titel, Tag, Zeit, Dauer, Typ), Kreuz = löschen. Regelprüfung läuft bei jeder Änderung."; renderDayFocus(); }
+    else if (focus.mode === "week") { hint.textContent = "Termin in eine andere Spalte oder an eine andere Höhe ziehen = Tag/Beginn verschieben (15-Min.-Raster). Klick = bearbeiten."; renderWeekFocus(); }
+    else { hint.textContent = "Klick auf einen Tag öffnet den Tagesfokus."; renderMonthFocus(); }
+  }
+
+  function summaryFor(results, label) {
+    var summaryEl = document.getElementById("focusSummary");
+    var bad = results.filter(function(r) { return !r.ok; });
+    var hints = []; results.forEach(function(r) { r.hints.forEach(function(h) { if (h.indexOf("Platzhalter") === 0 || h.indexOf("Arbeitsannahme") === 0) hints.push(r.ev.title + ": " + h); }); });
+    if (bad.length === 0 && !results.length) { summaryEl.className = "focus-summary ok"; summaryEl.textContent = "Keine Termine " + label + "."; return; }
+    if (bad.length === 0) {
+      summaryEl.className = "focus-summary " + (hints.length ? "warn" : "ok");
+      summaryEl.innerHTML = "<strong>Regelprüfung: alle " + results.length + " Bausteine " + label + " regelkonform.</strong>" + (hints.length ? "<br>" + hints.length + " Hinweis(e): " + escapeHtml(hints.slice(0, 4).join(" · ")) + (hints.length > 4 ? " …" : "") : "");
+    } else {
+      var lines = []; bad.forEach(function(r) { r.messages.forEach(function(m) { lines.push("<b>" + escapeHtml(r.ev.title) + "</b> (" + r.ev.time + "): " + escapeHtml(m)); }); });
+      summaryEl.className = "focus-summary bad";
+      summaryEl.innerHTML = "<strong>Regelprüfung: " + bad.length + " Baustein(e) mit Verstoß " + label + ".</strong><br>• " + lines.join("<br>• ");
+    }
+  }
+
+  // ---- Tagesfokus ----
+  function renderDayFocus() {
+    var dateKey = focus.dateKey;
+    document.getElementById("focusTitle").textContent = "Tagesfokus – " + fmtDateLong(dateKey) + " (KW " + pad2(getISOWeek(parseDateKey(dateKey)).week) + ")" + (isHoliday(dateKey) ? " – Feiertag: " + HOLIDAYS[dateKey] : "");
+    document.getElementById("fmNew").style.display = "";
+    var results = checkPlausibility(dateKey);
+    summaryFor(results, "an diesem Tag");
+    var body = document.getElementById("focusBody");
+    body.innerHTML = "";
+    var events = (eventsData[dateKey] || []).slice().sort(function(a, b) { return toMin(a.start) - toMin(b.start); });
+    if (!events.length) { body.innerHTML = '<div class="empty-note">Keine Termine. Über „Neuer Termin an diesem Tag“ anlegen oder im Wochenfokus einen Termin hierher ziehen.</div>'; return; }
+    events.forEach(function(ev) {
+      var res = results.filter(function(r) { return r.ev.uid === ev.uid; })[0];
+      var card = document.createElement("div");
+      card.className = "baustein-card" + (res && !res.ok ? " violation" : "") + (ev.placeholder ? " placeholder" : "");
+      card.style.borderLeftColor = ev.color;
+      card.setAttribute("draggable", "true");
+      card.setAttribute("data-uid", ev.uid);
+      var head = document.createElement("div"); head.className = "baustein-head";
+      var timeSpan = document.createElement("span"); timeSpan.className = "baustein-time"; timeSpan.textContent = ev.time;
+      var titleSpan = document.createElement("span"); titleSpan.className = "baustein-title";
+      titleSpan.innerHTML = escapeHtml(ev.title) + ' <span class="tag grey">' + typeLabels[ev.type] + '</span>' + (ev.placeholder ? ' <span class="tag warn">Platzhalter</span>' : '') + (ev.assumption ? ' <span class="tag cyan">Annahme</span>' : '') + (ev.source === "manuell" ? ' <span class="tag ok">manuell</span>' : '');
+      var actions = document.createElement("div"); actions.className = "baustein-actions";
+      var editBtn = document.createElement("button"); editBtn.className = "icon-btn"; editBtn.title = "Bearbeiten"; editBtn.textContent = "✎ Bearbeiten";
+      var delBtn = document.createElement("button"); delBtn.className = "icon-btn del"; delBtn.title = "Löschen"; delBtn.textContent = "✕";
+      actions.appendChild(editBtn); actions.appendChild(delBtn);
+      head.appendChild(timeSpan); head.appendChild(titleSpan); head.appendChild(actions);
+      card.appendChild(head);
+      var desc = document.createElement("div"); desc.className = "baustein-desc"; desc.textContent = (ev.ort ? ev.ort + " · " : "") + (ev.desc || ""); card.appendChild(desc);
+      if (ev.rule) {
+        var r = ev.rule, parts = [];
+        if (r.allowedDays) parts.push("Wochentag: " + r.allowedDays.join("/"));
+        if (r.turnus) parts.push("Turnus: " + r.turnus);
+        if (r.fixedTime) parts.push("Festes Fenster: " + r.fixedTime);
+        if (r.duration) parts.push("Regeldauer: " + r.duration + " Min.");
+        if (r.couplingForbiddenWith) parts.push("Kopplungsverbot mit " + (RULES[r.couplingForbiddenWith] ? RULES[r.couplingForbiddenWith].label : r.couplingForbiddenWith));
+        if (r.notSplittable) parts.push("Nicht trennbar: " + r.subslots);
+        if (r.note) parts.push(r.note);
+        var rd = document.createElement("div"); rd.className = "baustein-rule"; rd.textContent = parts.join(" · "); card.appendChild(rd);
+      }
+      if (res && !res.ok) { var vm = document.createElement("div"); vm.className = "baustein-violation-msg"; vm.innerHTML = res.messages.map(escapeHtml).join("<br>"); card.appendChild(vm); }
+      if (res && res.hints.length) { var hm = document.createElement("div"); hm.className = "baustein-hint-msg"; hm.textContent = res.hints.join(" · "); card.appendChild(hm); }
+
+      card.addEventListener("dragstart", function(e) { e.dataTransfer.setData("text/plain", this.getAttribute("data-uid")); this.classList.add("dragging"); });
+      card.addEventListener("dragend", function() { this.classList.remove("dragging"); });
+      card.addEventListener("dragover", function(e) { e.preventDefault(); this.classList.add("dropready"); });
+      card.addEventListener("dragleave", function() { this.classList.remove("dropready"); });
+      card.addEventListener("drop", function(e) {
+        e.preventDefault(); this.classList.remove("dropready");
+        var dragged = e.dataTransfer.getData("text/plain"), target = this.getAttribute("data-uid");
+        if (dragged && dragged !== target) swapEventTimes(dateKey, dragged, target);
+      });
+      editBtn.addEventListener("click", function(e) { e.stopPropagation(); openForm(dateKey, ev.uid); });
+      delBtn.addEventListener("click", function(e) { e.stopPropagation(); deleteEvent(dateKey, ev.uid); });
+      body.appendChild(card);
+    });
+  }
+
+  function swapEventTimes(dateKey, uidA, uidB) {
+    var evs = eventsData[dateKey] || [];
+    var a = evs.filter(function(x) { return x.uid === uidA; })[0], b = evs.filter(function(x) { return x.uid === uidB; })[0];
+    if (!a || !b) return;
+    var tmp = a.start; a.start = b.start; b.start = tmp;
+    refreshTime(a); refreshTime(b); sortDay(dateKey);
+    afterChange("Zeiten getauscht am " + fmtDateDE(dateKey) + ": " + a.title + " ↔ " + b.title);
+  }
+
+  function deleteEvent(dateKey, uid) {
+    var evs = eventsData[dateKey] || [];
+    var ev = evs.filter(function(x) { return x.uid === uid; })[0];
+    if (!ev) return;
+    var msg = "„" + ev.title + "“ (" + ev.time + ") am " + fmtDateDE(dateKey) + " endgültig löschen?";
+    if (ev.blockKey && ev.rule && ev.rule.notSplittable) msg += "\nHinweis: Teil eines nicht trennbaren Blocks – die Regelprüfung meldet danach einen unvollständigen Block.";
+    confirmDialog("Termin löschen", msg, function() {
+      var cur = eventsData[dateKey] || [];
+      eventsData[dateKey] = cur.filter(function(x) { return x.uid !== uid; });
+      if (!eventsData[dateKey].length) delete eventsData[dateKey];
+      afterChange("Gelöscht: " + ev.title + " am " + fmtDateDE(dateKey));
+    }, "Löschen");
+  }
+
+  function moveEvent(fromKey, uid, toKey, newStart) {
+    var evs = eventsData[fromKey] || [];
+    var ev = evs.filter(function(x) { return x.uid === uid; })[0];
+    if (!ev) return;
+    var moved = [ev];
+    if (ev.blockKey) moved = evs.filter(function(x) { return x.blockKey === ev.blockKey; }); // Block gemeinsam verschieben
+    var delta = (newStart !== null && newStart !== undefined) ? toMin(newStart) - toMin(ev.start) : 0;
+    eventsData[fromKey] = evs.filter(function(x) { return moved.indexOf(x) === -1; });
+    if (!eventsData[fromKey].length) delete eventsData[fromKey];
+    if (!eventsData[toKey]) eventsData[toKey] = [];
+    moved.forEach(function(x) { x.start = fromMin(Math.max(0, toMin(x.start) + delta)); refreshTime(x); eventsData[toKey].push(x); });
+    sortDay(toKey);
+    afterChange("Verschoben: " + ev.title + " von " + fmtDateDE(fromKey) + " nach " + fmtDateDE(toKey) + " " + ev.time + (moved.length > 1 ? " (Block, " + moved.length + " Teile)" : ""));
+  }
+
+  // ---- Wochenfokus ----
+  var HOUR_PX = 44, DAY_START = 7, DAY_END = 18;
+  function renderWeekFocus() {
+    var d = parseDateKey(focus.dateKey);
+    var mon = mondayOfWeek(d);
+    var iso = getISOWeek(d);
+    var fri = addDays(mon, 4);
+    document.getElementById("focusTitle").textContent = "Wochenfokus – KW " + pad2(iso.week) + " (" + pad2(mon.getDate()) + "." + pad2(mon.getMonth() + 1) + ". – " + pad2(fri.getDate()) + "." + pad2(fri.getMonth() + 1) + "." + fri.getFullYear() + ")";
+    document.getElementById("fmNew").style.display = "";
+    var results = [];
+    var dayKeys = [];
+    for (var i = 0; i < 7; i++) { var dk = dateToKey(addDays(mon, i)); dayKeys.push(dk); if (eventsData[dk]) results = results.concat(checkPlausibility(dk)); }
+    summaryFor(results, "in KW " + pad2(iso.week));
+    var body = document.getElementById("focusBody");
+    body.innerHTML = "";
+    var showWeekend = dayKeys.slice(5).some(function(k) { return eventsData[k] && eventsData[k].length; });
+    var cols = showWeekend ? 7 : 5;
+    var grid = document.createElement("div"); grid.className = "week-grid";
+    grid.style.gridTemplateColumns = "52px repeat(" + cols + ", 1fr)";
+    grid.style.setProperty("--hourpx", HOUR_PX + "px");
+    var corner = document.createElement("div"); corner.className = "week-head"; corner.textContent = ""; grid.appendChild(corner);
+    for (i = 0; i < cols; i++) {
+      var hk = dayKeys[i]; var hd = parseDateKey(hk);
+      var h = document.createElement("div"); h.className = "week-head" + (isHoliday(hk) ? " holiday" : "");
+      h.innerHTML = WEEKDAY_SHORT[hd.getDay()] + " " + pad2(hd.getDate()) + "." + pad2(hd.getMonth() + 1) + ".<small>" + (isHoliday(hk) ? HOLIDAYS[hk] : ((eventsData[hk] || []).length + " Termine")) + "</small>";
+      (function(k) { h.style.cursor = "pointer"; h.title = "Tagesfokus"; h.addEventListener("click", function() { focus.dateKey = k; focus.mode = "day"; renderFocus(); }); })(hk);
+      grid.appendChild(h);
+    }
+    var totalH = (DAY_END - DAY_START) * HOUR_PX;
+    var times = document.createElement("div"); times.className = "week-times"; times.style.height = totalH + "px";
+    for (var hr = DAY_START; hr <= DAY_END; hr++) { var t = document.createElement("div"); t.style.top = ((hr - DAY_START) * HOUR_PX) + "px"; t.textContent = pad2(hr) + ":00"; times.appendChild(t); }
+    grid.appendChild(times);
+    for (i = 0; i < cols; i++) {
+      (function(dk) {
+        var col = document.createElement("div"); col.className = "week-col" + (isHoliday(dk) ? " holiday" : ""); col.style.height = totalH + "px";
+        col.setAttribute("data-date", dk);
+        col.addEventListener("dragover", function(e) { e.preventDefault(); this.classList.add("dragover"); });
+        col.addEventListener("dragleave", function() { this.classList.remove("dragover"); });
+        col.addEventListener("drop", function(e) {
+          e.preventDefault(); this.classList.remove("dragover");
+          var data = e.dataTransfer.getData("text/plain"); if (!data) return;
+          var p = data.split("|"); var fromKey = p[0], uid = p[1], grabOffset = parseInt(p[2] || "0", 10);
+          var rect = this.getBoundingClientRect();
+          var y = e.clientY - rect.top - grabOffset;
+          var mins = DAY_START * 60 + Math.round((y / HOUR_PX) * 60 / 15) * 15;
+          mins = Math.max(DAY_START * 60 - 60, Math.min(DAY_END * 60, mins));
+          moveEvent(fromKey, uid, dk, fromMin(mins));
+        });
+        var evs = (eventsData[dk] || []).slice().sort(function(a, b) { return toMin(a.start) - toMin(b.start); });
+        var res = results;
+        evs.forEach(function(ev, idx) {
+          var st = toMin(ev.start), en = st + ev.duration;
+          var top = Math.max(0, (st - DAY_START * 60) / 60 * HOUR_PX);
+          var height = Math.max(16, (Math.min(en, DAY_END * 60) - Math.max(st, DAY_START * 60)) / 60 * HOUR_PX - 2);
+          var r = res.filter(function(x) { return x.ev.uid === ev.uid; })[0];
+          var el = document.createElement("div");
+          el.className = "week-ev" + (r && !r.ok ? " violation" : "") + (ev.placeholder ? " placeholder" : "");
+          var overlapped = evs.slice(0, idx).some(function(o) { return overlaps(o, ev) && !(ev.blockKey && o.blockKey === ev.blockKey); });
+          if (overlapped) el.classList.add("overlapped");
+          el.style.top = top + "px"; el.style.height = height + "px"; el.style.background = ev.color;
+          el.innerHTML = "<b>" + escapeHtml(ev.title) + "</b>" + (height > 26 ? ev.time : "");
+          el.title = ev.time + " " + ev.title + (r && !r.ok ? "\n" + r.messages.join("\n") : "");
+          el.setAttribute("draggable", "true");
+          el.addEventListener("dragstart", function(e) { var rr = this.getBoundingClientRect(); e.dataTransfer.setData("text/plain", dk + "|" + ev.uid + "|" + Math.round(e.clientY - rr.top)); });
+          el.addEventListener("click", function(e) { e.stopPropagation(); openForm(dk, ev.uid); });
+          col.appendChild(el);
+        });
+        grid.appendChild(col);
+      })(dayKeys[i]);
+    }
+    var wrap = document.createElement("div"); wrap.style.overflowX = "auto"; wrap.appendChild(grid); body.appendChild(wrap);
+    var sum = document.createElement("div"); sum.style.cssText = "font-size:0.78rem;color:var(--muted);margin-top:8px";
+    var wh = 0, wn = 0; dayKeys.forEach(function(k) { (eventsData[k] || []).forEach(function(e) { wh += e.duration; wn++; }); });
+    sum.textContent = wn + " Termine, " + (Math.round(wh / 6) / 10).toLocaleString("de-DE") + " h Terminzeit in dieser Woche.";
+    body.appendChild(sum);
+  }
+
+  // ---- Monatsfokus ----
+  function renderMonthFocus() {
+    var d = parseDateKey(focus.dateKey); var m = d.getMonth();
+    document.getElementById("focusTitle").textContent = "Monatsfokus – " + monthNames[m] + " " + YEAR;
+    document.getElementById("fmNew").style.display = "";
+    var results = []; var daysInMonth = new Date(YEAR, m + 1, 0).getDate();
+    var body = document.getElementById("focusBody"); body.innerHTML = "";
+    var list = document.createElement("div"); list.className = "month-list";
+    var n = 0, hrs = 0;
+    for (var day = 1; day <= daysInMonth; day++) {
+      var dk = formatYMD(YEAR, m, day);
+      var evs = eventsData[dk]; if (!evs || !evs.length) continue;
+      var res = checkPlausibility(dk); results = results.concat(res);
+      var bad = res.filter(function(r) { return !r.ok; }).length;
+      var box = document.createElement("div"); box.className = "month-day" + (bad ? " violation" : "");
+      var dh = 0; evs.forEach(function(e) { dh += e.duration; n++; }); hrs += dh;
+      box.innerHTML = "<h4><span>" + fmtDateDE(dk) + "</span><span>" + (Math.round(dh / 6) / 10).toLocaleString("de-DE") + " h" + (bad ? ' <span class="tag bad">' + bad + ' Verstoß</span>' : "") + "</span></h4>";
+      evs.slice().sort(function(a, b) { return toMin(a.start) - toMin(b.start); }).forEach(function(ev) {
+        var r = res.filter(function(x) { return x.ev.uid === ev.uid; })[0];
+        var row = document.createElement("div"); row.className = "row" + (r && !r.ok ? " bad" : (ev.placeholder ? " ph" : ""));
+        row.innerHTML = '<span class="dot" style="background:' + ev.color + '"></span><span class="t">' + ev.time + '</span><span>' + escapeHtml(ev.title) + (ev.placeholder ? " (Platzhalter)" : "") + '</span>';
+        box.appendChild(row);
+      });
+      (function(k) { box.addEventListener("click", function() { focus.dateKey = k; focus.mode = "day"; renderFocus(); }); })(dk);
+      list.appendChild(box);
+    }
+    summaryFor(results, "im " + monthNames[m]);
+    if (!n) list.innerHTML = '<div class="empty-note">Keine Termine in diesem Monat.</div>';
+    body.appendChild(list);
+    var sum = document.createElement("div"); sum.style.cssText = "font-size:0.78rem;color:var(--muted);margin-top:10px";
+    sum.textContent = n + " Termine, " + Math.round(hrs / 60) + " h Terminzeit im " + monthNames[m] + ".";
+    body.appendChild(sum);
+  }
+
+  function focusNav(dir) {
+    var d = parseDateKey(focus.dateKey);
+    if (focus.mode === "day") d = addDays(d, dir);
+    else if (focus.mode === "week") d = addDays(d, 7 * dir);
+    else { d = new Date(d.getFullYear(), d.getMonth() + dir, 1); }
+    if (d.getFullYear() !== YEAR) return;
+    focus.dateKey = dateToKey(d);
+    renderFocus();
+  }
+
+  // ================= Formular (Anlegen / Bearbeiten) =================
+  var formState = { dateKey: null, uid: null };
+  function openForm(dateKey, uid) {
+    formState = { dateKey: dateKey, uid: uid || null };
+    var ev = uid ? (eventsData[dateKey] || []).filter(function(x) { return x.uid === uid; })[0] : null;
+    document.getElementById("formTitle").textContent = ev ? "Termin bearbeiten" : "Neuen Termin anlegen";
+    document.getElementById("fTitle").value = ev ? ev.title : "";
+    document.getElementById("fDate").value = dateKey;
+    document.getElementById("fType").value = ev ? ev.type : "JF";
+    document.getElementById("fStart").value = ev ? ev.start : "09:00";
+    document.getElementById("fDuration").value = ev ? ev.duration : 50;
+    document.getElementById("fTurnus").value = ev ? ((ev.rule && ev.rule.turnus) || "") : "";
+    document.getElementById("fOrt").value = ev ? (ev.ort || "") : "";
+    document.getElementById("fDesc").value = ev ? (ev.desc || "") : "";
+    document.getElementById("fPlaceholder").checked = ev ? !!ev.placeholder : false;
+    var seriesBox = document.getElementById("fSeries"); seriesBox.checked = false;
+    var sCount = ev && ev.seriesId ? findEventsBySeries(ev.seriesId).length : 0;
+    seriesBox.parentNode.style.display = sCount > 1 ? "" : "none";
+    seriesBox.nextElementSibling.textContent = "Titel/Dauer/Turnus/Beschreibung auf alle " + sCount + " Termine derselben Reihe übertragen";
+    var ri = document.getElementById("fRuleInfo");
+    if (ev && ev.rule) {
+      var r = ev.rule, parts = [];
+      if (r.allowedDays) parts.push("zulässige Wochentage " + r.allowedDays.join("/"));
+      if (r.fixedTime) parts.push("festes Zeitfenster " + r.fixedTime);
+      if (r.duration) parts.push("Regeldauer " + r.duration + " Min.");
+      if (r.notSplittable) parts.push("nicht trennbarer Block (" + r.subslots + ")");
+      if (r.couplingForbiddenWith) parts.push("Kopplungsverbot mit " + (RULES[r.couplingForbiddenWith] || {}).label);
+      ri.style.display = ""; ri.textContent = "Hinterlegte Regel: " + parts.join(", ") + ". Bearbeitbar heißt nicht automatisch zulässig – Abweichungen werden nach dem Speichern als Verstoß markiert.";
+    } else { ri.style.display = "none"; }
+    document.getElementById("fWarn").style.display = "none";
+    document.getElementById("fDelete").style.display = ev ? "" : "none";
+    document.getElementById("formOverlay").classList.add("active");
+    document.getElementById("fTitle").focus();
+  }
+  function closeForm() { document.getElementById("formOverlay").classList.remove("active"); }
+  function saveForm() {
+    var title = document.getElementById("fTitle").value.trim();
+    var date = document.getElementById("fDate").value;
+    var type = document.getElementById("fType").value;
+    var start = document.getElementById("fStart").value;
+    var dur = parseInt(document.getElementById("fDuration").value, 10);
+    var turnus = document.getElementById("fTurnus").value.trim();
+    var ort = document.getElementById("fOrt").value.trim();
+    var desc = document.getElementById("fDesc").value.trim();
+    var ph = document.getElementById("fPlaceholder").checked;
+    var series = document.getElementById("fSeries").checked;
+    var warn = document.getElementById("fWarn");
+    if (!title || !date || !start || !(dur > 0) || date.substr(0, 4) !== String(YEAR)) { warn.style.display = ""; warn.textContent = "Titel, Datum (2027), Beginn und Dauer sind Pflichtfelder."; return; }
+    if (formState.uid) {
+      var ev = (eventsData[formState.dateKey] || []).filter(function(x) { return x.uid === formState.uid; })[0];
+      if (!ev) return;
+      var old = ev.title + " " + fmtDateDE(formState.dateKey) + " " + ev.time;
+      ev.title = title; ev.type = type; ev.duration = dur; ev.ort = ort; ev.desc = desc; ev.placeholder = ph; ev.source = "manuell";
+      if (ev.rule && ev.rule.editable !== false && turnus !== (ev.rule.turnus || "")) ev.rule.turnus = turnus;
+      if (!ev.rule && turnus) ev.rule = { id: "frei-" + ev.uid, turnus: turnus, editable: true, label: title };
+      if (series && ev.seriesId) {
+        findEventsBySeries(ev.seriesId).forEach(function(x) { if (x.ev.uid !== ev.uid && !x.ev.blockKey) { x.ev.title = title; x.ev.duration = dur; x.ev.desc = desc; x.ev.ort = ort; x.ev.type = type; x.ev.source = "manuell"; refreshTime(x.ev); } });
+      }
+      if (date !== formState.dateKey || start !== ev.start) {
+        ev.start = start; refreshTime(ev);
+        if (date !== formState.dateKey) { moveEvent(formState.dateKey, ev.uid, date, start); closeForm(); return; }
+      }
+      refreshTime(ev); sortDay(formState.dateKey);
+      closeForm();
+      afterChange("Bearbeitet: " + old + " → " + ev.title + " " + ev.time + (series ? " (Reihe)" : ""));
+    } else {
+      var nev = addEvent(date, title, type, start, dur, desc, turnus ? { id: "frei-" + uidCounter, turnus: turnus, editable: true, label: title } : null, { placeholder: ph, ort: ort, source: "manuell", seriesId: null });
+      sortDay(date);
+      closeForm();
+      afterChange("Neu angelegt: " + nev.title + " am " + fmtDateDE(date) + " " + nev.time);
+      if (document.getElementById("focusOverlay").classList.contains("active") && focus.mode === "day") { focus.dateKey = date; renderFocus(); }
+    }
+  }
+
+
+  // ================= Seiteneigene Dialoge (confirm/alert sind im Viewer nicht verfügbar) =================
+  function showDialog(opt) {
+    var ov = document.getElementById("dlgOverlay");
+    document.getElementById("dlgTitle").textContent = opt.title || "Hinweis";
+    document.getElementById("dlgText").textContent = opt.text || "";
+    var ta = document.getElementById("dlgArea");
+    if (opt.textarea !== undefined) { ta.style.display = ""; ta.value = opt.textarea; } else { ta.style.display = "none"; ta.value = ""; }
+    var footer = document.getElementById("dlgFooter"); footer.innerHTML = "";
+    (opt.buttons || [{ label: "OK", primary: true }]).forEach(function(b) {
+      var btn = document.createElement("button"); btn.type = "button";
+      btn.className = "btn " + (b.primary ? "cyan" : b.danger ? "danger" : "secondary");
+      btn.textContent = b.label;
+      btn.addEventListener("click", function() { var keep = b.onClick && b.onClick(btn) === true; if (!keep) ov.classList.remove("active"); });
+      footer.appendChild(btn);
+    });
+    ov.classList.add("active");
+    var first = footer.querySelector(".btn.cyan") || footer.querySelector(".btn"); if (first) first.focus();
+  }
+  function confirmDialog(title, text, onYes, yesLabel) {
+    showDialog({ title: title, text: text, buttons: [{ label: "Abbrechen" }, { label: yesLabel || "Ja, ausführen", danger: true, onClick: onYes }] });
+  }
+
+  // ================= Prüfprotokoll gesamt =================
+  function openAudit() {
+    recomputeViolations();
+    var body = document.getElementById("auditBody"); body.innerHTML = "";
+    var keys = Object.keys(violationCache).sort();
+    if (!keys.length) { body.innerHTML = '<div class="empty-note">Keine Regelverstöße im gesamten Jahr 2027.</div>'; }
+    keys.forEach(function(dk) {
+      violationCache[dk].forEach(function(r) {
+        if (r.ok) return;
+        var row = document.createElement("div"); row.className = "row";
+        row.innerHTML = '<span class="d">' + fmtDateDE(dk) + '</span><span><b>' + escapeHtml(r.ev.title) + '</b> (' + r.ev.time + ')<br>' + r.messages.map(escapeHtml).join("<br>") + '</span>';
+        row.addEventListener("click", function() { document.getElementById("auditOverlay").classList.remove("active"); selectDate(dk); openFocus(dk, "day"); });
+        body.appendChild(row);
+      });
+    });
+    document.getElementById("auditOverlay").classList.add("active");
+  }
+
+  // ================= Änderungsprotokoll, Export / Import, Autosave =================
+  function logChange(text) {
+    var now = new Date();
+    changelog.unshift({ ts: now.toISOString(), text: text });
+    renderChangelog();
+  }
+  function renderChangelog() {
+    var el = document.getElementById("changelog");
+    if (!changelog.length) { el.innerHTML = '<div style="color:var(--muted)">Noch keine Änderungen in dieser Sitzung.</div>'; return; }
+    el.innerHTML = changelog.slice(0, 40).map(function(c) { var d = new Date(c.ts); return "<div><time>" + pad2(d.getDate()) + "." + pad2(d.getMonth() + 1) + ". " + pad2(d.getHours()) + ":" + pad2(d.getMinutes()) + "</time>" + escapeHtml(c.text) + "</div>"; }).join("");
+  }
+  function serialize() {
+    var events = allEventsFlat().map(function(x) {
+      var e = x.ev;
+      return { date: x.dateKey, uid: e.uid, title: e.title, type: e.type, start: e.start, duration: e.duration, desc: e.desc, ort: e.ort, placeholder: e.placeholder, assumption: e.assumption, blockKey: e.blockKey, seriesId: e.seriesId, source: e.source, ruleId: e.rule ? e.rule.id : null, rule: e.rule };
+    });
+    return { app: "GF Jahreskalender 2027 – Fokusmodus", version: 3, year: YEAR, exported: new Date().toISOString(), events: events, changelog: changelog };
+  }
+  function deserialize(obj) {
+    if (!obj || !obj.events || obj.year !== YEAR) throw new Error("Datei passt nicht zum Jahreskalender 2027.");
+    eventsData = {}; var rules = {}; uidCounter = 1;
+    obj.events.forEach(function(e) {
+      var rule = null;
+      if (e.rule) { var rid = e.rule.id; if (!rules[rid]) rules[rid] = e.rule; rule = rules[rid]; }
+      if (!eventsData[e.date]) eventsData[e.date] = [];
+      var n = parseInt(String(e.uid).replace("ev", ""), 10); if (n >= uidCounter) uidCounter = n + 1;
+      eventsData[e.date].push({ uid: e.uid, title: e.title, type: e.type, start: e.start, duration: e.duration, time: rangeStr(e.start, e.duration), desc: e.desc || "", color: typeColors[e.type] || "#333", rule: rule, placeholder: !!e.placeholder, assumption: !!e.assumption, ort: e.ort || "", blockKey: e.blockKey || null, seriesId: e.seriesId || null, source: e.source || "import" });
+    });
+    for (var id in rules) RULES[id] = rules[id];
+    for (var dk in eventsData) sortDay(dk);
+    changelog = obj.changelog || [];
+    renderChangelog();
+  }
+  function exportJSON() {
+    var obj = serialize();
+    var data = JSON.stringify(obj, null, 2);
+    var name = "jahreskalender-2027-fritsch-stand-" + new Date().toISOString().substr(0, 10) + ".json";
+    try {
+      var blob = new Blob([data], { type: "application/json" });
+      var a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name;
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      setTimeout(function() { URL.revokeObjectURL(a.href); }, 1000);
+    } catch (e) { /* Download nicht möglich – Textfeld unten */ }
+    showDialog({
+      title: "Export JSON – " + obj.events.length + " Termine",
+      text: "Die Datei „" + name + "“ wurde zum Download angeboten. Falls der Browser keinen Download zulässt: Inhalt kopieren und als .json-Datei speichern. Der Import liest genau dieses Format.",
+      textarea: data,
+      buttons: [{ label: "Schließen" }, { label: "In Zwischenablage kopieren", primary: true, onClick: function(btn) {
+        var ta = document.getElementById("dlgArea");
+        var done = function() { btn.textContent = "Kopiert"; };
+        try { navigator.clipboard.writeText(ta.value).then(done, function() { ta.select(); done(); }); } catch (e) { ta.select(); done(); }
+        return true;
+      } }]
+    });
+    logChange("Export JSON erstellt (" + obj.events.length + " Termine)");
+  }
+  function importJSON(file) {
+    var reader = new FileReader();
+    reader.onload = function() {
+      try { deserialize(JSON.parse(reader.result)); afterChange("Import JSON: " + file.name); }
+      catch (e) { showDialog({ title: "Import fehlgeschlagen", text: e.message }); }
+    };
+    reader.readAsText(file);
+  }
+  function autosave() {
+    try { window.localStorage.setItem(STORAGE_KEY, JSON.stringify(serialize())); } catch (e) { /* Speicher nicht verfügbar */ }
+  }
+  function checkRestore() {
+    var saved = null;
+    try { saved = window.localStorage.getItem(STORAGE_KEY); } catch (e) { saved = null; }
+    if (!saved) return;
+    var obj; try { obj = JSON.parse(saved); } catch (e) { return; }
+    if (!obj || !obj.exported || !obj.changelog || !obj.changelog.length) return;
+    var banner = document.getElementById("restoreBanner");
+    var d = new Date(obj.exported);
+    document.getElementById("restoreInfo").textContent = pad2(d.getDate()) + "." + pad2(d.getMonth() + 1) + "." + d.getFullYear() + " " + pad2(d.getHours()) + ":" + pad2(d.getMinutes()) + ", " + obj.changelog.length + " Änderungen";
+    banner.style.display = "";
+    document.getElementById("restoreYes").onclick = function() { try { deserialize(obj); } catch (e) { showDialog({ title: "Wiederherstellen fehlgeschlagen", text: e.message }); } banner.style.display = "none"; afterChange(null); };
+    document.getElementById("restoreNo").onclick = function() { banner.style.display = "none"; try { window.localStorage.removeItem(STORAGE_KEY); } catch (e) {} };
+  }
+
+  // ================= Formatliste =================
+  var FORMATLISTE = [
+    ["Innere Mission", [
+      ["JF Zittlau · JF Konter · JF Rojano-Marin · JF Röper · JF Weisang · JF Pernak · JF MAV IM · JF Möller/Hagenbrock", "monatlich", "50 Min.", "Di-JF-Tag (Slots Annahme)", "bestätigt"],
+      ["IMK", "quartalsweise", "3 Std.", "1. Mittwoch", "bestätigt"],
+      ["Vorstandssitzung IM", "ca. 4–5×/Jahr", "90 Min.", "Mittwoch", "Platzhalter"],
+      ["Verwaltungsrat IM", "ca. 2×/Jahr", "90 Min.", "Mittwoch", "Platzhalter"],
+      ["AG Wohlfahrt Bochum · AG-FW Stadt Bochum", "unregelmäßig", "90 Min.", "Mittwoch", "Platzhalter"]]],
+    ["Diakonie Ruhr", [
+      ["Leitungskonferenz Sozialwirtschaft", "1. Montag", "2 Std.", "Mo 14:00–16:00", "bestätigt"],
+      ["Leistungsklausur Sozialwirtschaft", "2×/Jahr, 2 Tage", "Mo+Di", "03.–04.05. / 08.–09.11.", "bestätigt"],
+      ["Steuerungsgruppen UK DR / Personal / Digitalisierung", "Do-Rotation", "2 Std.", "1. Donnerstag", "bis Klärung"]]],
+    ["EVAR", [
+      ["Erweiterte Konzernleitung (eKL)", "3. Montag", "3 Std.", "Mo 12:00–15:00", "bestätigt"],
+      ["JF Machleit Ebner", "quartalsweise nach eKL", "50 Min.", "Mo im Anschluss", "bestätigt"]]],
+    ["SBO", [
+      ["Wirtschaftsausschuss SBO", "4. Dienstag", "2 Std.", "Di 15:00–17:00", "bestätigt"],
+      ["AR/GV SBO", "2×/Jahr", "3 Std.", "Donnerstag", "Platzhalter"],
+      ["JF MAV+BR SBO", "alle 2 Monate", "50 Min.", "3. Donnerstag 14:00", "neu"],
+      ["Monatsgespräch SBO · Betriebsversammlung SBO", "—", "—", "—", "gestrichen"]]],
+    ["LeWo", [
+      ["JF Lahn · JF Rethfeldt (MiR) · JF Raatz · JF Malcher (Bau) · JF Sonnenschein (Immobilien)", "monatlich", "50 Min.", "Di-JF-Tag (Slots Annahme)", "bestätigt"],
+      ["JF Jahndorf", "alle 6–8 Wochen", "50 Min.", "Dienstag (7-Wochen-Takt)", "Regel 1"],
+      ["JF Mala (eigener Termin)", "—", "—", "Teilslot in JF Personal", "gestrichen"]]],
+    ["Gesellschafter", [
+      ["GVV DADuL", "2×/Jahr", "2 Std.", "Donnerstag", "Platzhalter"],
+      ["GVV Pflege/DfM/Culina", "2×/Jahr", "2 Std.", "Donnerstag", "Platzhalter"],
+      ["AG DADuL (Back, Kirchhoff)", "3×/Jahr", "2 Std.", "Donnerstag", "Platzhalter"]]],
+    ["GBL (8 Einzel-JF)", [
+      ["JF Melzig · JF Moreira · JF Kutlu · JF Bradtke · JF Eull", "monatlich", "50 Min.", "Di-Mittagsband", "neu"],
+      ["JF Frerich/Culina", "monatlich (Obergrenze)", "50 Min.", "Di-Mittagsband", "neu"],
+      ["JF Rieckert", "monatlich", "50 Min.", "Di-Mittagsband (ersetzt 3-Std.-Sitzung DB/DD)", "neu"],
+      ["JF Jahndorf", "alle 6–8 Wochen", "50 Min.", "siehe LeWo", "Regel 1"]]],
+    ["Referate (4 Einzel-JF) + A³", [
+      ["JF Personal (inkl. Poolspringer-Slot Frau Mala)", "alle 6–8 Wochen", "75 Min. (50+20+5)", "Dienstag, Block nicht trennbar", "Regel 2+3"],
+      ["JF Marketing & Vertrieb", "monatlich", "50 Min.", "Di-Mittagsband", "neu"],
+      ["JF Wirtschaft & Finanzen", "monatlich", "50 Min.", "Di-Mittagsband", "neu"],
+      ["JF QM & Regulatorik", "alle 6–8 Wochen", "50 Min.", "Dienstag", "neu"],
+      ["JF A³-Team", "monatlich", "90 Min.", "3. Dienstag 14:00–15:30", "neu"]]],
+    ["Steuerkreise (GBL-Ebene)", [
+      ["Steuerkreis Wirtschaft & Finanzen", "monatlich", "90 Min.", "4. Do, Doppelpack Teil 1, in der Einrichtung", "neu"],
+      ["Steuerkreis QM & Regulatorik", "alle 2 Monate", "90 Min.", "4. Do, Doppelpack Teil 2, direkt anschließend", "neu"],
+      ["Steuerkreis Personal · Steuerkreis Marketing & Vertrieb", "offen", "—", "ohne GF, kein GF-Termin", "ohne GF"]]],
+    ["Klausuren, Blocker, offene Formate", [
+      ["GBL-Klausur", "jährlich November", "1,5 Tage", "18.–19.11. (Do–Fr)", "neu"],
+      ["Führung im Dialog", "jährlich Feb/März", "1,5 Tage", "04.–05.02. (Do–Fr)", "neu"],
+      ["Klausur Strategie", "halbjährlich", "1,5 Tage", "08.–09.04. / 30.09.–01.10.", "Platzhalter"],
+      ["LK ambulant · LK stationär", "offen", "je 90 Min.", "gemeinsamer Kopf, Donnerstag", "Platzhalter"],
+      ["Wochengespräch mit GF-Beteiligung", "monatlich", "2 Std.", "14:00–16:00, Wochentag offen (Annahme 2. Do)", "Regel 7"],
+      ["Pufferslot Gremien", "monatlich", "90 Min.", "3. Do 16:00–17:30", "bestätigt"],
+      ["Fokuszeit-Blocker", "wöchentlich Mo + Fr", "90 / 120 Min.", "Mo 07:30–09:00, Fr 09:00–11:00", "Regel 5"],
+      ["Projektarbeit-Blocker GF", "wöchentlich", "2 Std.", "Mi 13:30–15:30", "Regel 6"]]]
+  ];
+  function renderFormatList() {
+    var tagFor = function(s) { var c = s === "gestrichen" ? "bad" : s === "Platzhalter" ? "warn" : (s === "ohne GF" || s === "bis Klärung") ? "grey" : s.indexOf("Regel") === 0 ? "cyan" : "ok"; return '<span class="tag ' + c + '">' + s + "</span>"; };
+    var html = '<table class="fl-table"><thead><tr><th>Format (Bezeichnung)</th><th>Rhythmus</th><th>Dauer</th><th>Slot 2027</th><th>Status</th></tr></thead><tbody>';
+    FORMATLISTE.forEach(function(g) {
+      html += '<tr class="group"><td colspan="5">' + escapeHtml(g[0]) + "</td></tr>";
+      g[1].forEach(function(r) { html += "<tr><td>" + escapeHtml(r[0]) + "</td><td>" + escapeHtml(r[1]) + "</td><td>" + escapeHtml(r[2]) + "</td><td>" + escapeHtml(r[3]) + "</td><td>" + tagFor(r[4]) + "</td></tr>"; });
+    });
+    html += "</tbody></table>";
+    document.getElementById("formatListContainer").innerHTML = html;
+  }
+
+  // ================= Verdrahtung =================
+  function wire() {
+    var filterButtons = document.querySelectorAll(".filter-btn");
+    for (var b = 0; b < filterButtons.length; b++) {
+      filterButtons[b].addEventListener("click", function() {
+        for (var j = 0; j < filterButtons.length; j++) filterButtons[j].classList.remove("active");
+        this.classList.add("active");
+        currentFilter = this.getAttribute("data-filter");
+        renderCalendar();
+        if (selectedDateKey) selectDate(selectedDateKey);
+      });
+    }
+    document.getElementById("focusCloseBtn").addEventListener("click", closeFocus);
+    document.getElementById("focusOverlay").addEventListener("click", function(e) { if (e.target === this) closeFocus(); });
+    document.getElementById("fmDay").addEventListener("click", function() { focus.mode = "day"; renderFocus(); });
+    document.getElementById("fmWeek").addEventListener("click", function() { focus.mode = "week"; renderFocus(); });
+    document.getElementById("fmMonth").addEventListener("click", function() { focus.mode = "month"; renderFocus(); });
+    document.getElementById("fmPrev").addEventListener("click", function() { focusNav(-1); });
+    document.getElementById("fmNext").addEventListener("click", function() { focusNav(1); });
+    document.getElementById("fmNew").addEventListener("click", function() { openForm(focus.dateKey, null); });
+    document.getElementById("btnNewGlobal").addEventListener("click", function() { openForm(selectedDateKey || "2027-01-04", null); });
+    document.getElementById("fCancel").addEventListener("click", closeForm);
+    document.getElementById("fSave").addEventListener("click", saveForm);
+    document.getElementById("fDelete").addEventListener("click", function() { if (formState.uid) { closeForm(); deleteEvent(formState.dateKey, formState.uid); } });
+    document.getElementById("formOverlay").addEventListener("click", function(e) { if (e.target === this) closeForm(); });
+    document.getElementById("btnAudit").addEventListener("click", openAudit);
+    document.getElementById("auditClose").addEventListener("click", function() { document.getElementById("auditOverlay").classList.remove("active"); });
+    document.getElementById("auditOverlay").addEventListener("click", function(e) { if (e.target === this) this.classList.remove("active"); });
+    document.getElementById("btnExport").addEventListener("click", exportJSON);
+    document.getElementById("btnImport").addEventListener("click", function() { document.getElementById("importFile").click(); });
+    document.getElementById("importFile").addEventListener("change", function() { if (this.files && this.files[0]) importJSON(this.files[0]); this.value = ""; });
+    document.getElementById("btnReset").addEventListener("click", function() {
+      confirmDialog("Ausgangsstand laden", "Alle Änderungen dieser Sitzung verwerfen und den generierten Ausgangsstand laden?", function() {
+        buildInitialData(); changelog = []; renderChangelog();
+        try { window.localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+        afterChange(null);
+      }, "Verwerfen und neu laden");
+    });
+    document.addEventListener("keydown", function(e) {
+      if (e.key === "Escape") {
+        if (document.getElementById("dlgOverlay").classList.contains("active")) document.getElementById("dlgOverlay").classList.remove("active");
+        else if (document.getElementById("formOverlay").classList.contains("active")) closeForm();
+        else if (document.getElementById("auditOverlay").classList.contains("active")) document.getElementById("auditOverlay").classList.remove("active");
+        else closeFocus();
+      }
+      if (document.getElementById("focusOverlay").classList.contains("active") && !document.getElementById("formOverlay").classList.contains("active")) {
+        if (e.key === "ArrowLeft") focusNav(-1);
+        if (e.key === "ArrowRight") focusNav(1);
+      }
+    });
+  }
+
+  // ================= Init =================
+  buildInitialData();
+  renderFormatList();
+  wire();
+  recomputeViolations();
+  renderCalendar();
+  selectDate("2027-01-04");
+  checkRestore();
+
+  // Test-/Automationsschnittstelle (kein UI-Bestandteil)
+  window.GFKAL = {
+    eventsData: function() { return eventsData; }, checkPlausibility: checkPlausibility, recomputeViolations: recomputeViolations,
+    openFocus: openFocus, openForm: openForm, saveForm: saveForm, deleteEvent: deleteEvent, moveEvent: moveEvent, swapEventTimes: swapEventTimes,
+    serialize: serialize, deserialize: deserialize, afterChange: afterChange, addEvent: addEvent, RULES: function() { return RULES; }, allEventsFlat: allEventsFlat, buildInitialData: buildInitialData
+  };
+})();
+</script>
+</body>
+</html>

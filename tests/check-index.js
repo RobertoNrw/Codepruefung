@@ -35,13 +35,13 @@ function eq(a, b, msg) { if (JSON.stringify(a) !== JSON.stringify(b)) throw new 
   }
 
   // ---------- Ausgangsstand ----------
-  await test("Ausgangsstand: 599 Termine, keine Verstöße, alles in 2027, keine Ausweichkonflikte", async function(p) {
+  await test("Ausgangsstand: 561 Termine, keine Verstöße, alles in 2027, keine Ausweichkonflikte", async function(p) {
     var r = await p.evaluate(function() {
       var G = window.GFKAL, flat = G.allEventsFlat(), v = 0;
       for (var dk in G.eventsData()) G.checkPlausibility(dk).forEach(function(x) { if (!x.ok) v++; });
       return { total: flat.length, v: v, outside: flat.filter(function(x) { return x.dateKey.slice(0, 4) !== "2027"; }).length, conflicts: G.generationConflicts().length };
     });
-    eq(r, { total: 599, v: 0, outside: 0, conflicts: 0 }, "Ausgangsstand");
+    eq(r, { total: 561, v: 0, outside: 0, conflicts: 0 }, "Ausgangsstand");
   });
   await test("Raster: kein Terminende nach 18:00 (außer Klausuren), keine Lücke unter 10 Minuten", async function(p) {
     var r = await p.evaluate(function() {
@@ -53,6 +53,8 @@ function eq(a, b, msg) { if (JSON.stringify(a) !== JSON.stringify(b)) throw new 
         for (var i = 1; i < e.length; i++) {
           if (e[i].blockKey && e[i].blockKey === e[i - 1].blockKey) continue;
           if (e[i].rule && e[i].rule.id === "lk-ambulant-stationaer") continue;
+          if (e[i].seriesId === "wochengespraech" && e[i - 1].seriesId === "projektarbeit") continue;   // Projektarbeit 12–14 Uhr direkt vor dem Wochengespräch
+          if (e[i].seriesId === "projektarbeit" && e[i - 1].seriesId === "imk") continue;              // IMK 09–12 Uhr direkt vor der Projektarbeit
           var gap = tm(e[i].start) - (tm(e[i - 1].start) + e[i - 1].duration);
           if (gap >= 0 && gap < 10) small++;
         }
@@ -93,7 +95,7 @@ function eq(a, b, msg) { if (JSON.stringify(a) !== JSON.stringify(b)) throw new 
       var after = G.allEventsFlat().filter(function(x) { return x.ev.rule && (x.ev.rule.baseId || x.ev.rule.id) === "jf-partner"; });
       return { total: partner.length, geaendert: after.filter(function(x) { return x.ev.rule.turnus === "alle 8 Wochen"; }).length, original: G.RULES()["jf-partner"].turnus };
     });
-    eq(r, { total: 156, geaendert: 1, original: "monatlich" }, "Regel-Kopie");
+    eq(r, { total: 137, geaendert: 1, original: "monatlich" }, "Regel-Kopie");
   });
   await test("Befund 1: mit Serienhäkchen ändert sich nur die eigene Serie, nicht die anderen Partner", async function(p) {
     var r = await p.evaluate(function() {
@@ -125,7 +127,7 @@ function eq(a, b, msg) { if (JSON.stringify(a) !== JSON.stringify(b)) throw new 
   });
   await test("Befund 5: Tag-Tausch behält beide Dauern und die Spanne, ohne neue Überschneidung", async function(p) {
     var r = await p.evaluate(function() {
-      var G = window.GFKAL, day = "2027-01-04", D = G.eventsData()[day];
+      var G = window.GFKAL, day = "2027-02-01", D = G.eventsData()[day];
       var a = D.filter(function(e) { return e.title.indexOf("Fokuszeit") === 0; })[0], b = D.filter(function(e) { return e.title.indexOf("Leitungskonferenz") === 0; })[0];
       var d1 = a.duration, d2 = b.duration;
       G.swapEventTimes(day, a.uid, b.uid);
@@ -133,7 +135,7 @@ function eq(a, b, msg) { if (JSON.stringify(a) !== JSON.stringify(b)) throw new 
       return { d: [a.duration === d1, b.duration === d2], lk: b.time, fokus: a.time, ueberschneidung: msgs };
     });
     eq(r.d, [true, true], "Dauer");
-    eq(r.lk, "07:30 – 09:30", "LK beginnt am Anfang der Spanne");
+    eq(r.lk, "09:00 – 11:00", "LK beginnt am Anfang der Spanne");
     eq(r.fokus, "14:30 – 16:00", "Fokus endet am Ende der Spanne");
     eq(r.ueberschneidung, 0, "Überschneidungen");
   });
@@ -229,15 +231,16 @@ function eq(a, b, msg) { if (JSON.stringify(a) !== JSON.stringify(b)) throw new 
     });
     eq(r, 1, "Abweichungsmeldung");
   });
-  await test("Punkt 11: zweites Montagsfenster 09:00–10:30 ist zulässig, andere Fenster nicht", async function(p) {
+  await test("Punkt 11: Fokuszeit Montag 09:00–10:30 ist zulässig, 07:30 (vor 09:00) und andere Fenster nicht", async function(p) {
     var r = await p.evaluate(function() {
       var G = window.GFKAL, f = G.allEventsFlat().filter(function(x) { return x.ev.seriesId === "fokuszeit-mo"; })[0], e = f.ev;
       var check = function() { return G.checkPlausibility(f.dateKey).filter(function(x) { return x.ev.uid === e.uid; })[0]; };
-      e.start = "09:00"; e.time = "09:00 – 10:30"; var alt = check();
+      e.start = "09:00"; e.time = "09:00 – 10:30"; var std = check();
+      e.start = "07:30"; e.time = "07:30 – 09:00"; var alt = check();
       e.start = "10:00"; e.time = "10:00 – 11:30"; var anders = check();
-      return { altOk: alt.messages.filter(function(m) { return m.indexOf("Zeitfenster") === 0; }).length, altHinweis: alt.hints.some(function(h) { return h.indexOf("Alternatives") === 0; }), andersMeldung: anders.messages.filter(function(m) { return m.indexOf("Zeitfenster") === 0; }).length };
+      return { stdOk: std.ok, frueh: alt.messages.filter(function(m) { return m.indexOf("Beginn vor 09:00") === 0; }).length, andersMeldung: anders.messages.filter(function(m) { return m.indexOf("Zeitfenster") === 0; }).length };
     });
-    eq(r, { altOk: 0, altHinweis: true, andersMeldung: 1 }, "Montagsfenster");
+    eq(r, { stdOk: true, frueh: 1, andersMeldung: 1 }, "Montagsfenster");
   });
   await test("Punkt 11: Annahme lässt sich im Formular quittieren, auch für die ganze Serie", async function(p) {
     var r = await p.evaluate(function() {
@@ -249,11 +252,11 @@ function eq(a, b, msg) { if (JSON.stringify(a) !== JSON.stringify(b)) throw new 
       out.nachher = G.allEventsFlat().filter(function(x) { return x.ev.seriesId === "wochengespraech" && x.ev.assumption; }).length;
       return out;
     });
-    eq(r, { vorher: 12, zeileSichtbar: true, nachher: 0 }, "Annahme");
+    eq(r, { vorher: 44, zeileSichtbar: true, nachher: 0 }, "Annahme");
   });
 
   // ---------- Verschieben, Drag ----------
-  await test("Befund 9/12: Drag nie vor 07:00 und nie über 18:00, Klausur wird geklemmt", async function(p) {
+  await test("Befund 9/12: Drag nie vor 09:00 und nie über 18:00, Klausur wird geklemmt", async function(p) {
     var r = await p.evaluate(function() {
       var G = window.GFKAL, kl = G.eventsData()["2027-05-03"].filter(function(e) { return e.type === "Klausur"; })[0], out = {};
       G.moveEvent("2027-05-03", kl.uid, "2027-06-14", "18:00", { clampGrid: true }); out.klausur = kl.time;
@@ -261,7 +264,7 @@ function eq(a, b, msg) { if (JSON.stringify(a) !== JSON.stringify(b)) throw new 
       G.moveEvent("2027-06-07", f.uid, "2027-06-07", "06:00", { clampGrid: true }); out.fokus = f.time;
       return out;
     });
-    eq(r, { klausur: "09:00 – 18:00", fokus: "07:00 – 08:30" }, "Klemmen");
+    eq(r, { klausur: "09:00 – 18:00", fokus: "09:00 – 10:30" }, "Klemmen");
   });
   await test("Befund 13: Block wird nur als Ganzes verschoben und bleibt bei Klemmen zusammen", async function(p) {
     var r = await p.evaluate(function() {
@@ -273,7 +276,7 @@ function eq(a, b, msg) { if (JSON.stringify(a) !== JSON.stringify(b)) throw new 
       return { teile: now.length, zeiten: now.map(function(e) { return e.time; }), verstoesse: v };
     });
     eq(r.teile, 3, "Teile"); eq(r.verstoesse, 0, "Block bleibt regelkonform");
-    ok(r.zeiten[0].indexOf("07:00") === 0, "Block beginnt nicht um 07:00: " + r.zeiten.join(","));
+    ok(r.zeiten[0].indexOf("09:00") === 0, "Block beginnt nicht um 09:00: " + r.zeiten.join(","));
   });
   await test("Verschieben über Mitternacht ist ausgeschlossen (kein „27:00“)", async function(p) {
     var r = await p.evaluate(function() {
@@ -348,11 +351,11 @@ function eq(a, b, msg) { if (JSON.stringify(a) !== JSON.stringify(b)) throw new 
     await p.waitForSelector("#dlgOverlay.active");
     var text = await p.textContent("#dlgText");
     ok(text.indexOf("10 Termine") >= 0, "Rückfrage nennt nicht die Terminzahl: " + text);
-    eq(await p.evaluate(function() { return window.GFKAL.allEventsFlat().length; }), 599, "vor der Bestätigung unverändert");
+    eq(await p.evaluate(function() { return window.GFKAL.allEventsFlat().length; }), 561, "vor der Bestätigung unverändert");
     await p.click("#dlgFooter .btn.danger");
     eq(await p.evaluate(function() { return window.GFKAL.allEventsFlat().length; }), 10, "nach der Bestätigung ersetzt");
     await p.click("#btnUndo");
-    eq(await p.evaluate(function() { return window.GFKAL.allEventsFlat().length; }), 599, "Rückgängig stellt den Bestand her");
+    eq(await p.evaluate(function() { return window.GFKAL.allEventsFlat().length; }), 561, "Rückgängig stellt den Bestand her");
   });
   await test("JSON Version 4: Regeln einmal, keine abgeleiteten Felder, Rundlauf bleibt verlustfrei", async function(p) {
     var r = await p.evaluate(function() {
@@ -373,7 +376,7 @@ function eq(a, b, msg) { if (JSON.stringify(a) !== JSON.stringify(b)) throw new 
       G.deserialize(s);
       return { n: G.allEventsFlat().length, regeln: Object.keys(G.RULES()).length };
     });
-    eq(r.n, 599, "Terminzahl");
+    eq(r.n, 561, "Terminzahl");
     ok(r.regeln >= 26, "Regeln aus Version 3 nicht übernommen: " + r.regeln);
   });
   await test("Befund 14: Ausgangsstand schreibt den Browserstand nicht sofort zurück, Rückgängig stellt her", async function(p) {
@@ -386,14 +389,14 @@ function eq(a, b, msg) { if (JSON.stringify(a) !== JSON.stringify(b)) throw new 
       G.undo();
       return { gespeichert: gespeichert, n1: n1, nachResetLeer: nachReset, n2: n2, n3: G.allEventsFlat().length };
     });
-    eq(r, { gespeichert: true, n1: 598, nachResetLeer: true, n2: 599, n3: 598 }, "Ausgangsstand");
+    eq(r, { gespeichert: true, n1: 560, nachResetLeer: true, n2: 561, n3: 560 }, "Ausgangsstand");
   });
   await test("Autosave und Wiederherstellen: Banner erscheint nach Neuladen, Stand kommt zurück", async function(p) {
     await p.evaluate(function() { var G = window.GFKAL, d = G.allEventsFlat()[0]; G.deleteEvent(d.dateKey, d.ev.uid); document.querySelector("#dlgFooter .btn.danger").click(); });
     await p.reload();
     ok(await p.isVisible("#restoreBanner"), "Banner fehlt");
     await p.click("#restoreYes");
-    eq(await p.evaluate(function() { return window.GFKAL.allEventsFlat().length; }), 598, "wiederhergestellter Bestand");
+    eq(await p.evaluate(function() { return window.GFKAL.allEventsFlat().length; }), 560, "wiederhergestellter Bestand");
   });
   await test("Speicher-Schnittstelle: Store lässt sich austauschen (Vorbereitung Backend)", async function(p) {
     var r = await p.evaluate(function() {
@@ -434,7 +437,7 @@ function eq(a, b, msg) { if (JSON.stringify(a) !== JSON.stringify(b)) throw new 
       out.blockerInklKlausur = G.allEventsFlat().filter(function(x) { return G.passesFilter(x.ev); }).every(function(x) { return ["Blocker", "Projekt", "Klausur"].indexOf(x.ev.type) >= 0; });
       return out;
     });
-    ok(r.treffer === 8 && r.nurJahndorf, "Suche liefert nicht die acht Jahndorf-Termine: " + JSON.stringify(r));
+    ok(r.treffer === 7 && r.nurJahndorf, "Suche liefert nicht die sieben Jahndorf-Termine: " + JSON.stringify(r));
     eq([r.raster, r.tag, r.woche, r.monat], [1, 1, 1, 1], "gefilterte Ansichten zeigen genau den einen Jahndorf-Termin");
     eq([r.nurPlatzhalter, r.blockerInklKlausur], [true, true], "Zusatzfilter");
   });
@@ -499,7 +502,7 @@ function eq(a, b, msg) { if (JSON.stringify(a) !== JSON.stringify(b)) throw new 
     ok(r.kontrast >= 4.5, "Kontrast Projektfarbe " + r.kontrast.toFixed(2));
   });
   await test("Hinweistexte nennen die Knöpfe „Bearbeiten“ und „Löschen“", async function(p) {
-    await p.evaluate(function() { window.GFKAL.openFocus("2027-01-05", "day"); });
+    await p.evaluate(function() { window.GFKAL.openFocus("2027-01-12", "day"); });
     var hint = await p.textContent("#focusHint"), btns = await p.evaluate(function() { return Array.prototype.map.call(document.querySelectorAll(".baustein-actions button"), function(b) { return b.textContent; }).slice(0, 2); });
     ok(hint.indexOf("Bearbeiten") >= 0 && hint.indexOf("Löschen") >= 0 && hint.indexOf("Stift") < 0 && hint.indexOf("Kreuz") < 0, "Hinweis: " + hint);
     ok(btns[0].indexOf("Bearbeiten") >= 0 && btns[1].indexOf("Löschen") >= 0, "Knöpfe: " + btns.join("|"));
@@ -571,7 +574,98 @@ function eq(a, b, msg) { if (JSON.stringify(a) !== JSON.stringify(b)) throw new 
       var res = G.checkPlausibility("2027-01-05", ctx);
       return { verstoesse: res.filter(function(x) { return !x.ok; }).length, bestand: G.allEventsFlat().length };
     });
-    eq(r, { verstoesse: 2, bestand: 599 }, "Kontext");
+    eq(r, { verstoesse: 2, bestand: 561 }, "Kontext");
+  });
+
+  // ---------- Anpassungen 2027: Zeiten, Urlaub, Formate, Auswahllisten ----------
+  await test("Regel: kein regulärer Termin vor 09:00, Verstoß bei 08:00", async function(p) {
+    var r = await p.evaluate(function() {
+      var G = window.GFKAL, frueh = G.allEventsFlat().filter(function(x) { return x.ev.start < "09:00"; }).length;
+      var f = G.allEventsFlat().filter(function(x) { return x.ev.seriesId === "pufferslot"; })[0], e = f.ev;
+      e.start = "08:00"; e.time = "08:00 – 09:30";
+      var m = G.checkPlausibility(f.dateKey).filter(function(x) { return x.ev.uid === e.uid; })[0].messages.filter(function(t) { return t.indexOf("Beginn vor 09:00") === 0; }).length;
+      return { frueh: frueh, meldung: m };
+    });
+    eq(r, { frueh: 0, meldung: 1 }, "Vor 09:00");
+  });
+  await test("Fokuszeit Montag 09:00–10:30", async function(p) {
+    var r = await p.evaluate(function() {
+      var l = window.GFKAL.allEventsFlat().filter(function(x) { return x.ev.seriesId === "fokuszeit-mo"; });
+      return { n: l.length > 40, zeiten: Array.from(new Set(l.map(function(x) { return x.ev.time; }))) };
+    });
+    eq(r, { n: true, zeiten: ["09:00 – 10:30"] }, "Fokus Montag");
+  });
+  await test("Wirtschaftsausschuss: 4. Dienstag 09:00–11:00, 30 Min. Rückfahrtpuffer, keine Überschneidung", async function(p) {
+    var r = await p.evaluate(function() {
+      var G = window.GFKAL, wa = G.allEventsFlat().filter(function(x) { return x.ev.seriesId === "wirtschaftsausschuss"; }), out = { n: wa.length, zeiten: {}, orte: {}, frueh: 0, verstoesse: 0 };
+      wa.forEach(function(x) {
+        out.zeiten[x.ev.time] = 1; out.orte[x.ev.ort] = 1;
+        G.eventsData()[x.dateKey].forEach(function(o) { if (o.uid !== x.ev.uid && o.start > x.ev.start && o.start < "11:30") out.frueh++; });
+        G.checkPlausibility(x.dateKey).forEach(function(y) { if (!y.ok) out.verstoesse++; });
+      });
+      out.zeiten = Object.keys(out.zeiten); out.orte = Object.keys(out.orte);
+      return out;
+    });
+    eq(r, { n: 10, zeiten: ["09:00 – 11:00"], orte: ["SBO Sommerdelle"], frueh: 0, verstoesse: 0 }, "Wirtschaftsausschuss");
+  });
+  await test("Rückfahrtpuffer: Termin 15 Minuten nach dem Wirtschaftsausschuss wird gemeldet", async function(p) {
+    var r = await p.evaluate(function() {
+      var G = window.GFKAL, wa = G.allEventsFlat().filter(function(x) { return x.ev.seriesId === "wirtschaftsausschuss"; })[0];
+      var j = G.addEvent(wa.dateKey, "Test", "JF", "11:15", 50, "", null, {});
+      return G.checkPlausibility(wa.dateKey).filter(function(x) { return x.ev.uid === j.uid; })[0].messages.filter(function(m) { return m.indexOf("Rückfahrtpuffer") === 0; }).length;
+    });
+    eq(r, 1, "Puffer");
+  });
+  await test("Urlaub und Feiertage: keine Termine, kein Ersatz, Urlaub liegt im Prüfprotokoll", async function(p) {
+    var r = await p.evaluate(function() {
+      var G = window.GFKAL, V = [["2027-01-01", "2027-01-08"], ["2027-03-26", "2027-04-02"], ["2027-07-26", "2027-07-29"], ["2027-08-04", "2027-08-20"], ["2027-10-22", "2027-11-05"]];
+      var H = ["2027-01-01", "2027-03-26", "2027-03-29", "2027-05-01", "2027-05-06", "2027-05-17", "2027-05-27", "2027-10-03", "2027-11-01", "2027-12-25", "2027-12-26"];
+      var inV = function(k) { return V.some(function(v) { return k >= v[0] && k <= v[1]; }); };
+      var bad = G.allEventsFlat().filter(function(x) { return inV(x.dateKey) || H.indexOf(x.dateKey) >= 0; }).length;
+      var t = G.addEvent("2027-08-10", "Test", "JF", "10:00", 50, "", null, {});
+      var m = G.checkPlausibility("2027-08-10").filter(function(x) { return x.ev.uid === t.uid; })[0].messages.filter(function(x) { return x.indexOf("Urlaub") >= 0; }).length;
+      return { bad: bad, meldung: m };
+    });
+    eq(r, { bad: 0, meldung: 1 }, "Urlaub");
+  });
+  await test("Urlaub und Feiertag werden im Jahresraster verschieden eingefärbt", async function(p) {
+    var r = await p.evaluate(function() {
+      var u = document.querySelector('.cell.vacation[data-date="2027-08-05"]'), f = document.querySelector('.cell.holiday[data-date="2027-05-06"]');
+      return { urlaub: !!u, feiertag: !!f, verschieden: !!u && !!f && getComputedStyle(u).backgroundColor !== getComputedStyle(f).backgroundColor, uTitel: u && u.title, fTitel: f && f.title };
+    });
+    eq(r, { urlaub: true, feiertag: true, verschieden: true, uTitel: "Urlaub", fTitel: "Feiertag: Christi Himmelfahrt" }, "Einfärbung");
+  });
+  await test("Wochengespräch jeden Mittwoch 14:00–16:00, Projektarbeit 12:00–14:00 davor", async function(p) {
+    var r = await p.evaluate(function() {
+      var G = window.GFKAL, wg = G.allEventsFlat().filter(function(x) { return x.ev.seriesId === "wochengespraech"; }), pr = G.allEventsFlat().filter(function(x) { return x.ev.seriesId === "projektarbeit"; });
+      var tag = function(k) { return new Date(k + "T12:00:00").getDay(); };
+      return { wgMi: wg.every(function(x) { return tag(x.dateKey) === 3; }), wgZeit: Array.from(new Set(wg.map(function(x) { return x.ev.time; }))), prZeit: Array.from(new Set(pr.map(function(x) { return x.ev.time; }))), gleich: wg.length === pr.length };
+    });
+    eq(r, { wgMi: true, wgZeit: ["14:00 – 16:00"], prZeit: ["12:00 – 14:00"], gleich: true }, "Mittwoch");
+  });
+  await test("Dauern: Steuerkreise 120, LK ambulant 120 und stationär 180 (getrennte Farbe), ASA 2× 120", async function(p) {
+    var r = await p.evaluate(function() {
+      var G = window.GFKAL, by = function(id) { return G.allEventsFlat().filter(function(x) { return x.ev.seriesId === id; }); };
+      var set = function(l, f) { return Array.from(new Set(l.map(function(x) { return f(x.ev); }))); };
+      var a = by("lk-ambulant"), st = by("lk-stationaer");
+      return {
+        sk: set(by("sk-wifi").concat(by("sk-qm")), function(e) { return e.duration; }),
+        ambulant: set(a, function(e) { return e.title + "|" + e.duration; }), stationaer: set(st, function(e) { return e.title + "|" + e.duration; }),
+        farben: a[0].ev.color !== st[0].ev.color, asa: set(by("asa"), function(e) { return e.duration + "|" + e.placeholder; }), asaAnzahl: by("asa").length, verstoesse: G.recomputeViolations()
+      };
+    });
+    eq(r, { sk: [120], ambulant: ["Leitungskonferenz ambulant|120"], stationaer: ["Leitungskonferenz stationär|180"], farben: true, asa: ["120|true"], asaAnzahl: 2, verstoesse: 0 }, "Dauern");
+  });
+  await test("Formular: Auswahllisten für Besprechung (vorhandene Titel) sowie Ort/Träger, Vorbelegung aus vorhandenem Titel", async function(p) {
+    var r = await p.evaluate(function() {
+      var G = window.GFKAL;
+      G.openForm("2027-02-02", null);
+      var titel = Array.from(document.querySelectorAll("#titleList option")).map(function(o) { return o.value; });
+      var orte = Array.from(document.querySelectorAll("#ortList option")).map(function(o) { return o.value; });
+      var t = document.getElementById("fTitle"); t.value = "Wirtschaftsausschuss SBO"; t.dispatchEvent(new Event("change"));
+      return { hatWA: titel.indexOf("Wirtschaftsausschuss SBO") >= 0, eindeutig: titel.length === new Set(titel).size, orte: orte, dauer: document.getElementById("fDuration").value, ort: document.getElementById("fOrt").value, typ: document.getElementById("fType").value, liste: [t.getAttribute("list"), document.getElementById("fOrt").getAttribute("list")] };
+    });
+    eq(r, { hatWA: true, eindeutig: true, orte: ["Westring 26", "SBO Sommerdelle", "Pferdebachstraße"], dauer: "120", ort: "SBO Sommerdelle", typ: "Gremium", liste: ["titleList", "ortList"] }, "Auswahllisten");
   });
 
   await browser.close();

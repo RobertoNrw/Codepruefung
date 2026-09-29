@@ -126,8 +126,10 @@
   .cell:nth-child(7n) { border-right: none; }
   .cell.empty { background: #fafbfc; cursor: default; }
   .cell.weekend { background: #fdfafc; }
-  .cell.holiday { background: #f6f6f6; }
-  .cell.holiday .day-num { color: #adb5bd; }
+  .cell.holiday { background: #fbe4ea; }
+  .cell.holiday .day-num { color: #b0304f; }
+  .cell.vacation { background: #fff3cd; }
+  .cell.vacation .day-num { color: #8a6100; }
   .cell:hover:not(.empty) { background: #f1f8ff; }
   .cell.selected { outline: 2px solid var(--primary); outline-offset: -2px; background: #faeefd !important; }
   .viol-count { position: absolute; top: 2px; right: 3px; background: var(--bad); color: #fff; font-size: 0.62rem; font-weight: 700; line-height: 1; border-radius: 8px; padding: 2px 5px; min-width: 14px; text-align: center; }
@@ -225,12 +227,14 @@
   /* Wochenfokus */
   .week-grid { display: grid; grid-template-columns: 52px repeat(5, 1fr); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; min-width: 760px; }
   .week-head { background: var(--primary-light); color: var(--primary); font-weight: 700; font-size: 0.8rem; text-align: center; padding: 6px 4px; border-bottom: 1px solid var(--border); border-right: 1px solid #eee; }
-  .week-head.holiday { color: #adb5bd; }
+  .week-head.holiday { color: #b0304f; background: #fbe4ea; }
+  .week-head.vacation { color: #8a6100; background: #fff3cd; }
   .week-head small { display: block; font-weight: 500; color: var(--muted); font-size: 0.68rem; }
   .week-times { position: relative; border-right: 1px solid #eee; }
   .week-times div { position: absolute; left: 0; right: 4px; font-size: 0.66rem; color: var(--muted); text-align: right; transform: translateY(-50%); }
   .week-col { position: relative; border-right: 1px solid #eee; background: repeating-linear-gradient(to bottom, #fff 0, #fff calc(var(--hourpx) - 1px), #f1f3f5 calc(var(--hourpx) - 1px), #f1f3f5 var(--hourpx)); }
-  .week-col.holiday { background: repeating-linear-gradient(to bottom, #f6f6f6 0, #f6f6f6 calc(var(--hourpx) - 1px), #e9e9e9 calc(var(--hourpx) - 1px), #e9e9e9 var(--hourpx)); }
+  .week-col.holiday { background: repeating-linear-gradient(to bottom, #fbe4ea 0, #fbe4ea calc(var(--hourpx) - 1px), #f3cdd7 calc(var(--hourpx) - 1px), #f3cdd7 var(--hourpx)); }
+  .week-col.vacation { background: repeating-linear-gradient(to bottom, #fff3cd 0, #fff3cd calc(var(--hourpx) - 1px), #f5e3a3 calc(var(--hourpx) - 1px), #f5e3a3 var(--hourpx)); }
   .week-col.dragover { background-color: #e6f4fb; box-shadow: inset 0 0 0 2px var(--secondary); }
   .week-ev { touch-action: none; position: absolute; left: 3px; right: 3px; border-radius: 4px; padding: 3px 5px; font-size: 0.68rem; line-height: 1.2; color: #fff; overflow: hidden; cursor: grab; border: 1px solid rgba(0,0,0,0.15); box-shadow: 0 1px 2px rgba(0,0,0,0.15); }
   .week-ev b { display: block; font-size: 0.7rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -311,6 +315,10 @@
     <div class="legend-item"><span class="dot" style="background:var(--c-fokus)"></span> Fokuszeit</div>
     <div class="legend-item"><span class="dot" style="background:var(--c-projekt)"></span> Projektzeit</div>
     <div class="legend-item"><span class="dot" style="background:var(--c-klausur)"></span> Klausur</div>
+    <div class="legend-item"><span class="dot" style="background:#0288d1"></span> Leitungskonferenz ambulant</div>
+    <div class="legend-item"><span class="dot" style="background:#e65100"></span> Leitungskonferenz stationär</div>
+    <div class="legend-item"><span class="dot" style="background:#fbe4ea;border:1px solid #b0304f"></span> Feiertag (NRW)</div>
+    <div class="legend-item"><span class="dot" style="background:#fff3cd;border:1px solid #8a6100"></span> Urlaub</div>
     <div class="legend-item"><span class="dot ph" style="background:#6c757d"></span> Platzhalter (unbestätigt)</div>
     <div class="legend-item"><span class="dot" style="background:var(--bad);border-radius:0;width:8px;height:8px"></span> Regelverstoß am Tag</div>
   </div>
@@ -341,11 +349,13 @@
       <details class="fl">
         <summary>Offene Punkte (zu klären mit Sandra Merino-Kesting / Kerstin Tomnitz / GF)</summary>
         <ul class="open-list" style="margin-top:8px">
-          <li><strong>Wochengespräch mit GF-Beteiligung:</strong> Wochentag bestätigen. Im Tool als Arbeitsannahme auf dem 2. Donnerstag, 14:00–16:00 Uhr.</li>
-          <li><strong>Fokuszeit-Blocker Montag:</strong> 07:30–09:00 oder 09:00–10:30? Im Tool: 07:30–09:00 (Regelfassung); die Alternative ist am Baustein vermerkt.</li>
+          <li><strong>Wochengespräch mit GF-Beteiligung und Projektarbeit:</strong> Struktur mit Herrn Fritsch bestätigen. Im Tool als Arbeitsannahme jeden Mittwoch: Projektarbeit 12:00–14:00 Uhr, direkt danach Wochengespräch 14:00–16:00 Uhr.</li>
+          <li><strong>Fokuszeit-Blocker Montag:</strong> 09:00–10:30 Uhr. Reguläre Termine beginnen grundsätzlich nicht vor 09:00 Uhr.</li>
+          <li><strong>Urlaub und Feiertage 2027:</strong> Urlaub 01.–08.01., 26.03.–02.04., 26.–29.07., 04.–20.08., 22.10.–05.11. sowie die NRW-Feiertage sind frei. Termine an diesen Tagen entfallen ohne Ersatztermin; Intervall-JF (6–8 Wochen) rücken um eine Woche.</li>
+          <li><strong>Wirtschaftsausschuss SBO:</strong> 4. Dienstag ab 09:00 Uhr, danach 30 Min. Rückfahrtpuffer.</li>
           <li><strong>Dienstags-JF:</strong> Verteilung der 13 monatlichen Partner-JF (IM/LeWo) und der 13 GBL-/Referate-/A³-Formate auf die Dienstage ist eine gekennzeichnete Arbeitsannahme (bis zu 7 Slots je Dienstag, 50 Min., 10 Min. Wechsel). Keine bestätigte Einzelzuordnung.</li>
           <li><strong>JF-Dauer:</strong> 50 Min. lt. SEK-Liste; Arbeitsdatei rechnet vorsorglich mit 75 Min. Im Tool: 50 Min. je JF (SEK-Vorgabe), Dauer je Baustein editierbar.</li>
-          <li><strong>Platzhalter:</strong> Vorstandssitzung IM, Verwaltungsrat IM, AG Wohlfahrt / AG-FW, LK ambulant / LK stationär, Klausur Strategie, Gesellschafterversammlungen und AG DADuL sind als unbestätigt markiert (gestrichelter Ring, Ecke unten rechts).</li>
+          <li><strong>Platzhalter:</strong> Vorstandssitzung IM, Verwaltungsrat IM, AG Wohlfahrt / AG-FW, Leitungskonferenz ambulant (2 Std.) / stationär (3 Std.), ASA (Team, 2 Std.), Klausur Strategie, Gesellschafterversammlungen und AG DADuL sind als unbestätigt markiert (gestrichelter Ring, Ecke unten rechts).</li>
           <li><strong>Steuerungsgruppen UK DR / Personal / Digitalisierung:</strong> Do-Rotation bis zur Klärung mit den neuen Steuerkreisen beibehalten.</li>
           <li><strong>Steuerkreis Personal, Steuerkreis Marketing &amp; Vertrieb:</strong> ohne GF, Rhythmus offen – blockieren keine GF-Ressource, daher nicht im Kalender.</li>
           <li><strong>Persistenz:</strong> Änderungen werden als JSON exportiert/importiert; zusätzlich Autosave im Browser (sofern verfügbar). Endgültiges Speicherkonzept offen.</li>
@@ -381,9 +391,9 @@
         2. JF Mala: kein eigener Termin, Teilslot innerhalb JF Personal.<br>
         3. JF Personal: 75 Min. = 50 Referat + 20 Poolspringer Frau Mala + 5 Wechselpuffer, Block nicht trennbar.<br>
         4. GBL-Klausur (18.–19.11.) und Leistungsklausur Sozialwirtschaft (03.–04.05., 08.–09.11.) nie in derselben ISO-Woche.<br>
-        5. Fokuszeit-Blocker: Montag und Freitag, je inkl. 0,5 Std. Abstimmung Assistenz GF.<br>
-        6. Projektarbeit-Blocker GF: wöchentlich Mittwoch 13:30–15:30.<br>
-        7. Wochengespräch mit GF-Beteiligung: monatlich, 2 Std., 14:00–16:00 (Wochentag offen).
+        5. Fokuszeit-Blocker: Montag 09:00–10:30 und Freitag 09:00–11:00, je inkl. 0,5 Std. Abstimmung Assistenz GF.<br>
+        6. Projektarbeit-Blocker GF: wöchentlich Mittwoch 12:00–14:00, direkt vor dem Wochengespräch.<br>
+        7. Wochengespräch mit GF-Beteiligung: wöchentlich Mittwoch, 2 Std., 14:00–16:00 (mit Herrn Fritsch bestätigen).
       </div>
     </div>
   </div>
@@ -419,7 +429,7 @@
     <header id="formTitle">Termin bearbeiten</header>
     <div class="body">
       <div class="form-grid">
-        <div class="full"><label for="fTitle">Titel (Bezeichnung des Formats)</label><input type="text" id="fTitle"></div>
+        <div class="full"><label for="fTitle">Titel (Bezeichnung des Formats)</label><input type="text" id="fTitle" list="titleList" autocomplete="off" placeholder="vorhandenen Termin wählen oder neu eingeben"><datalist id="titleList"></datalist></div>
         <div><label for="fDate">Datum</label><input type="date" id="fDate" min="2027-01-01" max="2027-12-31"></div>
         <div><label for="fType">Typ / Kategorie</label>
           <select id="fType">
@@ -434,7 +444,7 @@
         <div><label for="fStart">Beginn</label><input type="time" id="fStart" step="300"></div>
         <div><label for="fDuration">Dauer (Minuten)</label><input type="number" id="fDuration" min="5" max="720" step="5"></div>
         <div><label for="fTurnus">Turnus (Serieninformation)</label><input type="text" id="fTurnus" placeholder="z. B. monatlich, alle 6-8 Wochen"></div>
-        <div><label for="fOrt">Ort / Träger</label><input type="text" id="fOrt" placeholder="optional"></div>
+        <div><label for="fOrt">Ort / Träger</label><input type="text" id="fOrt" list="ortList" autocomplete="off" placeholder="optional"><datalist id="ortList"><option value="Westring 26"><option value="SBO Sommerdelle"><option value="Pferdebachstraße"></datalist></div>
         <div class="full"><label for="fDesc">Beschreibung / Hinweis</label><textarea id="fDesc" rows="3"></textarea></div>
         <div class="full">
           <div class="check"><input type="checkbox" id="fPlaceholder"><label for="fPlaceholder" style="margin:0">Platzhalter – Termin noch nicht bestätigt</label></div>
@@ -483,6 +493,8 @@
     YEAR: 2027,
     DAY_START: 7,
     DAY_END: 18,
+    REGULAR_START: 9,       // reguläre Termine beginnen nicht vor 09:00 Uhr
+    RETURN_BUFFER_MIN: 30,  // Rückfahrtpuffer nach dem Wirtschaftsausschuss
     HOUR_PX: 44,
     SLOT_GAP_MIN: 10,
     GRID_SNAP_MIN: 15,
@@ -511,6 +523,16 @@
     "2027-10-03": "Tag der Deutschen Einheit", "2027-11-01": "Allerheiligen", "2027-12-25": "1. Weihnachtstag", "2027-12-26": "2. Weihnachtstag"
   };
 
+  // Urlaub 2027: von/bis einschließlich. Feiertage und Urlaub sind frei, es gibt dafür keine Ersatztermine.
+  var VACATIONS = [
+    ["2027-01-01", "2027-01-08"], ["2027-03-26", "2027-04-02"], ["2027-07-26", "2027-07-29"],
+    ["2027-08-04", "2027-08-20"], ["2027-10-22", "2027-11-05"]
+  ];
+
+  // Eigene Farben für einzelne Serien (Leitungskonferenz ambulant und stationär klar trennen)
+  var SERIES_COLORS = { "lk-ambulant": "#0288d1", "lk-stationaer": "#e65100" };
+  var ORT_OPTIONS = ["Westring 26", "SBO Sommerdelle", "Pferdebachstraße"];
+
   var typeColors = {
     JF: "#1976d2", Steuerkreis: "#7b1fa2", Gremium: "#00796b", Blocker: "#2e7d32", Projekt: "#b45309", Klausur: "#c2185b"
   };
@@ -528,6 +550,11 @@
   function fmtDateDE(dateKey) { var d = parseDateKey(dateKey); return WEEKDAY_SHORT[d.getDay()] + " " + pad2(d.getDate()) + "." + pad2(d.getMonth() + 1) + "." + d.getFullYear(); }
   function fmtDateLong(dateKey) { var d = parseDateKey(dateKey); return WEEKDAY_LONG[d.getDay()] + ", " + d.getDate() + ". " + monthNames[d.getMonth()] + " " + d.getFullYear(); }
   function isHoliday(dateKey) { return !!HOLIDAYS[dateKey]; }
+  function isVacation(dateKey) { for (var i = 0; i < VACATIONS.length; i++) if (dateKey >= VACATIONS[i][0] && dateKey <= VACATIONS[i][1]) return true; return false; }
+  function isOffDay(dateKey) { return isHoliday(dateKey) || isVacation(dateKey); }
+  function dayOffLabel(dateKey) { return isHoliday(dateKey) ? "Feiertag: " + HOLIDAYS[dateKey] : (isVacation(dateKey) ? "Urlaub" : ""); }
+  function dayOffClass(dateKey) { return isHoliday(dateKey) ? " holiday" : (isVacation(dateKey) ? " vacation" : ""); }
+  function colorFor(type, seriesId) { return SERIES_COLORS[seriesId] || typeColors[type] || "#333333"; }
   function isWeekend(dateKey) { var g = parseDateKey(dateKey).getDay(); return g === 0 || g === 6; }
 
   function getISOWeek(date) {
@@ -571,7 +598,7 @@
       uid: "ev" + (uidCounter++),
       title: title, type: type, start: start, duration: duration,
       time: rangeStr(start, duration),
-      desc: desc || "", color: typeColors[type] || "#333333",
+      desc: desc || "", color: colorFor(type, opts.seriesId || (rule ? rule.id : null)),
       rule: rule || null,
       placeholder: !!opts.placeholder, assumption: !!opts.assumption,
       ort: opts.ort || "", blockKey: opts.blockKey || null, seriesId: opts.seriesId || (rule ? rule.id : null),
@@ -584,7 +611,7 @@
     eventsData[dateStr].push(ev);
     return ev;
   }
-  function refreshTime(ev) { ev.time = rangeStr(ev.start, ev.duration); ev.color = typeColors[ev.type] || "#333333"; }
+  function refreshTime(ev) { ev.time = rangeStr(ev.start, ev.duration); ev.color = colorFor(ev.type, ev.seriesId); }
   function touch(ev) { ev.version = (ev.version || 1) + 1; ev.updatedAt = nowISO(); }
 
   // ---- Slot-Allokator: erst aufs Raster, dann suchen. Ein gefundenes freies Fenster wird nicht noch einmal gerastet. ----
@@ -595,7 +622,8 @@
     for (var i = 0; i < evs.length; i++) {
       if (blockKey && evs[i].blockKey === blockKey) continue;
       var os = toMin(evs[i].start), oe = os + evs[i].duration;
-      if (s < oe + gap && os < e + gap) return oe;
+      var after = Math.max(gap, (evs[i].rule && evs[i].rule.bufferAfterMin) || 0);
+      if (s < oe + after && os < e + gap) return oe + (after - gap);
     }
     return -1;
   }
@@ -616,7 +644,7 @@
     if (!opts.force) {
       // hinter der Wunschzeit ist nichts mehr frei: das freie Fenster im Kernzeitfenster nehmen, das der Wunschzeit am nächsten liegt
       var best = -1;
-      for (var t = snapUp(CONFIG.DAY_START * 60); t + duration <= limit; t += CONFIG.GRID_SNAP_MIN) {
+      for (var t = snapUp(CONFIG.REGULAR_START * 60); t + duration <= limit; t += CONFIG.GRID_SNAP_MIN) {
         if (slotClash(evs, t, duration, gap, opts.blockKey) < 0 && (best < 0 || Math.abs(t - pref) < Math.abs(best - pref))) best = t;
       }
       if (best >= 0) return best;
@@ -632,7 +660,7 @@
   // Reihenfolge: gleicher Monat vorwärts, gleicher Monat rückwärts, danach anderer Monat rückwärts, zuletzt vorwärts.
   // Ohne freies Ziel bleibt der Termin liegen, die Prüfung meldet ihn, und der Konflikt steht in generationConflicts.
   var generationConflicts = [];
-  function isFreeDay(d) { var k = dateToKey(d); return d.getFullYear() === YEAR && !hasKlausur(k) && !isHoliday(k); }
+  function isFreeDay(d) { var k = dateToKey(d); return d.getFullYear() === YEAR && !hasKlausur(k) && !isOffDay(k); }
   function shiftToFree(d, maxWeeks, label) {
     var key = dateToKey(d);
     if (isFreeDay(d)) return { date: d, shifted: false };
@@ -649,7 +677,8 @@
     generationConflicts.push((label || "Termin") + " am " + fmtDateDE(key) + ": kein freies Ausweichziel in " + YEAR + ", bleibt liegen.");
     return { date: d, shifted: false, conflict: true, from: key };
   }
-  function avoidKlausur(d) { return shiftToFree(d, 3, "Monatstermin"); }
+  // Feiertag und Urlaub: der Termin entfällt ohne Ersatz ({dropped:true}). Nur bei einer Klausur wird verschoben.
+  function avoidKlausur(d) { return isOffDay(dateToKey(d)) ? { date: d, dropped: true } : shiftToFree(d, 3, "Monatstermin"); }
     function shiftNote(r) { return r.shifted ? " Verschoben von " + fmtDateDE(r.from) + " (Feiertag/Klausur)." : ""; }
 
   function hasKlausur(dateKey) {
@@ -659,9 +688,16 @@
   }
 
   // Intervalltermine (alle 6–8 Wochen = 7-Wochen-Takt) an einem Wochentag
-  function intervalDates(startKey, weeks) {
-    var out = []; var d = parseDateKey(startKey);
-    while (d.getFullYear() === YEAR) { out.push(dateToKey(d)); d = addDays(d, weeks * 7); }
+  // Jeder Termin wird ab dem tatsächlichen Vorgänger gerechnet. Fällt er auf Klausur, Feiertag oder Urlaub, geht es eine Woche vor, dann eine zurück.
+  // taken: bereits von anderen Intervallreihen belegte Dienstage, damit die Reihen nicht auf einem Tag zusammenfallen.
+  function intervalDates(startKey, weeks, taken) {
+    var out = []; var d = parseDateKey(startKey); taken = taken || {};
+    while (d.getFullYear() === YEAR) {
+      var pick = null;
+      [0, 7, -7].forEach(function(off) { var c = addDays(d, off); if (!pick && isFreeDay(c) && !taken[dateToKey(c)]) pick = c; });
+      if (!pick) { generationConflicts.push("Intervalltermin am " + fmtDateDE(dateToKey(d)) + ": kein freies Ausweichziel in " + YEAR + ", bleibt liegen."); pick = d; }
+      out.push(dateToKey(pick)); taken[dateToKey(pick)] = true; d = addDays(pick, weeks * 7);
+    }
     return out;
   }
 
@@ -669,15 +705,15 @@
     eventsData = {}; uidCounter = 1; RULES = {}; generationConflicts = [];
 
     // ---- Regeln (Kern: 7 GF-Korrekturregeln + Strukturregeln) ----
-    var rFokusMo = defRule({ id: "fokuszeit-mo", label: "Fokuszeit-Blocker (Mo)", allowedDays: ["Mo"], turnus: "wöchentlich", duration: 90, fixedTime: "07:30 – 09:00", altTimes: ["09:00 – 10:30"], note: "Regel 5: inkl. 0,5 Std. Abstimmung Assistenz GF. Alternative 09:00–10:30 noch offen.", editable: true });
+    var rFokusMo = defRule({ id: "fokuszeit-mo", label: "Fokuszeit-Blocker (Mo)", allowedDays: ["Mo"], turnus: "wöchentlich", duration: 90, fixedTime: "09:00 – 10:30", note: "Regel 5: inkl. 0,5 Std. Abstimmung Assistenz GF. Montag 09:00–10:30, keine regulären Termine vor 09:00.", editable: true });
     var rFokusFr = defRule({ id: "fokuszeit-fr", label: "Fokuszeit-Blocker (Fr)", allowedDays: ["Fr"], turnus: "wöchentlich", duration: 120, fixedTime: "09:00 – 11:00", note: "Regel 5: inkl. 0,5 Std. Abstimmung Assistenz GF.", editable: true });
-    var rProjekt = defRule({ id: "projektarbeit", label: "Projektarbeit-Blocker GF", allowedDays: ["Mi"], turnus: "wöchentlich", duration: 120, fixedTime: "13:30 – 15:30", note: "Regel 6: fest auf Mittwoch.", editable: true });
-    var rWG = defRule({ id: "wochengespraech", label: "Wochengespräch mit GF-Beteiligung", allowedDays: ["Mo","Di","Mi","Do","Fr"], turnus: "monatlich", duration: 120, fixedTime: "14:00 – 16:00", note: "Regel 7: Wochentag noch nicht bestätigt (Arbeitsannahme 2. Donnerstag).", editable: true });
+    var rProjekt = defRule({ id: "projektarbeit", label: "Projektarbeit-Blocker GF", allowedDays: ["Mi"], turnus: "wöchentlich", duration: 120, fixedTime: "12:00 – 14:00", note: "Regel 6: fest auf Mittwoch, direkt vor dem Wochengespräch.", editable: true });
+    var rWG = defRule({ id: "wochengespraech", label: "Wochengespräch mit GF-Beteiligung", allowedDays: ["Mi"], turnus: "wöchentlich", duration: 120, fixedTime: "14:00 – 16:00", note: "Regel 7: jeden Mittwoch, Projektarbeit davor. Struktur mit Herrn Fritsch bestätigen.", editable: true });
     var rPuffer = defRule({ id: "pufferslot", label: "Pufferslot Gremien", allowedDays: ["Do"], turnus: "monatlich", duration: 90, note: "Schutzslot für kurzfristige Gremienbelange.", editable: true });
     var rLK = defRule({ id: "lk-sozialwirtschaft", label: "Leitungskonferenz Sozialwirtschaft", allowedDays: ["Mo"], turnus: "monatlich", duration: 120, note: "1. Montag, 2 Std. (ehemals Betriebsleitungskonferenz).", editable: false });
     var rEKL = defRule({ id: "ekl", label: "Erweiterte Konzernleitung (eKL)", allowedDays: ["Mo"], turnus: "monatlich", duration: 180, note: "3. Montag, 3 Std. (EVAR).", editable: false });
     var rMachleit = defRule({ id: "machleit-ebner", label: "JF Machleit Ebner", allowedDays: ["Mo"], turnus: "quartalsweise", duration: 50, note: "Quartalsweise direkt nach der eKL, ab 01/2027.", editable: true });
-    var rWA = defRule({ id: "wirtschaftsausschuss", label: "Wirtschaftsausschuss SBO", allowedDays: ["Di"], turnus: "monatlich", duration: 120, fixedTime: "15:00 – 17:00", note: "4. Dienstag, 2 Std. (Modell A1).", editable: false });
+    var rWA = defRule({ id: "wirtschaftsausschuss", label: "Wirtschaftsausschuss SBO", allowedDays: ["Di"], turnus: "monatlich", duration: 120, fixedTime: "09:00 – 11:00", bufferAfterMin: CONFIG.RETURN_BUFFER_MIN, note: "4. Dienstag, 09:00–11:00, danach " + CONFIG.RETURN_BUFFER_MIN + " Min. Rückfahrtpuffer (Modell A1).", editable: false });
     var rMAVBR = defRule({ id: "mav-br-sbo", label: "JF MAV+BR SBO", allowedDays: ["Do"], turnus: "alle 2 Monate", duration: 50, note: "Ersetzt Monatsgespräch SBO und Betriebsversammlung SBO (beide gestrichen).", editable: true });
     var rJahndorf = defRule({ id: "jahndorf", label: "JF Jahndorf", allowedDays: ["Di"], turnus: "alle 6-8 Wochen", duration: 50, note: "Regel 1: alle 6–8 Wochen, nicht monatlich.", editable: true });
     var rPersonal = defRule({ id: "jf-personal", label: "JF Personal", allowedDays: ["Di"], turnus: "alle 6-8 Wochen", totalDuration: 75, blockParts: [50, 20, 5], notSplittable: true, subslots: "50 Min. Referat + 20 Min. Poolspringer Frau Mala + 5 Min. Wechselpuffer", note: "Regeln 2+3: Mala-Teilslot im Block, Block nicht trennbar.", editable: true });
@@ -686,8 +722,8 @@
     var rGBL = defRule({ id: "jf-gbl", label: "JF GBL (Di-Mittagsband)", allowedDays: ["Di"], turnus: "monatlich", duration: 50, note: "GBL-JF liegen auf dem Dienstag-Mittagsband.", editable: true });
     var rReferat = defRule({ id: "jf-referat", label: "JF Referat (Di-Mittagsband)", allowedDays: ["Di"], turnus: "monatlich", duration: 50, editable: true });
     var rPartner = defRule({ id: "jf-partner", label: "JF Partner (Di)", allowedDays: ["Di"], turnus: "monatlich", duration: 50, note: "Dienstag = JF-Tag (Arbeitsannahme Slotverteilung).", editable: true });
-    var rSKWF = defRule({ id: "sk-wifi", label: "Steuerkreis Wirtschaft & Finanzen", allowedDays: ["Do"], turnus: "monatlich", duration: 90, note: "Teil 1 Doppelpack in derselben Einrichtung, GF dabei.", editable: true });
-    var rSKQM = defRule({ id: "sk-qm", label: "Steuerkreis QM & Regulatorik", allowedDays: ["Do"], turnus: "alle 2 Monate", duration: 90, note: "Teil 2 Doppelpack direkt im Anschluss, gleiche Einrichtung.", editable: true, coupledAfter: "sk-wifi", coupledMaxGapMin: 15 });
+    var rSKWF = defRule({ id: "sk-wifi", label: "Steuerkreis Wirtschaft & Finanzen", allowedDays: ["Do"], turnus: "monatlich", duration: 120, note: "Teil 1 Doppelpack in derselben Einrichtung, GF dabei.", editable: true });
+    var rSKQM = defRule({ id: "sk-qm", label: "Steuerkreis QM & Regulatorik", allowedDays: ["Do"], turnus: "alle 2 Monate", duration: 120, note: "Teil 2 Doppelpack direkt im Anschluss, gleiche Einrichtung.", editable: true, coupledAfter: "sk-wifi", coupledMaxGapMin: 15 });
     var rSG = defRule({ id: "steuerungsgruppe", label: "Steuerungsgruppen DR (Rotation)", allowedDays: ["Do"], turnus: "monatlich", duration: 120, note: "Alte Steuerungsgruppen UK DR / Personal / Digitalisierung, Do-Rotation bis zur Klärung.", pendingClarification: true, editable: true });
     var rKlausurSW = defRule({ id: "klausur-sw", label: "Leistungsklausur Sozialwirtschaft", allowedDays: ["Mo","Di"], turnus: "2x jährlich", couplingForbiddenWith: "gbl-klausur", note: "Regel 4: nie in derselben ISO-Woche wie die GBL-Klausur.", editable: true });
     var rGBLKlausur = defRule({ id: "gbl-klausur", label: "GBL-Klausur", allowedDays: ["Do","Fr"], turnus: "jährlich (November)", couplingForbiddenWith: "klausur-sw", note: "Regel 4: nie in derselben ISO-Woche wie die Leistungsklausur Sozialwirtschaft.", editable: true });
@@ -696,7 +732,8 @@
     var rIMK = defRule({ id: "imk", label: "IMK", allowedDays: ["Mi"], turnus: "quartalsweise", duration: 180, editable: true });
     var rExtern = defRule({ id: "extern-im", label: "Externe Gremien IM / Stadt", allowedDays: ["Mi"], turnus: "unregelmäßig", editable: true });
     var rGVV = defRule({ id: "gesellschafter", label: "Gesellschafter / AR", allowedDays: ["Do"], turnus: "2-3x jährlich", editable: true });
-    var rLKamb = defRule({ id: "lk-ambulant-stationaer", label: "LK ambulant / LK stationär", allowedDays: ["Do"], turnus: "offen", editable: true });
+    var rLKamb = defRule({ id: "lk-ambulant-stationaer", label: "Leitungskonferenz ambulant / stationär", allowedDays: ["Do"], turnus: "offen", editable: true });
+    var rASA = defRule({ id: "asa", label: "ASA (Team-Termin)", turnus: "2x jährlich", duration: 120, note: "Platzhalter: Teamtermin, 2 Std., 2× jährlich.", editable: true });
 
     var m, i, k;
 
@@ -718,18 +755,19 @@
     for (m = 0; m < 12; m++) {
       var mondays = getAllWeekdaysOfMonth(YEAR, m, 1);
       for (i = 0; i < mondays.length; i++) {
-        k = dateToKey(mondays[i]); if (isHoliday(k) || hasKlausur(k)) continue;
-        addEvent(k, "Fokuszeit-Blocker (Mo)", "Blocker", "07:30", 90, "Wissensmanagement, Selbstorganisation, Vor-/Nachbereitung – inkl. 0,5 Std. Abstimmung mit Assistenz GF.", rFokusMo);
+        k = dateToKey(mondays[i]); if (isOffDay(k) || hasKlausur(k)) continue;
+        addEvent(k, "Fokuszeit-Blocker (Mo)", "Blocker", "09:00", 90, "Wissensmanagement, Selbstorganisation, Vor-/Nachbereitung – inkl. 0,5 Std. Abstimmung mit Assistenz GF.", rFokusMo);
       }
       var fridays = getAllWeekdaysOfMonth(YEAR, m, 5);
       for (i = 0; i < fridays.length; i++) {
-        k = dateToKey(fridays[i]); if (isHoliday(k) || hasKlausur(k)) continue;
+        k = dateToKey(fridays[i]); if (isOffDay(k) || hasKlausur(k)) continue;
         addEvent(k, "Fokuszeit-Blocker (Fr)", "Blocker", "09:00", 120, "Wissensmanagement, Selbstorganisation, Vor-/Nachbereitung – inkl. 0,5 Std. Abstimmung mit Assistenz GF.", rFokusFr);
       }
       var weds = getAllWeekdaysOfMonth(YEAR, m, 3);
       for (i = 0; i < weds.length; i++) {
-        k = dateToKey(weds[i]); if (isHoliday(k) || hasKlausur(k)) continue;
-        addEvent(k, "Projektarbeit-Blocker GF", "Projekt", "13:30", 120, "Statusmeetings, Telefonate, operative Klärung – fest Mittwoch (Regel 6).", rProjekt);
+        k = dateToKey(weds[i]); if (isOffDay(k) || hasKlausur(k)) continue;
+        addEvent(k, "Projektarbeit-Blocker GF", "Projekt", "12:00", 120, "Statusmeetings, Telefonate, operative Klärung – fest Mittwoch, direkt vor dem Wochengespräch (Regel 6).", rProjekt);
+        addEvent(k, "Wochengespräch mit GF-Beteiligung", "Gremium", "14:00", 120, "Wöchentlich am Mittwoch, 2 Std., 14:00–16:00 Uhr (Regel 7). Struktur mit Herrn Fritsch bestätigen.", rWG, { assumption: true, seriesId: "wochengespraech" });
       }
     }
 
@@ -737,13 +775,15 @@
     for (m = 0; m < 12; m++) {
       var mo3 = avoidKlausur(getNthWeekdayOfMonth(YEAR, m, 1, 3));
       k = dateToKey(mo3.date);
-      var ekl = placeOnDay(k, "Erweiterte Konzernleitung (eKL)", "Gremium", "12:00", 180, "Monatlicher Montag-Anker (EVAR), 3. Montag, 3 Std." + shiftNote(mo3), rEKL, { ort: "EVAR" });
-      if (m % 3 === 0) {
-        placeOnDay(k, "JF Machleit Ebner", "JF", fromMin(toMin(ekl.start) + ekl.duration + 15), 50, "Quartalsweise direkt im Anschluss an die eKL, ab 01/2027 (EVAR), 50 Min.", rMachleit, { ort: "EVAR" });
+      if (!mo3.dropped) {
+        var ekl = placeOnDay(k, "Erweiterte Konzernleitung (eKL)", "Gremium", "12:00", 180, "Monatlicher Montag-Anker (EVAR), 3. Montag, 3 Std." + shiftNote(mo3), rEKL, { ort: "EVAR" });
+        if (m % 3 === 0) {
+          placeOnDay(k, "JF Machleit Ebner", "JF", fromMin(toMin(ekl.start) + ekl.duration + 15), 50, "Quartalsweise direkt im Anschluss an die eKL, ab 01/2027 (EVAR), 50 Min.", rMachleit, { ort: "EVAR" });
+        }
       }
       var mo1 = avoidKlausur(getNthWeekdayOfMonth(YEAR, m, 1, 1));
       k = dateToKey(mo1.date);
-      placeOnDay(k, "Leitungskonferenz Sozialwirtschaft", "Gremium", "14:00", 120, "Monatlicher Montag-Anker (Diakonie Ruhr), 1. Montag, 2 Std." + shiftNote(mo1), rLK, { ort: "Westring" });
+      if (!mo1.dropped) placeOnDay(k, "Leitungskonferenz Sozialwirtschaft", "Gremium", "14:00", 120, "Monatlicher Montag-Anker (Diakonie Ruhr), 1. Montag, 2 Std." + shiftNote(mo1), rLK, { ort: "Westring 26" });
     }
 
     // ---- 4. Dienstag = JF-Tag (Arbeitsannahme Slotverteilung) ----
@@ -754,25 +794,44 @@
       3: { partner: ["JF Lahn", "JF Rethfeldt (MiR)", "JF Raatz"], gbl: ["JF Kutlu", "JF Rieckert"], referat: [] },
       4: { partner: ["JF Malcher (Bau)", "JF Sonnenschein (Immobilien)"], gbl: ["JF Bradtke", "JF Eull"], referat: [] }
     };
-    // Intervalltermine: Klausurtage werden um eine Woche verschoben
-    var avoidTue = function(list) { return list.map(function(k0) { return dateToKey(shiftToFree(parseDateKey(k0), 1, "Intervalltermin").date); }); };
-    var jahndorfDates = avoidTue(intervalDates("2027-01-19", 7));
-    var personalDates = avoidTue(intervalDates("2027-01-12", 7));
-    var qmDates = avoidTue(intervalDates("2027-01-26", 7));
+    // Intervalltermine: 7-Wochen-Takt, Klausur-, Feiertags- und Urlaubstage werden von intervalDates umgangen
+    var intervalTaken = {};
+    var jahndorfDates = intervalDates("2027-01-19", 7, intervalTaken);
+    var personalDates = intervalDates("2027-01-12", 7, intervalTaken);
+    var qmDates = intervalDates("2027-01-26", 7, intervalTaken);
     var traeger = function(name) { return partnerIM.indexOf(name) >= 0 ? "Innere Mission" : (partnerLeWo.indexOf(name) >= 0 ? "LeWo" : ""); };
-    var countDay = function(kk) { return (eventsData[kk] || []).length; };
+    // Belegung in Minuten (inkl. Wechselzeit und Rückfahrtpuffer), damit Ausweichtermine auf den freiesten Dienstag fallen
+    var countDay = function(kk) { return (eventsData[kk] || []).reduce(function(sum, e) { return sum + e.duration + CONFIG.SLOT_GAP_MIN + ((e.rule && e.rule.bufferAfterMin) || 0); }, 0); };
 
     for (m = 0; m < 12; m++) {
       var tuesdays = getAllWeekdaysOfMonth(YEAR, m, 2).map(dateToKey);
-      var freeTuesdays = tuesdays.filter(function(kk) { return !hasKlausur(kk) && !isHoliday(kk); });
-      // Zielt auf den Dienstag des Monats mit der geringsten Belegung, wenn der Stamm-Dienstag ausfällt
-      var target = function(kk) {
+      var freeTuesdays = tuesdays.filter(function(kk) { return !hasKlausur(kk) && !isOffDay(kk); });
+      // Zielt auf den Dienstag des Monats mit der geringsten Belegung, wenn der Stamm-Dienstag wegen einer Klausur ausfällt.
+      // Feiertag und Urlaub: kein Ersatz, der Termin entfällt (key: null).
+      var hasWindow = function(kk, dur) {
+        for (var t = snapUp(CONFIG.REGULAR_START * 60); t + dur <= CONFIG.DAY_END * 60; t += CONFIG.GRID_SNAP_MIN) if (slotClash(eventsData[kk] || [], t, dur, CONFIG.SLOT_GAP_MIN) < 0) return true;
+        return false;
+      };
+      var target = function(kk, dur) {
+        dur = dur || 50;
+        if (isOffDay(kk)) return { key: null };
+        if (!freeTuesdays.length) return { key: null };
         if (freeTuesdays.indexOf(kk) >= 0) return { key: kk, moved: false };
-        var best = freeTuesdays[0];
-        freeTuesdays.forEach(function(c) { if (countDay(c) < countDay(best)) best = c; });
+        // am wenigsten belegter Dienstag, auf dem noch ein Fenster für die Dauer frei ist
+        var fit = freeTuesdays.filter(function(c) { return hasWindow(c, dur); });
+        // Reicht keiner der freien Dienstage, bleibt der Termin auf dem Klausur-Dienstag, sofern nach der Klausur noch ein Fenster frei ist
+        if (!fit.length && hasWindow(kk, dur)) return { key: kk, moved: false };
+        var pool = fit.length ? fit : freeTuesdays, best = pool[0];
+        pool.forEach(function(c) { if (countDay(c) < countDay(best)) best = c; });
         return { key: best, moved: true, from: kk };
       };
       var movedNote = function(t) { return t.moved ? " Verschoben von " + fmtDateDE(t.from) + " (Klausur/Feiertag)." : ""; };
+
+      // Feste Zeit zuerst: Wirtschaftsausschuss SBO (4. Di) vor allen JF, damit diese um Sitzung und Rückfahrtpuffer herumgelegt werden
+      if (tuesdays.length >= 4) {
+        var tw = target(tuesdays[3]);
+        if (tw.key) addEvent(tw.key, "Wirtschaftsausschuss SBO", "Gremium", "09:00", 120, "Monatlich, 4. Dienstag, 09:00–11:00 Uhr, danach " + CONFIG.RETURN_BUFFER_MIN + " Min. Rückfahrtpuffer (Modell A1)." + movedNote(tw), rWA, { ort: "SBO Sommerdelle" });
+      }
 
       // Reihenfolge: reguläre Dienstage zuerst, ausfallende (Klausur/Feiertag) zuletzt, damit deren Formate auf die am wenigsten belegten Dienstage verteilt werden
       var order = []; for (i = 0; i < tuesdays.length; i++) order.push(i);
@@ -781,11 +840,6 @@
         i = order[oi];
         k = tuesdays[i];
         var nth = i + 1;
-        // feste Zeit zuerst: Wirtschaftsausschuss SBO (4. Di)
-        if (nth === 4) {
-          var tw = target(k);
-          addEvent(tw.key, "Wirtschaftsausschuss SBO", "Gremium", "15:00", 120, "Monatlich, 4. Dienstag, 2 Std. (Modell A1)." + movedNote(tw), rWA, { ort: "SBO" });
-        }
         // Intervalltermine (6–8 Wochen, 7-Wochen-Takt)
         if (personalDates.indexOf(k) >= 0) {
           var bk = "jf-personal-" + k;
@@ -805,22 +859,22 @@
           var j, t;
           for (j = 0; j < g.partner.length; j++) {
             t = target(k);
-            placeOnDay(t.key, g.partner[j], "JF", "09:00", 50, "Monatlicher Jour fixe, 50 Min. Träger: " + traeger(g.partner[j]) + ". Slotzuordnung = Arbeitsannahme." + movedNote(t), rPartner, { assumption: true, seriesId: "partner-" + g.partner[j], ort: traeger(g.partner[j]) });
+            if (t.key) placeOnDay(t.key, g.partner[j], "JF", "09:00", 50, "Monatlicher Jour fixe, 50 Min. Träger: " + traeger(g.partner[j]) + ". Slotzuordnung = Arbeitsannahme." + movedNote(t), rPartner, { assumption: true, seriesId: "partner-" + g.partner[j], ort: traeger(g.partner[j]) });
           }
           for (j = 0; j < g.gbl.length; j++) {
             var d = g.gbl[j] === "JF Rieckert" ? "Monatlicher Jour fixe GBL, ambulanter Bereich, 50 Min. (ersetzt die frühere 3-Std.-Sitzung DB/DD). Di-Mittagsband." :
                     g.gbl[j] === "JF Frerich/Culina" ? "Monatlicher Jour fixe GBL / Tochtergesellschaft Culina, 50 Min. Di-Mittagsband (Takt: monatlich als Obergrenze)." :
                     "Monatlicher Jour fixe GBL, 50 Min. Di-Mittagsband.";
             t = target(k);
-            placeOnDay(t.key, g.gbl[j], "JF", "12:00", 50, d + movedNote(t), rGBL, { assumption: true, seriesId: "gbl-" + g.gbl[j] });
+            if (t.key) placeOnDay(t.key, g.gbl[j], "JF", "12:00", 50, d + movedNote(t), rGBL, { assumption: true, seriesId: "gbl-" + g.gbl[j] });
           }
           for (j = 0; j < g.referat.length; j++) {
             t = target(k);
-            placeOnDay(t.key, g.referat[j], "JF", "12:00", 50, "Monatlicher Jour fixe Referat " + g.referat[j].replace("JF ", "") + ", 50 Min. Di-Mittagsband." + movedNote(t), rReferat, { assumption: true, seriesId: "referat-" + g.referat[j] });
+            if (t.key) placeOnDay(t.key, g.referat[j], "JF", "12:00", 50, "Monatlicher Jour fixe Referat " + g.referat[j].replace("JF ", "") + ", 50 Min. Di-Mittagsband." + movedNote(t), rReferat, { assumption: true, seriesId: "referat-" + g.referat[j] });
           }
           if (nth === 3) {
-            t = target(k);
-            placeOnDay(t.key, "JF A³-Team", "JF", "14:00", 90, "Strategie & Controlling, 90 Min. monatlich (Leitung Merino-Kesting), Dienstagnachmittag." + movedNote(t), rA3, { seriesId: "jf-a3" });
+            t = target(k, 90);
+            if (t.key) placeOnDay(t.key, "JF A³-Team", "JF", "14:00", 90, "Strategie & Controlling, 90 Min. monatlich (Leitung Merino-Kesting), Dienstagnachmittag." + movedNote(t), rA3, { seriesId: "jf-a3" });
           }
         }
       }
@@ -829,7 +883,8 @@
     // ---- 5. Mittwoch: Innere Mission / extern ----
     for (m = 0; m < 12; m += 3) {
       var mi1 = avoidKlausur(getNthWeekdayOfMonth(YEAR, m, 3, 1)); k = dateToKey(mi1.date);
-      placeOnDay(k, "IMK", "Gremium", "09:00", 180, "Innere Mission Konferenz, quartalsweise, 3 Std., extern." + shiftNote(mi1), rIMK, { ort: "Innere Mission" });
+      // gap 0: 09:00–12:00 schließt direkt an die Projektarbeit (12:00) an
+      if (!mi1.dropped) placeOnDay(k, "IMK", "Gremium", "09:00", 180, "Innere Mission Konferenz, quartalsweise, 3 Std., extern." + shiftNote(mi1), rIMK, { ort: "Innere Mission", gap: 0 });
     }
     var vsIM = ["2027-02-10", "2027-04-21", "2027-06-23", "2027-09-08", "2027-11-24"];
     for (i = 0; i < vsIM.length; i++) placeOnDay(vsIM[i], "Vorstandssitzung IM", "Gremium", "09:00", 90, "Platzhalter: ca. 4–5×/Jahr, extern – genaue Termine noch offen.", rExtern, { placeholder: true, seriesId: "vorstand-im", ort: "Innere Mission" });
@@ -843,30 +898,32 @@
     var rotationIds = ["uk-dr", "personal", "digitalisierung"]; // je Gruppe eine eigene Serie
     for (m = 0; m < 12; m++) {
       var do1 = avoidKlausur(getNthWeekdayOfMonth(YEAR, m, 4, 1)); k = dateToKey(do1.date);
-      placeOnDay(k, rotation[m % 3], "Steuerkreis", "09:00", 120, "Alte Steuerungsgruppe, Do-Rotation, 2 Std. – bis zur Klärung mit den neuen Steuerkreisen beibehalten." + shiftNote(do1), rSG, { seriesId: "steuerungsgruppe-" + rotationIds[m % 3], ort: "Diakonie Ruhr" });
-      var do2 = avoidKlausur(getNthWeekdayOfMonth(YEAR, m, 4, 2)); k = dateToKey(do2.date);
-      placeOnDay(k, "Wochengespräch mit GF-Beteiligung", "Gremium", "14:00", 120, "Monatlich, 2 Std., 14:00–16:00 Uhr (Regel 7). Wochentag = Arbeitsannahme 2. Donnerstag, noch nicht bestätigt." + shiftNote(do2), rWG, { assumption: true, seriesId: "wochengespraech" });
+      if (!do1.dropped) placeOnDay(k, rotation[m % 3], "Steuerkreis", "09:00", 120, "Alte Steuerungsgruppe, Do-Rotation, 2 Std. – bis zur Klärung mit den neuen Steuerkreisen beibehalten." + shiftNote(do1), rSG, { seriesId: "steuerungsgruppe-" + rotationIds[m % 3], ort: "Diakonie Ruhr" });
       var do3 = avoidKlausur(getNthWeekdayOfMonth(YEAR, m, 4, 3)); k = dateToKey(do3.date);
-      if (m % 2 === 0) placeOnDay(k, "JF MAV+BR SBO", "JF", "14:00", 50, "Alle 2 Monate, 50 Min. Ersetzt Monatsgespräch SBO und Betriebsversammlung SBO (gestrichen)." + shiftNote(do3), rMAVBR, { seriesId: "mav-br-sbo", ort: "SBO" });
-      placeOnDay(k, "Pufferslot Gremien", "Gremium", "16:00", 90, "Fester Schutzslot für kurzfristige Gremienbelange, 3. Donnerstag, 16:00–17:30." + shiftNote(do3), rPuffer, { seriesId: "pufferslot" });
+      if (m % 2 === 0 && !do3.dropped) placeOnDay(k, "JF MAV+BR SBO", "JF", "14:00", 50, "Alle 2 Monate, 50 Min. Ersetzt Monatsgespräch SBO und Betriebsversammlung SBO (gestrichen)." + shiftNote(do3), rMAVBR, { seriesId: "mav-br-sbo", ort: "SBO Sommerdelle" });
+      if (!do3.dropped) placeOnDay(k, "Pufferslot Gremien", "Gremium", "16:00", 90, "Fester Schutzslot für kurzfristige Gremienbelange, 3. Donnerstag, 16:00–17:30." + shiftNote(do3), rPuffer, { seriesId: "pufferslot" });
       var do4 = avoidKlausur(getNthWeekdayOfMonth(YEAR, m, 4, 4)); k = dateToKey(do4.date);
-      var sk1 = placeOnDay(k, "Steuerkreis Wirtschaft & Finanzen", "Steuerkreis", "09:30", 90, "Monatlich – Teil 1 des Doppelpacks in derselben Einrichtung, GF dabei." + shiftNote(do4), rSKWF, { seriesId: "sk-wifi", ort: "Einrichtung (Vor-Ort)" });
-      if (m % 2 === 0) placeOnDay(k, "Steuerkreis QM & Regulatorik", "Steuerkreis", fromMin(toMin(sk1.start) + sk1.duration + 15), 90, "Alle 2 Monate – Teil 2 des Doppelpacks direkt im Anschluss, gleiche Einrichtung, GF dabei.", rSKQM, { seriesId: "sk-qm", ort: "Einrichtung (Vor-Ort)" });
+      var sk1 = do4.dropped ? null : placeOnDay(k, "Steuerkreis Wirtschaft & Finanzen", "Steuerkreis", "09:30", 120, "Monatlich, 2 Std. – Teil 1 des Doppelpacks in derselben Einrichtung, GF dabei." + shiftNote(do4), rSKWF, { seriesId: "sk-wifi", ort: "Einrichtung (Vor-Ort)" });
+      if (m % 2 === 0 && sk1) placeOnDay(k, "Steuerkreis QM & Regulatorik", "Steuerkreis", fromMin(toMin(sk1.start) + sk1.duration + 15), 120, "Alle 2 Monate, 2 Std. – Teil 2 des Doppelpacks direkt im Anschluss, gleiche Einrichtung, GF dabei.", rSKQM, { seriesId: "sk-qm", ort: "Einrichtung (Vor-Ort)" });
     }
     // Gesellschafter / AR (Termine exemplarisch, unbestätigt)
-    placeOnDay("2027-03-11", "AR/GV SBO", "Gremium", "09:00", 180, "Platzhalter: 2×/Jahr (nicht quartalsweise), Termin noch offen.", rGVV, { placeholder: true, seriesId: "ar-gv-sbo", ort: "SBO" });
-    placeOnDay("2027-09-16", "AR/GV SBO", "Gremium", "09:00", 180, "Platzhalter: 2×/Jahr (nicht quartalsweise), Termin noch offen.", rGVV, { placeholder: true, seriesId: "ar-gv-sbo", ort: "SBO" });
+    placeOnDay("2027-03-11", "AR/GV SBO", "Gremium", "09:00", 180, "Platzhalter: 2×/Jahr (nicht quartalsweise), Termin noch offen.", rGVV, { placeholder: true, seriesId: "ar-gv-sbo", ort: "SBO Sommerdelle" });
+    placeOnDay("2027-09-16", "AR/GV SBO", "Gremium", "09:00", 180, "Platzhalter: 2×/Jahr (nicht quartalsweise), Termin noch offen.", rGVV, { placeholder: true, seriesId: "ar-gv-sbo", ort: "SBO Sommerdelle" });
     placeOnDay("2027-03-25", "GVV DADuL", "Gremium", "09:00", 120, "Platzhalter: Gesellschafterversammlung DADuL, 2×/Jahr, Termin noch offen.", rGVV, { placeholder: true, seriesId: "gvv-dadul" });
     placeOnDay("2027-10-14", "GVV DADuL", "Gremium", "09:00", 120, "Platzhalter: Gesellschafterversammlung DADuL, 2×/Jahr, Termin noch offen.", rGVV, { placeholder: true, seriesId: "gvv-dadul" });
     placeOnDay("2027-04-15", "GVV Pflege/DfM/Culina", "Gremium", "09:00", 120, "Platzhalter: Gesellschafterversammlung Pflege/DfM/Culina, 2×/Jahr, Termin noch offen.", rGVV, { placeholder: true, seriesId: "gvv-pflege" });
-    placeOnDay("2027-11-04", "GVV Pflege/DfM/Culina", "Gremium", "09:00", 120, "Platzhalter: Gesellschafterversammlung Pflege/DfM/Culina, 2×/Jahr, Termin noch offen.", rGVV, { placeholder: true, seriesId: "gvv-pflege" });
+    placeOnDay("2027-11-11", "GVV Pflege/DfM/Culina", "Gremium", "09:00", 120, "Platzhalter: Gesellschafterversammlung Pflege/DfM/Culina, 2×/Jahr, Termin noch offen.", rGVV, { placeholder: true, seriesId: "gvv-pflege" });
     placeOnDay("2027-02-18", "AG DADuL (Back, Kirchhoff)", "Gremium", "10:00", 120, "Platzhalter: 3×/Jahr, 2 Std., Termin noch offen.", rGVV, { placeholder: true, seriesId: "ag-dadul" });
     placeOnDay("2027-06-17", "AG DADuL (Back, Kirchhoff)", "Gremium", "10:00", 120, "Platzhalter: 3×/Jahr, 2 Std., Termin noch offen.", rGVV, { placeholder: true, seriesId: "ag-dadul" });
     placeOnDay("2027-10-21", "AG DADuL (Back, Kirchhoff)", "Gremium", "10:00", 120, "Platzhalter: 3×/Jahr, 2 Std., Termin noch offen.", rGVV, { placeholder: true, seriesId: "ag-dadul" });
     // LK ambulant / stationär (offen): gemeinsamer Kopf, getrennte Fachteile direkt nacheinander
     ["2027-03-04", "2027-09-02"].forEach(function(lk) {
-      var a = placeOnDay(lk, "LK ambulant", "Gremium", "09:00", 90, "Platzhalter: noch offen lt. Merino-Kesting – gemeinsamer Konferenzkopf mit LK stationär, getrennte Fachteile.", rLKamb, { placeholder: true, seriesId: "lk-ambulant" });
-      placeOnDay(lk, "LK stationär", "Gremium", fromMin(toMin(a.start) + a.duration), 90, "Platzhalter: noch offen – gemeinsamer Konferenzkopf mit LK ambulant, getrennte Fachteile.", rLKamb, { placeholder: true, seriesId: "lk-stationaer", gap: 0 });
+      var a = placeOnDay(lk, "Leitungskonferenz ambulant", "Gremium", "09:00", 120, "Platzhalter: noch offen lt. Merino-Kesting – 2 Std., gemeinsamer Konferenzkopf mit der Leitungskonferenz stationär, getrennte Fachteile.", rLKamb, { placeholder: true, seriesId: "lk-ambulant" });
+      placeOnDay(lk, "Leitungskonferenz stationär", "Gremium", fromMin(toMin(a.start) + a.duration), 180, "Platzhalter: noch offen – 3 Std., gemeinsamer Konferenzkopf mit der Leitungskonferenz ambulant, getrennte Fachteile.", rLKamb, { placeholder: true, seriesId: "lk-stationaer", gap: 0 });
+    });
+    // ASA: Team-Termin, 2× jährlich, 2 Std. (Platzhalter)
+    ["2027-03-18", "2027-09-09"].forEach(function(asa) {
+      placeOnDay(asa, "ASA (Team-Termin)", "Gremium", "10:00", 120, "Platzhalter: Teamtermin, 2 Std., 2× jährlich – Termin noch offen.", rASA, { placeholder: true, seriesId: "asa", ort: "Teams" });
     });
 
     // Tageslisten sortieren
@@ -936,6 +993,12 @@
     dates.forEach(function(k) { if (cur && daysBetween(k, cur[cur.length - 1]) <= 3) cur.push(k); else { cur = [k]; out.push(cur); } });
     return out;
   }
+  // Eine Lücke zählt nicht, wenn der erwartete Wochentag im zulässigen Fenster ein Feiertag oder Urlaubstag war (kein Ersatztermin)
+  function gapExcusedByOffDay(prevLast, nextFirst, spec) {
+    var wd = parseDateKey(nextFirst).getDay(), end = Math.min(spec.maxDays, daysBetween(prevLast, nextFirst) - 1);
+    for (var n = spec.minDays; n <= end; n++) { var c = addDays(parseDateKey(prevLast), n); if (c.getDay() === wd && isOffDay(dateToKey(c))) return true; }
+    return false;
+  }
   function turnusMessages(ev, dateKey, rule, ctx) {
     var msgs = [], spec = parseTurnus(rule.turnus);
     if (spec.kind === "open") return msgs;
@@ -956,7 +1019,7 @@
       if (ci > 0) {
         var prevLast = clusters[ci - 1][clusters[ci - 1].length - 1], pg = daysBetween(clusters[ci][0], prevLast);
         if (pg < spec.minDays) msgs.push("Turnus " + t + ", aber nur " + pg + " Tage Abstand zum " + fmtDateDE(prevLast) + " (mindestens " + spec.minDays + ").");
-        else if (spec.maxDays && pg > spec.maxDays) msgs.push("Lücke im Turnus " + t + ": " + pg + " Tage seit dem " + fmtDateDE(prevLast) + " (höchstens " + spec.maxDays + ").");
+        else if (spec.maxDays && pg > spec.maxDays && !gapExcusedByOffDay(prevLast, clusters[ci][0], spec)) msgs.push("Lücke im Turnus " + t + ": " + pg + " Tage seit dem " + fmtDateDE(prevLast) + " (höchstens " + spec.maxDays + ").");
       }
       if (ci >= 0 && ci < clusters.length - 1) {
         var nextFirst = clusters[ci + 1][0], ng = daysBetween(nextFirst, clusters[ci][clusters[ci].length - 1]);
@@ -980,6 +1043,7 @@
       var msgs = [], hints = [];
       var rule = ev.rule;
       if (isHoliday(dateKey)) msgs.push("Liegt auf einem Feiertag (" + HOLIDAYS[dateKey] + ").");
+      else if (isVacation(dateKey)) msgs.push("Liegt im Urlaub.");
       else if (isWeekend(dateKey)) msgs.push("Liegt am Wochenende.");
       if (rule) {
         if (rule.allowedDays && rule.allowedDays.indexOf(weekday) === -1) msgs.push("Wochentag " + weekday + " nicht zulässig – erlaubt: " + rule.allowedDays.join(", ") + ".");
@@ -1033,8 +1097,10 @@
         if (o.uid === ev.uid) return;
         if (ev.blockKey && o.blockKey === ev.blockKey) return;
         if (overlaps(ev, o)) msgs.push("Überschneidung mit „" + o.title + "“ (" + o.time + ").");
+        else if (o.rule && o.rule.bufferAfterMin && toMin(ev.start) >= toMin(o.start) + o.duration && toMin(ev.start) < toMin(o.start) + o.duration + o.rule.bufferAfterMin) msgs.push("Rückfahrtpuffer von " + o.rule.bufferAfterMin + " Min. nach „" + o.title + "“ (" + o.time + ") unterschritten.");
       });
       var st = toMin(ev.start), en = st + ev.duration;
+      if (st < CONFIG.REGULAR_START * 60) msgs.push("Beginn vor " + pad2(CONFIG.REGULAR_START) + ":00 Uhr – reguläre Termine beginnen frühestens um " + pad2(CONFIG.REGULAR_START) + ":00 Uhr.");
       if (st < CONFIG.DAY_START * 60 || en > CONFIG.DAY_END * 60) hints.push("Außerhalb des Kernzeitfensters " + pad2(CONFIG.DAY_START) + ":00–" + pad2(CONFIG.DAY_END) + ":00.");
       if (ev.placeholder) hints.push("Platzhalter – Termin unbestätigt, mit Sekretariat abzustimmen.");
       if (ev.assumption) hints.push("Arbeitsannahme (Slot/Wochentag nicht bestätigt).");
@@ -1113,7 +1179,7 @@
     return (a && a.classList && a.classList.contains("cell")) ? a.getAttribute("data-date") : null;
   }
   function cellLabel(dateKey, visibleCount, violations) {
-    return fmtDateLong(dateKey) + (isHoliday(dateKey) ? ", Feiertag: " + HOLIDAYS[dateKey] : "") + ", " + visibleCount + (visibleCount === 1 ? " Termin" : " Termine") + (violations ? ", " + violations + (violations === 1 ? " Regelverstoß" : " Regelverstöße") : "");
+    return fmtDateLong(dateKey) + (isOffDay(dateKey) ? ", " + dayOffLabel(dateKey) : "") + ", " + visibleCount + (visibleCount === 1 ? " Termin" : " Termine") + (violations ? ", " + violations + (violations === 1 ? " Regelverstoß" : " Regelverstöße") : "");
   }
   function onCellKeydown(e, dateKey) {
     var d = parseDateKey(dateKey), nd = null;
@@ -1176,12 +1242,12 @@
       for (var day = 1; day <= daysInMonth; day++) {
         var dateKey = formatYMD(YEAR, m, day);
         var cell = document.createElement("div");
-        cell.className = "cell" + (isWeekend(dateKey) ? " weekend" : "") + (isHoliday(dateKey) ? " holiday" : "") + (selectedDateKey === dateKey ? " selected" : "");
+        cell.className = "cell" + (isWeekend(dateKey) ? " weekend" : "") + dayOffClass(dateKey) + (selectedDateKey === dateKey ? " selected" : "");
         cell.setAttribute("data-date", dateKey);
         cell.setAttribute("role", "gridcell");
         cell.setAttribute("tabindex", dateKey === tabDate ? "0" : "-1");
         cell.setAttribute("aria-selected", selectedDateKey === dateKey ? "true" : "false");
-        if (isHoliday(dateKey)) cell.title = HOLIDAYS[dateKey];
+        if (isOffDay(dateKey)) cell.title = dayOffLabel(dateKey);
         var numSpan = document.createElement("span");
         numSpan.className = "day-num"; numSpan.textContent = day; cell.appendChild(numSpan);
         var list = (eventsData[dateKey] || []).filter(passesFilter);
@@ -1246,9 +1312,9 @@
     var dayAll = eventsData[dateKey] || [];
     var visible = dayAll.filter(passesFilter);
     listContainer.innerHTML = "";
-    if (isHoliday(dateKey)) { sub.textContent = "Feiertag: " + HOLIDAYS[dateKey]; }
+    if (isOffDay(dateKey)) { sub.textContent = dayOffLabel(dateKey); }
     if (visible.length === 0) {
-      if (!isHoliday(dateKey)) sub.textContent = dayAll.length ? "Alle " + dayAll.length + " Termine dieses Tages sind durch den Filter ausgeblendet." : "Keine Termine an diesem Tag.";
+      if (!isOffDay(dateKey)) sub.textContent = dayAll.length ? "Alle " + dayAll.length + " Termine dieses Tages sind durch den Filter ausgeblendet." : "Keine Termine an diesem Tag.";
       listContainer.innerHTML = dayAll.length ? '<div class="empty-note">Mit „Alle Formate“ sind die ausgeblendeten Termine wieder sichtbar.</div>' : '<div class="empty-note">Keine Einträge an diesem Tag. Tag steht für operatives Tagesgeschäft zur Verfügung.</div>';
     } else {
       var hrs = 0; visible.forEach(function(e) { hrs += e.duration; });
@@ -1344,7 +1410,7 @@
   // ---- Tagesfokus ----
   function renderDayFocus() {
     var dateKey = focus.dateKey;
-    document.getElementById("focusTitle").textContent = "Tagesfokus – " + fmtDateLong(dateKey) + " (KW " + pad2(getISOWeek(parseDateKey(dateKey)).week) + ")" + (isHoliday(dateKey) ? " – Feiertag: " + HOLIDAYS[dateKey] : "");
+    document.getElementById("focusTitle").textContent = "Tagesfokus – " + fmtDateLong(dateKey) + " (KW " + pad2(getISOWeek(parseDateKey(dateKey)).week) + ")" + (isOffDay(dateKey) ? " – " + dayOffLabel(dateKey) : "");
     document.getElementById("fmNew").style.display = "";
     var results = checkPlausibility(dateKey);
     summaryFor(results, "an diesem Tag");
@@ -1449,7 +1515,7 @@
     moved.forEach(function(x) { minS = Math.min(minS, toMin(x.start)); maxE = Math.max(maxE, toMin(x.start) + x.duration); });
     var delta = (newStart !== null && newStart !== undefined) ? toMin(newStart) - toMin(ev.start) : 0;
     if (opts.clampGrid) {
-      var g = CONFIG.GRID_SNAP_MIN, lo = CONFIG.DAY_START * 60;
+      var g = CONFIG.GRID_SNAP_MIN, lo = CONFIG.REGULAR_START * 60;
       var hi = Math.floor((CONFIG.DAY_END * 60 - (maxE - minS)) / g) * g;
       if (hi < lo) hi = lo;
       var anchor = Math.round((minS + delta) / g) * g;
@@ -1491,8 +1557,8 @@
     var corner = document.createElement("div"); corner.className = "week-head"; corner.textContent = ""; grid.appendChild(corner);
     for (i = 0; i < cols; i++) {
       var hk = dayKeys[i]; var hd = parseDateKey(hk);
-      var h = document.createElement("div"); h.className = "week-head" + (isHoliday(hk) ? " holiday" : "");
-      h.innerHTML = WEEKDAY_SHORT[hd.getDay()] + " " + pad2(hd.getDate()) + "." + pad2(hd.getMonth() + 1) + ".<small>" + (isHoliday(hk) ? escapeHtml(HOLIDAYS[hk]) : ((eventsData[hk] || []).filter(passesFilter).length + " Termine")) + "</small>";
+      var h = document.createElement("div"); h.className = "week-head" + dayOffClass(hk);
+      h.innerHTML = WEEKDAY_SHORT[hd.getDay()] + " " + pad2(hd.getDate()) + "." + pad2(hd.getMonth() + 1) + ".<small>" + (isOffDay(hk) ? escapeHtml(isHoliday(hk) ? HOLIDAYS[hk] : "Urlaub") : ((eventsData[hk] || []).filter(passesFilter).length + " Termine")) + "</small>";
       (function(k) {
         h.style.cursor = "pointer"; h.title = "Tagesfokus"; h.setAttribute("role", "button"); h.setAttribute("tabindex", "0");
         h.addEventListener("click", function() { focus.dateKey = k; focus.mode = "day"; renderFocus(); });
@@ -1506,7 +1572,7 @@
     grid.appendChild(times);
     for (i = 0; i < cols; i++) {
       (function(dk) {
-        var col = document.createElement("div"); col.className = "week-col" + (isHoliday(dk) ? " holiday" : ""); col.style.height = totalH + "px";
+        var col = document.createElement("div"); col.className = "week-col" + dayOffClass(dk); col.style.height = totalH + "px";
         col.setAttribute("data-date", dk);
         col.addEventListener("dragover", function(e) { e.preventDefault(); this.classList.add("dragover"); });
         col.addEventListener("dragleave", function() { this.classList.remove("dragover"); });
@@ -1598,7 +1664,7 @@
       var box = document.createElement("div"); box.className = "month-day week-list-day" + (bad ? " violation" : "");
       var dh = 0; evs.forEach(function(e) { dh += e.duration; n++; }); hrs += dh;
       var h4 = document.createElement("h4");
-      h4.innerHTML = "<span>" + escapeHtml(fmtDateDE(dk)) + (isHoliday(dk) ? " · " + escapeHtml(HOLIDAYS[dk]) : "") + "</span><span>" + (Math.round(dh / 6) / 10).toLocaleString("de-DE") + " h" + (bad ? ' <span class="tag bad">' + bad + ' Verstoß</span>' : "") + "</span>";
+      h4.innerHTML = "<span>" + escapeHtml(fmtDateDE(dk)) + (isOffDay(dk) ? " · " + escapeHtml(isHoliday(dk) ? HOLIDAYS[dk] : "Urlaub") : "") + "</span><span>" + (Math.round(dh / 6) / 10).toLocaleString("de-DE") + " h" + (bad ? ' <span class="tag bad">' + bad + ' Verstoß</span>' : "") + "</span>";
       (function(k) { h4.style.cursor = "pointer"; h4.setAttribute("role", "button"); h4.setAttribute("tabindex", "0"); h4.addEventListener("click", function() { focus.dateKey = k; focus.mode = "day"; renderFocus(); }); h4.addEventListener("keydown", function(e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); focus.dateKey = k; focus.mode = "day"; renderFocus(); } }); })(dk);
       box.appendChild(h4);
       if (!evs.length) { var em = document.createElement("div"); em.className = "empty-note"; em.textContent = "Keine Termine."; box.appendChild(em); }
@@ -1698,6 +1764,27 @@
   }
 
   var formState = { dateKey: null, uid: null, locked: false, blockPart: false };
+  // Auswahlliste "Besprechung": alle vorhandenen Titel, je Titel einmal, ohne die Teilslots der Blöcke
+  function fillTitleList() {
+    var seen = {}, titles = [];
+    allEventsFlat().forEach(function(x) { if (!x.ev.blockKey && !seen[x.ev.title]) { seen[x.ev.title] = 1; titles.push(x.ev.title); } });
+    titles.sort(function(a, b) { return a.localeCompare(b, "de"); });
+    var dl = document.getElementById("titleList");
+    dl.textContent = "";
+    titles.forEach(function(t) { var o = document.createElement("option"); o.value = t; dl.appendChild(o); });
+  }
+  // Neuer Termin mit einem vorhandenen Titel: Typ, Dauer, Turnus und Ort aus dem ersten Treffer vorbelegen
+  function prefillFromTitle() {
+    if (formState.uid) return;
+    var title = document.getElementById("fTitle").value.trim(), hit = null;
+    var flat = allEventsFlat();
+    for (var i = 0; i < flat.length && !hit; i++) if (flat[i].ev.title === title && !flat[i].ev.blockKey) hit = flat[i].ev;
+    if (!hit) return;
+    document.getElementById("fType").value = hit.type;
+    document.getElementById("fDuration").value = hit.duration;
+    document.getElementById("fTurnus").value = (hit.rule && hit.rule.turnus) || "";
+    document.getElementById("fOrt").value = hit.ort || "";
+  }
   function applyFormLock() {
     var dev = document.getElementById("fDeviate").checked;
     var ruleLock = formState.locked && !dev;
@@ -1710,6 +1797,7 @@
     var ev = uid ? (eventsData[dateKey] || []).filter(function(x) { return x.uid === uid; })[0] : null;
     formState = { dateKey: dateKey, uid: uid || null, locked: !!(ev && ev.rule && ev.rule.editable === false), blockPart: !!(ev && ev.blockKey) };
     document.getElementById("formTitle").textContent = ev ? "Termin bearbeiten" : "Neuen Termin anlegen";
+    fillTitleList();
     document.getElementById("fTitle").value = ev ? ev.title : "";
     document.getElementById("fDate").value = dateKey;
     document.getElementById("fType").value = ev ? ev.type : "JF";
@@ -2164,7 +2252,7 @@
       { fixed: ["Steuerkreis Personal · Steuerkreis Marketing & Vertrieb", "offen", "—", "ohne GF, kein GF-Termin", "ohne GF"] }] },
     { name: "Klausuren, Blocker, offene Formate", items: [
       { series: ["gbl-klausur"] }, { series: ["fuehrung-dialog"] }, { series: ["klausur-strategie"] },
-      { series: ["lk-ambulant", "lk-stationaer"] }, { series: ["wochengespraech"] }, { series: ["pufferslot"] },
+      { series: ["lk-ambulant", "lk-stationaer"] }, { series: ["asa"] }, { series: ["wochengespraech"] }, { series: ["pufferslot"] },
       { series: ["fokuszeit-mo", "fokuszeit-fr"], label: "Fokuszeit-Blocker" }, { series: ["projektarbeit"] }] }
   ];
   function fmtDurMin(d) { return (d >= 60 && d % 60 === 0) ? (d / 60) + " Std." : d + " Min."; }
@@ -2324,6 +2412,7 @@
     document.getElementById("btnNewGlobal").addEventListener("click", function() { openForm(selectedDateKey || formatYMD(YEAR, 0, 4), null); });
     document.getElementById("fCancel").addEventListener("click", closeForm);
     document.getElementById("fSave").addEventListener("click", saveForm);
+    document.getElementById("fTitle").addEventListener("change", prefillFromTitle);
     document.getElementById("fDeviate").addEventListener("change", applyFormLock);
     document.getElementById("fDelete").addEventListener("click", function() { if (formState.uid) { closeForm(); deleteEvent(formState.dateKey, formState.uid); } });
     document.getElementById("formOverlay").addEventListener("click", function(e) { if (e.target === this) closeForm(); });

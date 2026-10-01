@@ -361,7 +361,7 @@
           <li><strong>JF-Dauer:</strong> 50 Min. lt. SEK-Liste; Arbeitsdatei rechnet vorsorglich mit 75 Min. Im Tool: 50 Min. je JF (SEK-Vorgabe), Dauer je Baustein editierbar.</li>
           <li><strong>Platzhalter:</strong> Vorstandssitzung IM, Verwaltungsrat IM, AG Wohlfahrt / AG-FW, Leitungskonferenz ambulant (2 Std.) / stationär (3 Std.), ASA (Team, 2 Std.), Klausur Strategie, Gesellschafterversammlungen und AG DADuL sind als unbestätigt markiert (gestrichelter Ring, Ecke unten rechts).</li>
           <li><strong>Steuerungsgruppen UK DR / Personal / Digitalisierung:</strong> Do-Rotation bis zur Klärung mit den neuen Steuerkreisen beibehalten.</li>
-          <li><strong>Steuerkreis Personal, Steuerkreis Marketing &amp; Vertrieb:</strong> ohne GF, Rhythmus offen – blockieren keine GF-Ressource, daher nicht im Kalender.</li>
+          <li><strong>Steuerkreise (alle 120 Min.):</strong> Wirtschaft &amp; Finanzen monatlich, QM &amp; Regulatorik alle 2 Monate, Personal und Marketing &amp; Vertrieb quartalsweise. Je Termintag zwei Steuerkreise im Block (15 Min. zum Verabschieden), Anreise 30 Min. nur vor dem ersten, danach ein Hospitationsblocker von 2 Std. Personal und Marketing &amp; Vertrieb liegen auf eigenen Quartalstagen.</li>
           <li><strong>Persistenz:</strong> Änderungen werden als JSON exportiert/importiert; zusätzlich Autosave im Browser (sofern verfügbar). Endgültiges Speicherkonzept offen.</li>
         </ul>
       </details>
@@ -499,6 +499,10 @@
     DAY_END: 18,
     REGULAR_START: 9,       // reguläre Termine beginnen nicht vor 09:00 Uhr
     RETURN_BUFFER_MIN: 30,  // Rückfahrtpuffer nach dem Wirtschaftsausschuss
+    SK_DURATION_MIN: 120,   // Steuerkreise dauern immer 120 Minuten
+    SK_TRAVEL_MIN: 30,      // Anreise, nur vor dem ersten Steuerkreis des Tages (kein Westring)
+    SK_FAREWELL_MIN: 15,    // Puffer zum Verabschieden zwischen zwei Steuerkreisen am selben Tag
+    SK_HOSPITATION_MIN: 120, // Hospitationsblocker im Anschluss an den Steuerkreis-Block
     HOUR_PX: 44,
     SLOT_GAP_MIN: 10,
     GRID_SNAP_MIN: 15,
@@ -539,7 +543,7 @@
   ];
 
   // Eigene Farben für einzelne Serien (Leitungskonferenz ambulant und stationär klar trennen)
-  var SERIES_COLORS = { "lk-ambulant": "#0288d1", "lk-stationaer": "#e65100", "imk": "#00838f", "imk-asa-im": "#ad1457", "asa": "#5d4037" };
+  var SERIES_COLORS = { "sk-anreise": "#78909c", "sk-hospitation": "#558b2f", "lk-ambulant": "#0288d1", "lk-stationaer": "#e65100", "imk": "#00838f", "imk-asa-im": "#ad1457", "asa": "#5d4037" };
   var ORT_OPTIONS = ["Westring 26", "SBO Sommerdelle", "Pferdebachstraße"];
 
   var typeColors = {
@@ -712,6 +716,25 @@
     return out;
   }
 
+  // Steuerkreis-Tag: Anreise (30) | Steuerkreis | 15 Min. Verabschieden | Steuerkreis | Hospitationsblocker (120).
+  // Ein Block aus bis zu zwei Steuerkreisen, direkt aufeinander, damit der GF nur einmal anreist. Der Block bleibt zusammen (blockKey).
+  function skBlockLength(n) { return CONFIG.SK_TRAVEL_MIN + n * CONFIG.SK_DURATION_MIN + (n - 1) * CONFIG.SK_FAREWELL_MIN + CONFIG.SK_HOSPITATION_MIN; }
+  function hasWindowOn(dateKey, dur) {
+    for (var t = snapUp(CONFIG.REGULAR_START * 60); t + dur <= CONFIG.DAY_END * 60; t += CONFIG.GRID_SNAP_MIN) if (slotClash(eventsData[dateKey] || [], t, dur, CONFIG.SLOT_GAP_MIN) < 0) return true;
+    return false;
+  }
+  function placeSKBlock(dateKey, sessions, rules, note) {
+    var bk = "sk-block-" + dateKey, pos = findSlot(dateKey, "09:00", skBlockLength(sessions.length), {}), first = null, prevEnd = null, last = null;
+    addEvent(dateKey, "Anreise Steuerkreis-Tag", "Blocker", fromMin(pos), CONFIG.SK_TRAVEL_MIN, "Anreise zum Steuerkreis, nur vor dem ersten Termin des Tages (kein Westring).", rules.an, { blockKey: bk, seriesId: "sk-anreise", ort: "unterwegs" });
+    pos += CONFIG.SK_TRAVEL_MIN;
+    sessions.forEach(function(x, i) {
+      if (i > 0) pos += CONFIG.SK_FAREWELL_MIN;
+      last = addEvent(dateKey, x.title, "Steuerkreis", fromMin(pos), CONFIG.SK_DURATION_MIN, x.desc + note, x.rule, { blockKey: bk, seriesId: x.seriesId, ort: "Einrichtung (Vor-Ort)" });
+      pos += CONFIG.SK_DURATION_MIN;
+    });
+    addEvent(dateKey, "Hospitation vor Ort", "Blocker", fromMin(pos), CONFIG.SK_HOSPITATION_MIN, "Hospitationsblocker, 2 Std., direkt im Anschluss: der GF bleibt ggf. vor Ort und schaut sich um.", rules.ho, { blockKey: bk, seriesId: "sk-hospitation", ort: "Einrichtung (Vor-Ort)" });
+  }
+
   function buildInitialData() {
     eventsData = {}; uidCounter = 1; RULES = {}; generationConflicts = [];
 
@@ -733,8 +756,12 @@
     var rGBL = defRule({ id: "jf-gbl", label: "JF GBL (Di-Mittagsband)", allowedDays: ["Di"], turnus: "monatlich", duration: 50, note: "GBL-JF liegen auf dem Dienstag-Mittagsband.", editable: true });
     var rReferat = defRule({ id: "jf-referat", label: "JF Referat (Di-Mittagsband)", allowedDays: ["Di"], turnus: "monatlich", duration: 50, editable: true });
     var rPartner = defRule({ id: "jf-partner", label: "JF Partner (Di)", allowedDays: ["Di"], turnus: "monatlich", duration: 50, note: "Dienstag = JF-Tag (Arbeitsannahme Slotverteilung).", editable: true });
-    var rSKWF = defRule({ id: "sk-wifi", label: "Steuerkreis Wirtschaft & Finanzen", allowedDays: ["Do"], turnus: "monatlich", duration: 120, note: "Teil 1 Doppelpack in derselben Einrichtung, GF dabei.", editable: true });
-    var rSKQM = defRule({ id: "sk-qm", label: "Steuerkreis QM & Regulatorik", allowedDays: ["Do"], turnus: "alle 2 Monate", duration: 120, note: "Teil 2 Doppelpack direkt im Anschluss, gleiche Einrichtung.", editable: true, coupledAfter: "sk-wifi", coupledMaxGapMin: 15 });
+    var rSKWF = defRule({ id: "sk-wifi", label: "Steuerkreis Wirtschaft & Finanzen", allowedDays: ["Do"], turnus: "monatlich", duration: CONFIG.SK_DURATION_MIN, note: "Teil 1 Doppelpack in derselben Einrichtung, GF dabei.", editable: true });
+    var rSKQM = defRule({ id: "sk-qm", label: "Steuerkreis QM & Regulatorik", allowedDays: ["Do"], turnus: "alle 2 Monate", duration: CONFIG.SK_DURATION_MIN, note: "Teil 2 Doppelpack direkt im Anschluss, gleiche Einrichtung.", editable: true, coupledAfter: "sk-wifi", coupledMaxGapMin: 15 });
+    var rSKP = defRule({ id: "sk-personal", label: "Steuerkreis Personal", allowedDays: ["Do"], turnus: "quartalsweise", duration: CONFIG.SK_DURATION_MIN, note: "Quartalsweise, 2 Std., zusammen mit dem Steuerkreis Marketing & Vertrieb an einem Termintag (außer Haus).", editable: true });
+    var rSKMV = defRule({ id: "sk-mv", label: "Steuerkreis Marketing & Vertrieb", allowedDays: ["Do"], turnus: "quartalsweise", duration: CONFIG.SK_DURATION_MIN, note: "Quartalsweise, 2 Std., zusammen mit dem Steuerkreis Personal an einem Termintag (außer Haus).", editable: true });
+    var rSKAn = defRule({ id: "sk-anreise", label: "Anreise Steuerkreis-Tag", turnus: "offen", duration: CONFIG.SK_TRAVEL_MIN, note: "Anreisepuffer nur vor dem ersten Steuerkreis des Tages (Steuerkreise finden nicht am Westring statt).", editable: true });
+    var rSKHo = defRule({ id: "sk-hospitation", label: "Hospitationsblocker vor Ort", turnus: "offen", duration: CONFIG.SK_HOSPITATION_MIN, note: "Direkt im Anschluss an den Steuerkreis-Block: der GF bleibt vor Ort und schaut sich um.", editable: true });
     var rSG = defRule({ id: "steuerungsgruppe", label: "Steuerungsgruppen DR (Rotation)", allowedDays: ["Do"], turnus: "monatlich", duration: 180, note: "Alte Steuerungsgruppen UK DR / Personal / Digitalisierung, 3 Std., Do-Rotation, Zuordnung noch zu klären.", pendingClarification: true, editable: true });
     var rKlausurSW = defRule({ id: "klausur-sw", label: "Leistungsklausur Sozialwirtschaft", allowedDays: ["Mo","Di"], turnus: "2x jährlich", couplingForbiddenWith: "gbl-klausur", note: "Regel 4: nie in derselben ISO-Woche wie die GBL-Klausur.", editable: true });
     var rGBLKlausur = defRule({ id: "gbl-klausur", label: "GBL-Klausur", allowedDays: ["Do","Fr"], turnus: "jährlich (November)", couplingForbiddenWith: "klausur-sw", note: "Regel 4: nie in derselben ISO-Woche wie die Leistungsklausur Sozialwirtschaft.", editable: true });
@@ -916,20 +943,27 @@
     var rotation = ["Steuerungsgruppe UK DR", "Steuerungsgruppe Personal", "Steuerungsgruppe Digitalisierung"];
     var rotationIds = ["uk-dr", "personal", "digitalisierung"]; // je Gruppe eine eigene Serie
     for (m = 0; m < 12; m++) {
+      // Steuerkreis-Tag: Wirtschaft & Finanzen monatlich, QM & Regulatorik alle 2 Monate direkt im Anschluss (ein Block, einmal Anreise)
+      var do4 = avoidKlausur(getNthWeekdayOfMonth(YEAR, m, 4, 4)); k = dateToKey(do4.date);
+      if (!do4.dropped) {
+        var skSessions = [{ title: "Steuerkreis Wirtschaft & Finanzen", rule: rSKWF, seriesId: "sk-wifi", desc: "Monatlich, 2 Std. – GF dabei, außer Haus." }];
+        if (m % 2 === 0) skSessions.push({ title: "Steuerkreis QM & Regulatorik", rule: rSKQM, seriesId: "sk-qm", desc: "Alle 2 Monate, 2 Std. – direkt im Anschluss (15 Min. Verabschieden), gleiche Einrichtung, GF dabei." });
+        placeSKBlock(k, skSessions, { an: rSKAn, ho: rSKHo }, shiftNote(do4));
+      }
       var do1 = avoidKlausur(getNthWeekdayOfMonth(YEAR, m, 4, 1)); k = dateToKey(do1.date);
       if (!do1.dropped) placeOnDay(k, rotation[m % 3], "Steuerkreis", "09:00", 180, "Alte Steuerungsgruppe, Do-Rotation, 3 Std. – bis zur Klärung mit den neuen Steuerkreisen beibehalten, Zuordnung noch zu klären." + shiftNote(do1), rSG, { seriesId: "steuerungsgruppe-" + rotationIds[m % 3], ort: "Diakonie Ruhr" });
       var do3 = avoidKlausur(getNthWeekdayOfMonth(YEAR, m, 4, 3)); k = dateToKey(do3.date);
+      // Wurde der 3. Donnerstag wegen einer Klausur auf den Steuerkreis-Tag geschoben, geht es stattdessen eine Woche zurück
+      if (do3.shifted && (eventsData[k] || []).some(function(e) { return e.seriesId === "sk-hospitation"; }) && isFreeDay(addDays(parseDateKey(do3.from), -7))) { do3 = { date: addDays(parseDateKey(do3.from), -7), shifted: true, from: do3.from }; k = dateToKey(do3.date); }
       if (m % 2 === 0 && !do3.dropped) placeOnDay(k, "JF MAV+BR SBO", "JF", "14:00", 100, "Alle 2 Monate, 100 Min. plus 20 Min. Puffer. Ersetzt Monatsgespräch SBO und Betriebsversammlung SBO (gestrichen)." + shiftNote(do3), rMAVBR, { seriesId: "mav-br-sbo", ort: "SBO Sommerdelle" });
       if (!do3.dropped) placeOnDay(k, "Pufferslot Gremien", "Gremium", "16:00", 90, "Fester Schutzslot für kurzfristige Gremienbelange, 3. Donnerstag, 16:00–17:30." + shiftNote(do3), rPuffer, { seriesId: "pufferslot" });
-      var do4 = avoidKlausur(getNthWeekdayOfMonth(YEAR, m, 4, 4)); k = dateToKey(do4.date);
-      var sk1 = do4.dropped ? null : placeOnDay(k, "Steuerkreis Wirtschaft & Finanzen", "Steuerkreis", "09:30", 120, "Monatlich, 2 Std. – Teil 1 des Doppelpacks in derselben Einrichtung, GF dabei." + shiftNote(do4), rSKWF, { seriesId: "sk-wifi", ort: "Einrichtung (Vor-Ort)" });
-      if (m % 2 === 0 && sk1) placeOnDay(k, "Steuerkreis QM & Regulatorik", "Steuerkreis", fromMin(toMin(sk1.start) + sk1.duration + 15), 120, "Alle 2 Monate, 2 Std. – Teil 2 des Doppelpacks direkt im Anschluss, gleiche Einrichtung, GF dabei.", rSKQM, { seriesId: "sk-qm", ort: "Einrichtung (Vor-Ort)" });
+
     }
     // Gesellschafter / AR (Termine exemplarisch, unbestätigt)
     placeOnDay("2027-03-11", "AR/GV SBO", "Gremium", "09:00", 180, "Platzhalter: 2×/Jahr (nicht quartalsweise), Termin noch offen.", rGVV, { placeholder: true, seriesId: "ar-gv-sbo", ort: "SBO Sommerdelle" });
     placeOnDay("2027-09-16", "AR/GV SBO", "Gremium", "09:00", 180, "Platzhalter: 2×/Jahr (nicht quartalsweise), Termin noch offen.", rGVV, { placeholder: true, seriesId: "ar-gv-sbo", ort: "SBO Sommerdelle" });
-    placeOnDay("2027-03-25", "GVV DADuL", "Gremium", "09:00", 180, "Platzhalter: Gesellschafterversammlung DADuL, 2×/Jahr, 3 Std., Termin noch offen.", rGVV, { placeholder: true, seriesId: "gvv-dadul" });
-    placeOnDay("2027-10-14", "GVV DADuL", "Gremium", "09:00", 180, "Platzhalter: Gesellschafterversammlung DADuL, 2×/Jahr, 3 Std., Termin noch offen.", rGVV, { placeholder: true, seriesId: "gvv-dadul" });
+    placeOnDay("2027-02-11", "GVV DADuL", "Gremium", "09:00", 180, "Platzhalter: Gesellschafterversammlung DADuL, 2×/Jahr, 3 Std., Termin noch offen.", rGVV, { placeholder: true, seriesId: "gvv-dadul" });
+    placeOnDay("2027-12-09", "GVV DADuL", "Gremium", "09:00", 180, "Platzhalter: Gesellschafterversammlung DADuL, 2×/Jahr, 3 Std., Termin noch offen.", rGVV, { placeholder: true, seriesId: "gvv-dadul" });
     placeOnDay("2027-04-15", "GVV Pflege/DfM/Culina/MiR", "Gremium", "09:00", 120, "Platzhalter: Gesellschafterversammlung Pflege/DfM/Culina/MiR, 2×/Jahr, Termin noch offen.", rGVV, { placeholder: true, seriesId: "gvv-pflege" });
     placeOnDay("2027-11-11", "GVV Pflege/DfM/Culina/MiR", "Gremium", "09:00", 120, "Platzhalter: Gesellschafterversammlung Pflege/DfM/Culina/MiR, 2×/Jahr, Termin noch offen.", rGVV, { placeholder: true, seriesId: "gvv-pflege" });
     placeOnDay("2027-02-18", "AG DADuL (Back, Kirchhoff)", "Gremium", "10:00", 120, "Platzhalter: 3×/Jahr, 2 Std., Termin noch offen.", rGVV, { placeholder: true, seriesId: "ag-dadul" });
@@ -944,6 +978,24 @@
     ["2027-03-18", "2027-09-09"].forEach(function(asa) {
       placeOnDay(asa, "ASA (Team-Termin)", "Gremium", "10:00", 120, "Platzhalter: Teamtermin, 2 Std., 2× jährlich – Termin noch offen.", rASA, { placeholder: true, seriesId: "asa", ort: "Teams" });
     });
+    // Steuerkreis Personal + Marketing & Vertrieb: quartalsweise, beide an einem Termintag (ein Block, einmal Anreise).
+    // Ausgehend vom Vorgänger im 13-Wochen-Takt wird der nächste Donnerstag mit freiem Fenster für den ganzen Block gesucht (±3 Wochen).
+    (function() {
+      var d = parseDateKey("2027-01-14");
+      while (d.getFullYear() === YEAR) {
+        var pick = null;
+        [0, 7, -7, 14, -14, 21, -21].forEach(function(off) {
+          var c = addDays(d, off), ck = dateToKey(c);
+          if (!pick && c.getFullYear() === YEAR && c.getDay() === 4 && isFreeDay(c) && hasWindowOn(ck, skBlockLength(2))) pick = ck;
+        });
+        if (!pick) { generationConflicts.push("Steuerkreis Personal / Marketing & Vertrieb um den " + fmtDateDE(dateToKey(d)) + ": kein Donnerstag mit freiem Fenster, entfällt."); d = addDays(d, 91); continue; }
+        placeSKBlock(pick, [
+          { title: "Steuerkreis Personal", rule: rSKP, seriesId: "sk-personal", desc: "Quartalsweise, 2 Std. – GF dabei, außer Haus." },
+          { title: "Steuerkreis Marketing & Vertrieb", rule: rSKMV, seriesId: "sk-mv", desc: "Quartalsweise, 2 Std. – direkt im Anschluss (15 Min. Verabschieden), GF dabei." }
+        ], { an: rSKAn, ho: rSKHo }, "");
+        d = addDays(parseDateKey(pick), 91);
+      }
+    })();
 
     // Tageslisten sortieren
     for (var dk in eventsData) sortDay(dk);
@@ -2268,8 +2320,8 @@
     { name: "Referate", countLabel: "Einzel-JF", suffix: " + A³", items: [
       { series: ["jf-personal"] }, { series: sids("referat-", REFERAT_JF).reverse() }, { series: ["jf-qm"] }, { series: ["jf-a3"], noCount: true }] },
     { name: "Steuerkreise (GBL-Ebene)", items: [
-      { series: ["sk-wifi"] }, { series: ["sk-qm"] },
-      { fixed: ["Steuerkreis Personal · Steuerkreis Marketing & Vertrieb", "offen", "—", "ohne GF, kein GF-Termin", "ohne GF"] }] },
+      { series: ["sk-wifi"] }, { series: ["sk-qm"] }, { series: ["sk-personal"] }, { series: ["sk-mv"] },
+      { series: ["sk-anreise"], noCount: true }, { series: ["sk-hospitation"], noCount: true }] },
     { name: "Klausuren, Blocker, offene Formate", items: [
       { series: ["gbl-klausur"] }, { series: ["fuehrung-dialog"] }, { series: ["klausur-strategie"] },
       { series: ["lk-ambulant", "lk-stationaer"] }, { series: ["asa"] }, { series: ["wochengespraech"] }, { series: ["pufferslot"] },

@@ -35,13 +35,13 @@ function eq(a, b, msg) { if (JSON.stringify(a) !== JSON.stringify(b)) throw new 
   }
 
   // ---------- Ausgangsstand ----------
-  await test("Ausgangsstand: 570 Termine, keine Verstöße, alles in 2027, keine Ausweichkonflikte", async function(p) {
+  await test("Ausgangsstand: 606 Termine, keine Verstöße, alles in 2027, keine Ausweichkonflikte", async function(p) {
     var r = await p.evaluate(function() {
       var G = window.GFKAL, flat = G.allEventsFlat(), v = 0;
       for (var dk in G.eventsData()) G.checkPlausibility(dk).forEach(function(x) { if (!x.ok) v++; });
       return { total: flat.length, v: v, outside: flat.filter(function(x) { return x.dateKey.slice(0, 4) !== "2027"; }).length, conflicts: G.generationConflicts().length };
     });
-    eq(r, { total: 570, v: 0, outside: 0, conflicts: 0 }, "Ausgangsstand");
+    eq(r, { total: 606, v: 0, outside: 0, conflicts: 0 }, "Ausgangsstand");
   });
   await test("Raster: kein Terminende nach 18:00 (außer Klausuren), keine Lücke unter 10 Minuten", async function(p) {
     var r = await p.evaluate(function() {
@@ -351,11 +351,11 @@ function eq(a, b, msg) { if (JSON.stringify(a) !== JSON.stringify(b)) throw new 
     await p.waitForSelector("#dlgOverlay.active");
     var text = await p.textContent("#dlgText");
     ok(text.indexOf("10 Termine") >= 0, "Rückfrage nennt nicht die Terminzahl: " + text);
-    eq(await p.evaluate(function() { return window.GFKAL.allEventsFlat().length; }), 570, "vor der Bestätigung unverändert");
+    eq(await p.evaluate(function() { return window.GFKAL.allEventsFlat().length; }), 606, "vor der Bestätigung unverändert");
     await p.click("#dlgFooter .btn.danger");
     eq(await p.evaluate(function() { return window.GFKAL.allEventsFlat().length; }), 10, "nach der Bestätigung ersetzt");
     await p.click("#btnUndo");
-    eq(await p.evaluate(function() { return window.GFKAL.allEventsFlat().length; }), 570, "Rückgängig stellt den Bestand her");
+    eq(await p.evaluate(function() { return window.GFKAL.allEventsFlat().length; }), 606, "Rückgängig stellt den Bestand her");
   });
   await test("JSON Version 4: Regeln einmal, keine abgeleiteten Felder, Rundlauf bleibt verlustfrei", async function(p) {
     var r = await p.evaluate(function() {
@@ -376,7 +376,7 @@ function eq(a, b, msg) { if (JSON.stringify(a) !== JSON.stringify(b)) throw new 
       G.deserialize(s);
       return { n: G.allEventsFlat().length, regeln: Object.keys(G.RULES()).length };
     });
-    eq(r.n, 570, "Terminzahl");
+    eq(r.n, 606, "Terminzahl");
     ok(r.regeln >= 26, "Regeln aus Version 3 nicht übernommen: " + r.regeln);
   });
   await test("Befund 14: Ausgangsstand schreibt den Browserstand nicht sofort zurück, Rückgängig stellt her", async function(p) {
@@ -389,14 +389,14 @@ function eq(a, b, msg) { if (JSON.stringify(a) !== JSON.stringify(b)) throw new 
       G.undo();
       return { gespeichert: gespeichert, n1: n1, nachResetLeer: nachReset, n2: n2, n3: G.allEventsFlat().length };
     });
-    eq(r, { gespeichert: true, n1: 569, nachResetLeer: true, n2: 570, n3: 569 }, "Ausgangsstand");
+    eq(r, { gespeichert: true, n1: 605, nachResetLeer: true, n2: 606, n3: 605 }, "Ausgangsstand");
   });
   await test("Autosave und Wiederherstellen: Banner erscheint nach Neuladen, Stand kommt zurück", async function(p) {
     await p.evaluate(function() { var G = window.GFKAL, d = G.allEventsFlat()[0]; G.deleteEvent(d.dateKey, d.ev.uid); document.querySelector("#dlgFooter .btn.danger").click(); });
     await p.reload();
     ok(await p.isVisible("#restoreBanner"), "Banner fehlt");
     await p.click("#restoreYes");
-    eq(await p.evaluate(function() { return window.GFKAL.allEventsFlat().length; }), 569, "wiederhergestellter Bestand");
+    eq(await p.evaluate(function() { return window.GFKAL.allEventsFlat().length; }), 605, "wiederhergestellter Bestand");
   });
   await test("Speicher-Schnittstelle: Store lässt sich austauschen (Vorbereitung Backend)", async function(p) {
     var r = await p.evaluate(function() {
@@ -574,7 +574,7 @@ function eq(a, b, msg) { if (JSON.stringify(a) !== JSON.stringify(b)) throw new 
       var res = G.checkPlausibility("2027-01-05", ctx);
       return { verstoesse: res.filter(function(x) { return !x.ok; }).length, bestand: G.allEventsFlat().length };
     });
-    eq(r, { verstoesse: 2, bestand: 570 }, "Kontext");
+    eq(r, { verstoesse: 2, bestand: 606 }, "Kontext");
   });
 
   // ---------- Anpassungen 2027: Zeiten, Urlaub, Formate, Auswahllisten ----------
@@ -708,6 +708,34 @@ function eq(a, b, msg) { if (JSON.stringify(a) !== JSON.stringify(b)) throw new 
         abstandOk: gaps.every(function(g) { return g >= 49 && g <= 63; }), dadul: dur(function(x) { return x.ev.seriesId === "gvv-dadul"; }), gvv: all.filter(function(x) { return x.ev.seriesId === "gvv-pflege"; }).map(function(x) { return x.ev.title; }) };
     });
     eq(r, { sg: [180], mav: [100, 20], jahndorf: [100], turnus: "alle 8 Wochen", abstandOk: true, dadul: [180], gvv: ["GVV Pflege/DfM/Culina/MiR", "GVV Pflege/DfM/Culina/MiR"] }, "Dauern");
+  });
+
+  // ---------- Steuerkreise: Takt, Cluster, Anreise, Hospitation ----------
+  await test("Steuerkreise: 120 Min., Takt monatlich / 2 Monate / quartalsweise, Personal und Marketing & Vertrieb gemeinsam", async function(p) {
+    var r = await p.evaluate(function() {
+      var G = window.GFKAL, by = function(id) { return G.allEventsFlat().filter(function(x) { return x.ev.seriesId === id; }); };
+      var dur = function(id) { return Array.from(new Set(by(id).map(function(x) { return x.ev.duration; }))); };
+      var tage = function(id) { return by(id).map(function(x) { return x.dateKey; }).sort(); };
+      return { wf: [by("sk-wifi").length, dur("sk-wifi")], qm: [by("sk-qm").length, dur("sk-qm")], p: [by("sk-personal").length, dur("sk-personal")], mv: [by("sk-mv").length, dur("sk-mv")],
+        gemeinsam: JSON.stringify(tage("sk-personal")) === JSON.stringify(tage("sk-mv")), v: G.recomputeViolations() };
+    });
+    eq(r, { wf: [10, [120]], qm: [5, [120]], p: [4, [120]], mv: [4, [120]], gemeinsam: true, v: 0 }, "Steuerkreise");
+  });
+  await test("Steuerkreis-Tag: höchstens zwei Steuerkreise, 15 Min. Verabschieden dazwischen, Anreise nur vorn, Hospitation 2 Std. danach", async function(p) {
+    var r = await p.evaluate(function() {
+      var G = window.GFKAL, tm = function(s) { var a = s.split(":"); return +a[0] * 60 + +a[1]; }, tage = {}, out = { tage: 0, max: 0, anreise: true, luecke: true, hosp: true, anreiseVorErstem: true };
+      G.allEventsFlat().forEach(function(x) { if (x.ev.type === "Steuerkreis" && x.ev.seriesId.indexOf("sk-") === 0 || x.ev.seriesId === "sk-anreise" || x.ev.seriesId === "sk-hospitation") (tage[x.dateKey] = tage[x.dateKey] || []).push(x.ev); });
+      Object.keys(tage).forEach(function(dk) {
+        var e = tage[dk].sort(function(a, b) { return tm(a.start) - tm(b.start); }), sk = e.filter(function(x) { return x.type === "Steuerkreis"; }), an = e.filter(function(x) { return x.seriesId === "sk-anreise"; }), ho = e.filter(function(x) { return x.seriesId === "sk-hospitation"; });
+        out.tage++; out.max = Math.max(out.max, sk.length);
+        if (an.length !== 1 || an[0].duration !== 30 || tm(an[0].start) + 30 !== tm(sk[0].start)) out.anreise = false;
+        if (sk.length === 2 && tm(sk[1].start) - (tm(sk[0].start) + sk[0].duration) !== 15) out.luecke = false;
+        if (ho.length !== 1 || ho[0].duration !== 120 || tm(ho[0].start) !== tm(sk[sk.length - 1].start) + 120) out.hosp = false;
+        if (e[0].seriesId !== "sk-anreise") out.anreiseVorErstem = false;
+      });
+      return out;
+    });
+    eq(r, { tage: 14, max: 2, anreise: true, luecke: true, hosp: true, anreiseVorErstem: true }, "Steuerkreis-Tag");
   });
 
   await browser.close();

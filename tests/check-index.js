@@ -35,13 +35,13 @@ function eq(a, b, msg) { if (JSON.stringify(a) !== JSON.stringify(b)) throw new 
   }
 
   // ---------- Ausgangsstand ----------
-  await test("Ausgangsstand: 561 Termine, keine Verstöße, alles in 2027, keine Ausweichkonflikte", async function(p) {
+  await test("Ausgangsstand: 570 Termine, keine Verstöße, alles in 2027, keine Ausweichkonflikte", async function(p) {
     var r = await p.evaluate(function() {
       var G = window.GFKAL, flat = G.allEventsFlat(), v = 0;
       for (var dk in G.eventsData()) G.checkPlausibility(dk).forEach(function(x) { if (!x.ok) v++; });
       return { total: flat.length, v: v, outside: flat.filter(function(x) { return x.dateKey.slice(0, 4) !== "2027"; }).length, conflicts: G.generationConflicts().length };
     });
-    eq(r, { total: 561, v: 0, outside: 0, conflicts: 0 }, "Ausgangsstand");
+    eq(r, { total: 570, v: 0, outside: 0, conflicts: 0 }, "Ausgangsstand");
   });
   await test("Raster: kein Terminende nach 18:00 (außer Klausuren), keine Lücke unter 10 Minuten", async function(p) {
     var r = await p.evaluate(function() {
@@ -49,12 +49,12 @@ function eq(a, b, msg) { if (JSON.stringify(a) !== JSON.stringify(b)) throw new 
       var tm = function(s) { var a = s.split(":"); return +a[0] * 60 + +a[1]; };
       for (var dk in D) {
         var e = D[dk].slice().sort(function(a, b) { return tm(a.start) - tm(b.start); });
-        e.forEach(function(x) { if (x.type !== "Klausur" && tm(x.start) + x.duration > 1080) late++; });
+        e.forEach(function(x) { if (x.type !== "Klausur" && x.seriesId !== "verwaltungsrat-im" && x.seriesId !== "ag-wohlfahrt" && tm(x.start) + x.duration > 1080) late++; });   // Abendtermine ab 17 Uhr
         for (var i = 1; i < e.length; i++) {
           if (e[i].blockKey && e[i].blockKey === e[i - 1].blockKey) continue;
           if (e[i].rule && e[i].rule.id === "lk-ambulant-stationaer") continue;
           if (e[i].seriesId === "wochengespraech" && e[i - 1].seriesId === "projektarbeit") continue;   // Projektarbeit 12–14 Uhr direkt vor dem Wochengespräch
-          if (e[i].seriesId === "projektarbeit" && e[i - 1].seriesId === "imk") continue;              // IMK 09–12 Uhr direkt vor der Projektarbeit
+          if (e[i].seriesId === "projektarbeit" && ["imk", "imk-asa-im", "vorstand-im"].indexOf(e[i - 1].seriesId) >= 0) continue;              // IMK 09–12 Uhr direkt vor der Projektarbeit
           var gap = tm(e[i].start) - (tm(e[i - 1].start) + e[i - 1].duration);
           if (gap >= 0 && gap < 10) small++;
         }
@@ -351,11 +351,11 @@ function eq(a, b, msg) { if (JSON.stringify(a) !== JSON.stringify(b)) throw new 
     await p.waitForSelector("#dlgOverlay.active");
     var text = await p.textContent("#dlgText");
     ok(text.indexOf("10 Termine") >= 0, "Rückfrage nennt nicht die Terminzahl: " + text);
-    eq(await p.evaluate(function() { return window.GFKAL.allEventsFlat().length; }), 561, "vor der Bestätigung unverändert");
+    eq(await p.evaluate(function() { return window.GFKAL.allEventsFlat().length; }), 570, "vor der Bestätigung unverändert");
     await p.click("#dlgFooter .btn.danger");
     eq(await p.evaluate(function() { return window.GFKAL.allEventsFlat().length; }), 10, "nach der Bestätigung ersetzt");
     await p.click("#btnUndo");
-    eq(await p.evaluate(function() { return window.GFKAL.allEventsFlat().length; }), 561, "Rückgängig stellt den Bestand her");
+    eq(await p.evaluate(function() { return window.GFKAL.allEventsFlat().length; }), 570, "Rückgängig stellt den Bestand her");
   });
   await test("JSON Version 4: Regeln einmal, keine abgeleiteten Felder, Rundlauf bleibt verlustfrei", async function(p) {
     var r = await p.evaluate(function() {
@@ -376,7 +376,7 @@ function eq(a, b, msg) { if (JSON.stringify(a) !== JSON.stringify(b)) throw new 
       G.deserialize(s);
       return { n: G.allEventsFlat().length, regeln: Object.keys(G.RULES()).length };
     });
-    eq(r.n, 561, "Terminzahl");
+    eq(r.n, 570, "Terminzahl");
     ok(r.regeln >= 26, "Regeln aus Version 3 nicht übernommen: " + r.regeln);
   });
   await test("Befund 14: Ausgangsstand schreibt den Browserstand nicht sofort zurück, Rückgängig stellt her", async function(p) {
@@ -389,14 +389,14 @@ function eq(a, b, msg) { if (JSON.stringify(a) !== JSON.stringify(b)) throw new 
       G.undo();
       return { gespeichert: gespeichert, n1: n1, nachResetLeer: nachReset, n2: n2, n3: G.allEventsFlat().length };
     });
-    eq(r, { gespeichert: true, n1: 560, nachResetLeer: true, n2: 561, n3: 560 }, "Ausgangsstand");
+    eq(r, { gespeichert: true, n1: 569, nachResetLeer: true, n2: 570, n3: 569 }, "Ausgangsstand");
   });
   await test("Autosave und Wiederherstellen: Banner erscheint nach Neuladen, Stand kommt zurück", async function(p) {
     await p.evaluate(function() { var G = window.GFKAL, d = G.allEventsFlat()[0]; G.deleteEvent(d.dateKey, d.ev.uid); document.querySelector("#dlgFooter .btn.danger").click(); });
     await p.reload();
     ok(await p.isVisible("#restoreBanner"), "Banner fehlt");
     await p.click("#restoreYes");
-    eq(await p.evaluate(function() { return window.GFKAL.allEventsFlat().length; }), 560, "wiederhergestellter Bestand");
+    eq(await p.evaluate(function() { return window.GFKAL.allEventsFlat().length; }), 569, "wiederhergestellter Bestand");
   });
   await test("Speicher-Schnittstelle: Store lässt sich austauschen (Vorbereitung Backend)", async function(p) {
     var r = await p.evaluate(function() {
@@ -574,7 +574,7 @@ function eq(a, b, msg) { if (JSON.stringify(a) !== JSON.stringify(b)) throw new 
       var res = G.checkPlausibility("2027-01-05", ctx);
       return { verstoesse: res.filter(function(x) { return !x.ok; }).length, bestand: G.allEventsFlat().length };
     });
-    eq(r, { verstoesse: 2, bestand: 561 }, "Kontext");
+    eq(r, { verstoesse: 2, bestand: 570 }, "Kontext");
   });
 
   // ---------- Anpassungen 2027: Zeiten, Urlaub, Formate, Auswahllisten ----------
@@ -595,23 +595,23 @@ function eq(a, b, msg) { if (JSON.stringify(a) !== JSON.stringify(b)) throw new 
     });
     eq(r, { n: true, zeiten: ["09:00 – 10:30"] }, "Fokus Montag");
   });
-  await test("Wirtschaftsausschuss: 4. Dienstag 09:00–11:00, 30 Min. Rückfahrtpuffer, keine Überschneidung", async function(p) {
+  await test("Wirtschaftsausschuss: 4. Dienstag 09:00–10:00, 30 Min. Rückfahrtpuffer, keine Überschneidung", async function(p) {
     var r = await p.evaluate(function() {
       var G = window.GFKAL, wa = G.allEventsFlat().filter(function(x) { return x.ev.seriesId === "wirtschaftsausschuss"; }), out = { n: wa.length, zeiten: {}, orte: {}, frueh: 0, verstoesse: 0 };
       wa.forEach(function(x) {
         out.zeiten[x.ev.time] = 1; out.orte[x.ev.ort] = 1;
-        G.eventsData()[x.dateKey].forEach(function(o) { if (o.uid !== x.ev.uid && o.start > x.ev.start && o.start < "11:30") out.frueh++; });
+        G.eventsData()[x.dateKey].forEach(function(o) { if (o.uid !== x.ev.uid && o.start > x.ev.start && o.start < "10:30") out.frueh++; });
         G.checkPlausibility(x.dateKey).forEach(function(y) { if (!y.ok) out.verstoesse++; });
       });
       out.zeiten = Object.keys(out.zeiten); out.orte = Object.keys(out.orte);
       return out;
     });
-    eq(r, { n: 10, zeiten: ["09:00 – 11:00"], orte: ["SBO Sommerdelle"], frueh: 0, verstoesse: 0 }, "Wirtschaftsausschuss");
+    eq(r, { n: 10, zeiten: ["09:00 – 10:00"], orte: ["SBO Sommerdelle"], frueh: 0, verstoesse: 0 }, "Wirtschaftsausschuss");
   });
   await test("Rückfahrtpuffer: Termin 15 Minuten nach dem Wirtschaftsausschuss wird gemeldet", async function(p) {
     var r = await p.evaluate(function() {
       var G = window.GFKAL, wa = G.allEventsFlat().filter(function(x) { return x.ev.seriesId === "wirtschaftsausschuss"; })[0];
-      var j = G.addEvent(wa.dateKey, "Test", "JF", "11:15", 50, "", null, {});
+      var j = G.addEvent(wa.dateKey, "Test", "JF", "10:15", 50, "", null, {});
       return G.checkPlausibility(wa.dateKey).filter(function(x) { return x.ev.uid === j.uid; })[0].messages.filter(function(m) { return m.indexOf("Rückfahrtpuffer") === 0; }).length;
     });
     eq(r, 1, "Puffer");
@@ -665,7 +665,49 @@ function eq(a, b, msg) { if (JSON.stringify(a) !== JSON.stringify(b)) throw new 
       var t = document.getElementById("fTitle"); t.value = "Wirtschaftsausschuss SBO"; t.dispatchEvent(new Event("change"));
       return { hatWA: titel.indexOf("Wirtschaftsausschuss SBO") >= 0, eindeutig: titel.length === new Set(titel).size, orte: orte, dauer: document.getElementById("fDuration").value, ort: document.getElementById("fOrt").value, typ: document.getElementById("fType").value, liste: [t.getAttribute("list"), document.getElementById("fOrt").getAttribute("list")] };
     });
-    eq(r, { hatWA: true, eindeutig: true, orte: ["Westring 26", "SBO Sommerdelle", "Pferdebachstraße"], dauer: "120", ort: "SBO Sommerdelle", typ: "Gremium", liste: ["titleList", "ortList"] }, "Auswahllisten");
+    eq(r, { hatWA: true, eindeutig: true, orte: ["Westring 26", "SBO Sommerdelle", "Pferdebachstraße"], dauer: "60", ort: "SBO Sommerdelle", typ: "Gremium", liste: ["titleList", "ortList"] }, "Auswahllisten");
+  });
+
+  // ---------- Mitschrift-Korrekturen: Innere Mission, SBO, Gesellschafter ----------
+  await test("IMK: 6 Sitzungen, 2 davon „IMK + ASA IM“ mit eigener Farbe, ASA-Team bleibt eigener Termin", async function(p) {
+    var r = await p.evaluate(function() {
+      var G = window.GFKAL, by = function(id) { return G.allEventsFlat().filter(function(x) { return x.ev.seriesId === id; }); };
+      var imk = by("imk"), mit = by("imk-asa-im"), asa = by("asa");
+      return { imk: imk.length, mit: mit.length, titel: mit[0].ev.title, dauer: Array.from(new Set(imk.concat(mit).map(function(x) { return x.ev.duration; }))),
+        farben: new Set([imk[0].ev.color, mit[0].ev.color, asa[0].ev.color]).size, asa: asa.length, asaTitel: asa[0].ev.title };
+    });
+    eq(r, { imk: 4, mit: 2, titel: "IMK + ASA IM", dauer: [180], farben: 3, asa: 2, asaTitel: "ASA (Team-Termin)" }, "IMK");
+  });
+  await test("Innere Mission: alle Termine außerhalb NRW-Schulferien und Urlaub", async function(p) {
+    var r = await p.evaluate(function() {
+      var G = window.GFKAL, ids = ["imk", "imk-asa-im", "vorstand-im", "verwaltungsrat-im", "ag-wohlfahrt", "ag-fw"];
+      var F = [["2027-03-22", "2027-03-27"], ["2027-05-18", "2027-05-18"], ["2027-07-19", "2027-08-31"], ["2027-10-23", "2027-11-06"]];
+      var l = G.allEventsFlat().filter(function(x) { return ids.indexOf(x.ev.seriesId) >= 0; });
+      var inF = l.filter(function(x) { return F.some(function(f) { return x.dateKey >= f[0] && x.dateKey <= f[1]; }); }).length;
+      var t = G.addEvent("2027-08-11", "Test", "Gremium", "10:00", 90, "", l[0].ev.rule, {});
+      var m = G.checkPlausibility("2027-08-11").filter(function(x) { return x.ev.uid === t.uid; })[0].messages.filter(function(x) { return x.indexOf("Schulferien") >= 0; }).length;
+      return { n: l.length, inF: inF, meldung: m };
+    });
+    eq(r, { n: 24, inF: 0, meldung: 1 }, "Schulferien");
+  });
+  await test("Vorstand IM 180, Verwaltungsrat 4× und AG Wohlfahrt 8× je 90 Min. ab 17:00", async function(p) {
+    var r = await p.evaluate(function() {
+      var G = window.GFKAL, by = function(id) { return G.allEventsFlat().filter(function(x) { return x.ev.seriesId === id; }); };
+      var set = function(id, f) { return Array.from(new Set(by(id).map(function(x) { return f(x.ev); }))); };
+      return { vs: set("vorstand-im", function(e) { return e.duration; }), vr: [by("verwaltungsrat-im").length, set("verwaltungsrat-im", function(e) { return e.time; })], ag: [by("ag-wohlfahrt").length, set("ag-wohlfahrt", function(e) { return e.time; })], v: G.recomputeViolations() };
+    });
+    eq(r, { vs: [180], vr: [4, ["17:00 – 18:30"]], ag: [8, ["17:00 – 18:30"]], v: 0 }, "Gremien IM");
+  });
+  await test("Steuerungsgruppen 180, MAV+BR 100 + 20 Min. Puffer, Jahndorf 100 alle 8 Wochen, GVV DADuL 180, GVV mit MiR", async function(p) {
+    var r = await p.evaluate(function() {
+      var G = window.GFKAL, all = G.allEventsFlat();
+      var dur = function(f) { return Array.from(new Set(all.filter(f).map(function(x) { return x.ev.duration; }))); };
+      var mav = all.filter(function(x) { return x.ev.seriesId === "mav-br-sbo"; })[0], jah = all.filter(function(x) { return x.ev.seriesId === "jahndorf"; });
+      var gaps = jah.map(function(x) { return x.dateKey; }).sort().map(function(k, i, a) { return i ? Math.round((new Date(k) - new Date(a[i - 1])) / 86400000) : 0; }).slice(1);
+      return { sg: dur(function(x) { return x.ev.seriesId.indexOf("steuerungsgruppe-") === 0; }), mav: [mav.ev.duration, mav.ev.rule.bufferAfterMin], jahndorf: dur(function(x) { return x.ev.seriesId === "jahndorf"; }), turnus: jah[0].ev.rule.turnus,
+        abstandOk: gaps.every(function(g) { return g >= 49 && g <= 63; }), dadul: dur(function(x) { return x.ev.seriesId === "gvv-dadul"; }), gvv: all.filter(function(x) { return x.ev.seriesId === "gvv-pflege"; }).map(function(x) { return x.ev.title; }) };
+    });
+    eq(r, { sg: [180], mav: [100, 20], jahndorf: [100], turnus: "alle 8 Wochen", abstandOk: true, dadul: [180], gvv: ["GVV Pflege/DfM/Culina/MiR", "GVV Pflege/DfM/Culina/MiR"] }, "Dauern");
   });
 
   await browser.close();

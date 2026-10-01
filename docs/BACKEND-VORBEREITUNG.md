@@ -1,7 +1,7 @@
 # Backend-Vorbereitung GF-Jahreskalender 2027
 
 Stand: `index.html` (eine Datei, keine Laufzeitabhängigkeit). Alle Änderungen sind zuerst dort umgesetzt. Das Backend folgt danach.
-Prüfung: `node tests/check-index.js` (Playwright mit Chromium; 55 Prüfungen über `window.GFKAL`).
+Prüfung: `node tests/check-index.js` (Playwright mit Chromium; 59 Prüfungen über `window.GFKAL`).
 
 ## Was die Datei jetzt für ein Backend mitbringt
 

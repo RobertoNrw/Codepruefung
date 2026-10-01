@@ -543,7 +543,7 @@
   ];
 
   // Eigene Farben für einzelne Serien (Leitungskonferenz ambulant und stationär klar trennen)
-  var SERIES_COLORS = { "sk-anreise": "#78909c", "sk-hospitation": "#558b2f", "lk-ambulant": "#0288d1", "lk-stationaer": "#e65100", "imk": "#00838f", "imk-asa-im": "#ad1457", "asa": "#5d4037" };
+  var SERIES_COLORS = { "lk-hospitation": "#7cb342", "sk-anreise": "#78909c", "sk-hospitation": "#558b2f", "lk-ambulant": "#0288d1", "lk-stationaer": "#e65100", "imk": "#00838f", "imk-asa-im": "#ad1457", "asa": "#5d4037" };
   var ORT_OPTIONS = ["Westring 26", "SBO Sommerdelle", "Pferdebachstraße"];
 
   var typeColors = {
@@ -760,6 +760,7 @@
     var rSKQM = defRule({ id: "sk-qm", label: "Steuerkreis QM & Regulatorik", allowedDays: ["Do"], turnus: "alle 2 Monate", duration: CONFIG.SK_DURATION_MIN, note: "Teil 2 Doppelpack direkt im Anschluss, gleiche Einrichtung.", editable: true, coupledAfter: "sk-wifi", coupledMaxGapMin: 15 });
     var rSKP = defRule({ id: "sk-personal", label: "Steuerkreis Personal", allowedDays: ["Do"], turnus: "quartalsweise", duration: CONFIG.SK_DURATION_MIN, note: "Quartalsweise, 2 Std., zusammen mit dem Steuerkreis Marketing & Vertrieb an einem Termintag (außer Haus).", editable: true });
     var rSKMV = defRule({ id: "sk-mv", label: "Steuerkreis Marketing & Vertrieb", allowedDays: ["Do"], turnus: "quartalsweise", duration: CONFIG.SK_DURATION_MIN, note: "Quartalsweise, 2 Std., zusammen mit dem Steuerkreis Personal an einem Termintag (außer Haus).", editable: true });
+    var rLKHo = defRule({ id: "lk-hospitation", label: "Hospitation nach Leitungskonferenz", turnus: "offen", duration: CONFIG.SK_HOSPITATION_MIN, note: "Hospitationsblocker, 2 Std., direkt nach Leitungskonferenz ambulant und stationär.", editable: true });
     var rSKAn = defRule({ id: "sk-anreise", label: "Anreise Steuerkreis-Tag", turnus: "offen", duration: CONFIG.SK_TRAVEL_MIN, note: "Anreisepuffer nur vor dem ersten Steuerkreis des Tages (Steuerkreise finden nicht am Westring statt).", editable: true });
     var rSKHo = defRule({ id: "sk-hospitation", label: "Hospitationsblocker vor Ort", turnus: "offen", duration: CONFIG.SK_HOSPITATION_MIN, note: "Direkt im Anschluss an den Steuerkreis-Block: der GF bleibt vor Ort und schaut sich um.", editable: true });
     var rSG = defRule({ id: "steuerungsgruppe", label: "Steuerungsgruppen DR (Rotation)", allowedDays: ["Do"], turnus: "monatlich", duration: 180, note: "Alte Steuerungsgruppen UK DR / Personal / Digitalisierung, 3 Std., Do-Rotation, Zuordnung noch zu klären.", pendingClarification: true, editable: true });
@@ -960,7 +961,7 @@
 
     }
     // Gesellschafter / AR (Termine exemplarisch, unbestätigt)
-    placeOnDay("2027-03-11", "AR/GV SBO", "Gremium", "09:00", 180, "Platzhalter: 2×/Jahr (nicht quartalsweise), Termin noch offen.", rGVV, { placeholder: true, seriesId: "ar-gv-sbo", ort: "SBO Sommerdelle" });
+    placeOnDay("2027-03-04", "AR/GV SBO", "Gremium", "09:00", 180, "Platzhalter: 2×/Jahr (nicht quartalsweise), Termin noch offen.", rGVV, { placeholder: true, seriesId: "ar-gv-sbo", ort: "SBO Sommerdelle" });
     placeOnDay("2027-09-16", "AR/GV SBO", "Gremium", "09:00", 180, "Platzhalter: 2×/Jahr (nicht quartalsweise), Termin noch offen.", rGVV, { placeholder: true, seriesId: "ar-gv-sbo", ort: "SBO Sommerdelle" });
     placeOnDay("2027-02-11", "GVV DADuL", "Gremium", "09:00", 180, "Platzhalter: Gesellschafterversammlung DADuL, 2×/Jahr, 3 Std., Termin noch offen.", rGVV, { placeholder: true, seriesId: "gvv-dadul" });
     placeOnDay("2027-12-09", "GVV DADuL", "Gremium", "09:00", 180, "Platzhalter: Gesellschafterversammlung DADuL, 2×/Jahr, 3 Std., Termin noch offen.", rGVV, { placeholder: true, seriesId: "gvv-dadul" });
@@ -970,12 +971,22 @@
     placeOnDay("2027-06-17", "AG DADuL (Back, Kirchhoff)", "Gremium", "10:00", 120, "Platzhalter: 3×/Jahr, 2 Std., Termin noch offen.", rGVV, { placeholder: true, seriesId: "ag-dadul" });
     placeOnDay("2027-10-21", "AG DADuL (Back, Kirchhoff)", "Gremium", "10:00", 120, "Platzhalter: 3×/Jahr, 2 Std., Termin noch offen.", rGVV, { placeholder: true, seriesId: "ag-dadul" });
     // LK ambulant / stationär (offen): gemeinsamer Kopf, getrennte Fachteile direkt nacheinander
-    ["2027-03-04", "2027-09-02"].forEach(function(lk) {
-      var a = placeOnDay(lk, "Leitungskonferenz ambulant", "Gremium", "09:00", 120, "Platzhalter: noch offen lt. Merino-Kesting – 2 Std., gemeinsamer Konferenzkopf mit der Leitungskonferenz stationär, getrennte Fachteile.", rLKamb, { placeholder: true, seriesId: "lk-ambulant" });
-      placeOnDay(lk, "Leitungskonferenz stationär", "Gremium", fromMin(toMin(a.start) + a.duration), 180, "Platzhalter: noch offen – 3 Std., gemeinsamer Konferenzkopf mit der Leitungskonferenz ambulant, getrennte Fachteile.", rLKamb, { placeholder: true, seriesId: "lk-stationaer", gap: 0 });
+    // Block: Leitungskonferenz ambulant (2 Std.) + stationär (3 Std.) direkt nacheinander, danach 2 Std. Hospitationsblocker (nur hier, neben den Steuerkreisen).
+    // Gesucht wird der Donnerstag um den Wunschtermin (±3 Wochen), an dem der ganze Block (7 Std.) in einen freien Tag passt.
+    ["2027-03-11", "2027-09-09"].forEach(function(base) {
+      var total = 120 + 180 + CONFIG.SK_HOSPITATION_MIN, pick = null;
+      [0, 7, -7, 14, -14, 21, -21].forEach(function(off) {
+        var c = addDays(parseDateKey(base), off), ck = dateToKey(c);
+        if (!pick && c.getFullYear() === YEAR && c.getDay() === 4 && isFreeDay(c) && hasWindowOn(ck, total)) pick = ck;
+      });
+      if (!pick) { generationConflicts.push("Leitungskonferenz ambulant/stationär um den " + fmtDateDE(base) + ": kein Donnerstag mit freiem Fenster für den Block."); return; }
+      var bk = "lk-block-" + pick, pos = findSlot(pick, "09:00", total, {});
+      addEvent(pick, "Leitungskonferenz ambulant", "Gremium", fromMin(pos), 120, "Platzhalter: noch offen lt. Merino-Kesting – 2 Std., gemeinsamer Konferenzkopf mit der Leitungskonferenz stationär, getrennte Fachteile.", rLKamb, { placeholder: true, seriesId: "lk-ambulant", blockKey: bk });
+      addEvent(pick, "Leitungskonferenz stationär", "Gremium", fromMin(pos + 120), 180, "Platzhalter: noch offen – 3 Std., gemeinsamer Konferenzkopf mit der Leitungskonferenz ambulant, getrennte Fachteile.", rLKamb, { placeholder: true, seriesId: "lk-stationaer", blockKey: bk });
+      addEvent(pick, "Hospitation nach Leitungskonferenz", "Blocker", fromMin(pos + 300), CONFIG.SK_HOSPITATION_MIN, "Hospitationsblocker, 2 Std., direkt im Anschluss an die Leitungskonferenzen ambulant und stationär.", rLKHo, { seriesId: "lk-hospitation", blockKey: bk });
     });
     // ASA: Team-Termin, 2× jährlich, 2 Std. (Platzhalter)
-    ["2027-03-18", "2027-09-09"].forEach(function(asa) {
+    ["2027-03-18", "2027-09-02"].forEach(function(asa) {
       placeOnDay(asa, "ASA (Team-Termin)", "Gremium", "10:00", 120, "Platzhalter: Teamtermin, 2 Std., 2× jährlich – Termin noch offen.", rASA, { placeholder: true, seriesId: "asa", ort: "Teams" });
     });
     // Steuerkreis Personal + Marketing & Vertrieb: quartalsweise, beide an einem Termintag (ein Block, einmal Anreise).
@@ -2324,7 +2335,7 @@
       { series: ["sk-anreise"], noCount: true }, { series: ["sk-hospitation"], noCount: true }] },
     { name: "Klausuren, Blocker, offene Formate", items: [
       { series: ["gbl-klausur"] }, { series: ["fuehrung-dialog"] }, { series: ["klausur-strategie"] },
-      { series: ["lk-ambulant", "lk-stationaer"] }, { series: ["asa"] }, { series: ["wochengespraech"] }, { series: ["pufferslot"] },
+      { series: ["lk-ambulant", "lk-stationaer"] }, { series: ["lk-hospitation"], noCount: true }, { series: ["asa"] }, { series: ["wochengespraech"] }, { series: ["pufferslot"] },
       { series: ["fokuszeit-mo", "fokuszeit-fr"], label: "Fokuszeit-Blocker" }, { series: ["projektarbeit"] }] }
   ];
   function fmtDurMin(d) { return (d >= 60 && d % 60 === 0) ? (d / 60) + " Std." : d + " Min."; }

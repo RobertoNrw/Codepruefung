@@ -35,13 +35,13 @@ function eq(a, b, msg) { if (JSON.stringify(a) !== JSON.stringify(b)) throw new 
   }
 
   // ---------- Ausgangsstand ----------
-  await test("Ausgangsstand: 606 Termine, keine Verstöße, alles in 2027, keine Ausweichkonflikte", async function(p) {
+  await test("Ausgangsstand: 608 Termine, keine Verstöße, alles in 2027, keine Ausweichkonflikte", async function(p) {
     var r = await p.evaluate(function() {
       var G = window.GFKAL, flat = G.allEventsFlat(), v = 0;
       for (var dk in G.eventsData()) G.checkPlausibility(dk).forEach(function(x) { if (!x.ok) v++; });
       return { total: flat.length, v: v, outside: flat.filter(function(x) { return x.dateKey.slice(0, 4) !== "2027"; }).length, conflicts: G.generationConflicts().length };
     });
-    eq(r, { total: 606, v: 0, outside: 0, conflicts: 0 }, "Ausgangsstand");
+    eq(r, { total: 608, v: 0, outside: 0, conflicts: 0 }, "Ausgangsstand");
   });
   await test("Raster: kein Terminende nach 18:00 (außer Klausuren), keine Lücke unter 10 Minuten", async function(p) {
     var r = await p.evaluate(function() {
@@ -351,11 +351,11 @@ function eq(a, b, msg) { if (JSON.stringify(a) !== JSON.stringify(b)) throw new 
     await p.waitForSelector("#dlgOverlay.active");
     var text = await p.textContent("#dlgText");
     ok(text.indexOf("10 Termine") >= 0, "Rückfrage nennt nicht die Terminzahl: " + text);
-    eq(await p.evaluate(function() { return window.GFKAL.allEventsFlat().length; }), 606, "vor der Bestätigung unverändert");
+    eq(await p.evaluate(function() { return window.GFKAL.allEventsFlat().length; }), 608, "vor der Bestätigung unverändert");
     await p.click("#dlgFooter .btn.danger");
     eq(await p.evaluate(function() { return window.GFKAL.allEventsFlat().length; }), 10, "nach der Bestätigung ersetzt");
     await p.click("#btnUndo");
-    eq(await p.evaluate(function() { return window.GFKAL.allEventsFlat().length; }), 606, "Rückgängig stellt den Bestand her");
+    eq(await p.evaluate(function() { return window.GFKAL.allEventsFlat().length; }), 608, "Rückgängig stellt den Bestand her");
   });
   await test("JSON Version 4: Regeln einmal, keine abgeleiteten Felder, Rundlauf bleibt verlustfrei", async function(p) {
     var r = await p.evaluate(function() {
@@ -376,7 +376,7 @@ function eq(a, b, msg) { if (JSON.stringify(a) !== JSON.stringify(b)) throw new 
       G.deserialize(s);
       return { n: G.allEventsFlat().length, regeln: Object.keys(G.RULES()).length };
     });
-    eq(r.n, 606, "Terminzahl");
+    eq(r.n, 608, "Terminzahl");
     ok(r.regeln >= 26, "Regeln aus Version 3 nicht übernommen: " + r.regeln);
   });
   await test("Befund 14: Ausgangsstand schreibt den Browserstand nicht sofort zurück, Rückgängig stellt her", async function(p) {
@@ -389,14 +389,14 @@ function eq(a, b, msg) { if (JSON.stringify(a) !== JSON.stringify(b)) throw new 
       G.undo();
       return { gespeichert: gespeichert, n1: n1, nachResetLeer: nachReset, n2: n2, n3: G.allEventsFlat().length };
     });
-    eq(r, { gespeichert: true, n1: 605, nachResetLeer: true, n2: 606, n3: 605 }, "Ausgangsstand");
+    eq(r, { gespeichert: true, n1: 607, nachResetLeer: true, n2: 608, n3: 607 }, "Ausgangsstand");
   });
   await test("Autosave und Wiederherstellen: Banner erscheint nach Neuladen, Stand kommt zurück", async function(p) {
     await p.evaluate(function() { var G = window.GFKAL, d = G.allEventsFlat()[0]; G.deleteEvent(d.dateKey, d.ev.uid); document.querySelector("#dlgFooter .btn.danger").click(); });
     await p.reload();
     ok(await p.isVisible("#restoreBanner"), "Banner fehlt");
     await p.click("#restoreYes");
-    eq(await p.evaluate(function() { return window.GFKAL.allEventsFlat().length; }), 605, "wiederhergestellter Bestand");
+    eq(await p.evaluate(function() { return window.GFKAL.allEventsFlat().length; }), 607, "wiederhergestellter Bestand");
   });
   await test("Speicher-Schnittstelle: Store lässt sich austauschen (Vorbereitung Backend)", async function(p) {
     var r = await p.evaluate(function() {
@@ -574,7 +574,7 @@ function eq(a, b, msg) { if (JSON.stringify(a) !== JSON.stringify(b)) throw new 
       var res = G.checkPlausibility("2027-01-05", ctx);
       return { verstoesse: res.filter(function(x) { return !x.ok; }).length, bestand: G.allEventsFlat().length };
     });
-    eq(r, { verstoesse: 2, bestand: 606 }, "Kontext");
+    eq(r, { verstoesse: 2, bestand: 608 }, "Kontext");
   });
 
   // ---------- Anpassungen 2027: Zeiten, Urlaub, Formate, Auswahllisten ----------
@@ -736,6 +736,20 @@ function eq(a, b, msg) { if (JSON.stringify(a) !== JSON.stringify(b)) throw new 
       return out;
     });
     eq(r, { tage: 14, max: 2, anreise: true, luecke: true, hosp: true, anreiseVorErstem: true }, "Steuerkreis-Tag");
+  });
+
+  await test("Leitungskonferenz ambulant + stationär als Block mit 2 Std. Hospitationsblocker direkt danach (nur diese)", async function(p) {
+    var r = await p.evaluate(function() {
+      var G = window.GFKAL, tm = function(s) { var a = s.split(":"); return +a[0] * 60 + +a[1]; }, all = G.allEventsFlat();
+      var ho = all.filter(function(x) { return x.ev.seriesId === "lk-hospitation"; }), out = { n: ho.length, dauer: [], ok: true, v: G.recomputeViolations() };
+      ho.forEach(function(h) {
+        out.dauer.push(h.ev.duration);
+        var a = all.filter(function(x) { return x.dateKey === h.dateKey && x.ev.seriesId === "lk-ambulant"; })[0], st = all.filter(function(x) { return x.dateKey === h.dateKey && x.ev.seriesId === "lk-stationaer"; })[0];
+        if (!a || !st || tm(st.ev.start) !== tm(a.ev.start) + 120 || tm(h.ev.start) !== tm(st.ev.start) + 180) out.ok = false;
+      });
+      return out;
+    });
+    eq(r, { n: 2, dauer: [120, 120], ok: true, v: 0 }, "LK-Block");
   });
 
   await browser.close();

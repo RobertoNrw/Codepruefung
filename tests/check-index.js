@@ -768,6 +768,41 @@ function eq(a, b, msg) { if (JSON.stringify(a) !== JSON.stringify(b)) throw new 
     eq(r.befund, { "2027-02-01": 2, "2027-08-19": 1, "2027-03-06": 1, "2027-06-02": 3, "2027-09-13": 2 }, "Bekannte Befunde (Fokuszeit, Urlaub, Samstag, Projektarbeit/Wochengespräch)");
   });
 
+  // ---------- Abgleich Kommunikationsmatrix ↔ Kalender ----------
+  await test("Matrix-Abgleich: Befunde je Zeile, Steuerkreise 3 Std. gegen 120 Min., gestrichene Formate von Fritsch", async function(p) {
+    var r = await p.evaluate(function() {
+      var m = window.GFKAL.matrixCompute(), c = {}, st = {};
+      m.rows.forEach(function(x) { c[x.status] = (c[x.status] || 0) + 1; st[x.entry.nr] = x.status; });
+      return { n: m.rows.length, c: c, sk: [st["14"], st["15"], st["19"], st["21"]], wa: st["33"], mav: st["30"], gestrichen: [st["32"], st["35d"]], wg: st["5"], fehlt: [st["8"], st["9"], st["25a"], st["25b"], st["31"]], gbl: st["2"], extra: m.extra.length };
+    });
+    eq(r, { n: 43, c: { "ohne-gf": 14, kongruent: 10, abweichend: 7, fehlt: 5, klaeren: 5, gestrichen: 2 }, sk: ["abweichend", "abweichend", "abweichend", "abweichend"], wa: "abweichend", mav: "abweichend", gestrichen: ["gestrichen", "gestrichen"], wg: "abweichend", fehlt: ["fehlt", "fehlt", "fehlt", "fehlt", "fehlt"], gbl: "kongruent", extra: 23 }, "Matrix-Abgleich");
+  });
+  await test("Matrix-Abgleich: Marke „Matrix ≠“ im Jahresraster, Hinweis in der Prüfung, Filter „Matrix-Abweichung“", async function(p) {
+    var r = await p.evaluate(function() {
+      var G = window.GFKAL, sk = G.allEventsFlat().filter(function(x) { return x.ev.seriesId === "sk-personal"; })[0];
+      var res = G.checkPlausibility(sk.dateKey).filter(function(y) { return y.ev.uid === sk.ev.uid; })[0];
+      G.setFilter({ onlyMatrix: true });
+      var vis = G.allEventsFlat().filter(function(x) { return G.passesFilter(x.ev); }), ids = {};
+      vis.forEach(function(x) { ids[x.ev.seriesId] = 1; });
+      var marks = document.querySelectorAll(".cell.has-matrix").length, btn = document.querySelector('.filter-btn[data-filter="Matrix"]').getAttribute("aria-pressed");
+      G.setFilter({ onlyMatrix: false });
+      return { hint: res.hints.some(function(h) { return h.indexOf("Kommunikationsmatrix Nr. 14") === 0; }), ok: res.ok, nur: vis.length > 0 && !ids["jf-a3"] && !!ids["sk-personal"] && !!ids["wirtschaftsausschuss"], marks: marks > 20, btn: btn };
+    });
+    eq(r, { hint: true, ok: true, nur: true, marks: true, btn: "true" }, "Marken");
+  });
+  await test("Matrix-Abgleich: Entscheidung Fritsch speicherbar, Zusammenfassung „nicht gewünscht“, CSV-Export", async function(p) {
+    var r = await p.evaluate(function() {
+      var G = window.GFKAL;
+      document.getElementById("matrixDetails").open = true;
+      var before = document.querySelector(".mx-final").textContent;
+      var sel = document.querySelector('select[data-nr="9"]'); sel.value = "nein"; sel.dispatchEvent(new Event("change"));
+      var after = document.querySelector(".mx-final").textContent, saved = JSON.parse(window.localStorage.getItem("gf-matrix-fritsch-2027") || "{}");
+      var csv = G.matrixCsv().split("\r\n").filter(Boolean);
+      return { vorher: before.indexOf("After Work") < 0 || before.indexOf("nicht gewünscht (2)") >= 0, nachher: after.indexOf("Von Fritsch nicht gewünscht (3)") >= 0 && after.indexOf("9 After Work") >= 0, saved: saved["9"], csvZeilen: csv.length, kopf: csv[0].indexOf("Entscheidung Fritsch") > 0 };
+    });
+    eq(r, { vorher: true, nachher: true, saved: "nein", csvZeilen: 1 + 43 + 23, kopf: true }, "Entscheidung");
+  });
+
   await browser.close();
   console.log(results.join("\n"));
   console.log("\n" + (results.length - failed) + " von " + results.length + " Prüfungen bestanden.");

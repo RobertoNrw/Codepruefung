@@ -360,7 +360,7 @@
           <li><strong>Dienstags-JF:</strong> Verteilung der 13 monatlichen Partner-JF (IM/LeWo) und der 13 GBL-/Referate-/A³-Formate auf die Dienstage ist eine gekennzeichnete Arbeitsannahme (bis zu 7 Slots je Dienstag, 50 Min., 10 Min. Wechsel). Keine bestätigte Einzelzuordnung.</li>
           <li><strong>JF-Dauer:</strong> 50 Min. lt. SEK-Liste; Arbeitsdatei rechnet vorsorglich mit 75 Min. Im Tool: 50 Min. je JF (SEK-Vorgabe), Dauer je Baustein editierbar.</li>
           <li><strong>Platzhalter:</strong> Vorstandssitzung IM, Verwaltungsrat IM, AG Wohlfahrt / AG-FW, Leitungskonferenz ambulant (2 Std.) / stationär (3 Std.), ASA (Team, 2 Std.), Klausur Strategie, Gesellschafterversammlungen und AG DADuL sind als unbestätigt markiert (gestrichelter Ring, Ecke unten rechts).</li>
-          <li><strong>Steuerungsgruppen UK DR / Personal / Digitalisierung:</strong> Do-Rotation bis zur Klärung mit den neuen Steuerkreisen beibehalten.</li>
+          <li><strong>Steuerungsgruppen UK DR / Personal / Digitalisierung DR:</strong> je 4 feste Termine laut Einladungen (Westring 26, Raum 209), unverändert übernommen. Zu klären: UK DR „6.03.2027“ ist ein Samstag, Personal 19.08.2027 liegt im Urlaub, Überschneidungen mit Fokuszeit (01.02., 13.09.), Projektarbeit/Wochengespräch (02.06.) und JF MAV+BR SBO (20.05.).</li>
           <li><strong>Steuerkreise (alle 120 Min.):</strong> Wirtschaft &amp; Finanzen monatlich, QM &amp; Regulatorik alle 2 Monate, Personal und Marketing &amp; Vertrieb quartalsweise. Je Termintag zwei Steuerkreise im Block (15 Min. zum Verabschieden), Anreise 30 Min. nur vor dem ersten, danach ein Hospitationsblocker von 2 Std. Personal und Marketing &amp; Vertrieb liegen auf eigenen Quartalstagen.</li>
           <li><strong>Persistenz:</strong> Änderungen werden als JSON exportiert/importiert; zusätzlich Autosave im Browser (sofern verfügbar). Endgültiges Speicherkonzept offen.</li>
         </ul>
@@ -391,7 +391,7 @@
 
       <div class="info-rule">
         <strong>Angewendete GF-Korrekturregeln:</strong><br>
-        1. JF Jahndorf: alle 6–8 Wochen, 50 Min. (nicht monatlich).<br>
+        1. JF Jahndorf: etwa alle 8 Wochen, 100 Min. (nicht monatlich).<br>
         2. JF Mala: kein eigener Termin, Teilslot innerhalb JF Personal.<br>
         3. JF Personal: 75 Min. = 50 Referat + 20 Poolspringer Frau Mala + 5 Wechselpuffer, Block nicht trennbar.<br>
         4. GBL-Klausur (18.–19.11.) und Leistungsklausur Sozialwirtschaft (03.–04.05., 08.–09.11.) nie in derselben ISO-Woche.<br>
@@ -763,7 +763,9 @@
     var rLKHo = defRule({ id: "lk-hospitation", label: "Hospitation nach Leitungskonferenz", turnus: "offen", duration: CONFIG.SK_HOSPITATION_MIN, note: "Hospitationsblocker, 2 Std., direkt nach Leitungskonferenz ambulant und stationär.", editable: true });
     var rSKAn = defRule({ id: "sk-anreise", label: "Anreise Steuerkreis-Tag", turnus: "offen", duration: CONFIG.SK_TRAVEL_MIN, note: "Anreisepuffer nur vor dem ersten Steuerkreis des Tages (Steuerkreise finden nicht am Westring statt).", editable: true });
     var rSKHo = defRule({ id: "sk-hospitation", label: "Hospitationsblocker vor Ort", turnus: "offen", duration: CONFIG.SK_HOSPITATION_MIN, note: "Direkt im Anschluss an den Steuerkreis-Block: der GF bleibt vor Ort und schaut sich um.", editable: true });
-    var rSG = defRule({ id: "steuerungsgruppe", label: "Steuerungsgruppen DR (Rotation)", allowedDays: ["Do"], turnus: "monatlich", duration: 180, note: "Alte Steuerungsgruppen UK DR / Personal / Digitalisierung, 3 Std., Do-Rotation, Zuordnung noch zu klären.", pendingClarification: true, editable: true });
+    var rSGP = defRule({ id: "steuerungsgruppe-personal", label: "Steuerungsgruppe Personal", allowedDays: ["Mo","Do"], turnus: "quartalsweise", duration: 180, note: "Quartalsweise, Westring 26, Raum 209 (Einladung Sven Pernak).", editable: true });
+    var rSGD = defRule({ id: "steuerungsgruppe-digitalisierung", label: "Steuerungsgruppe Digitalisierung DR", allowedDays: ["Mo"], turnus: "quartalsweise", duration: 60, note: "Quartalsweise, montags 13:00–14:00, Westring 26, Raum 209 (Einladung Jens Koch).", editable: true });
+    var rSGU = defRule({ id: "steuerungsgruppe-uk-dr", label: "Steuerungsgruppe UK DR", allowedDays: ["Mo","Mi","Do"], turnus: "quartalsweise", duration: 180, note: "Quartalsweise, Westring 26, Raum 209 (Einladung Sven Pernak).", editable: true });
     var rKlausurSW = defRule({ id: "klausur-sw", label: "Leistungsklausur Sozialwirtschaft", allowedDays: ["Mo","Di"], turnus: "2x jährlich", couplingForbiddenWith: "gbl-klausur", note: "Regel 4: nie in derselben ISO-Woche wie die GBL-Klausur.", editable: true });
     var rGBLKlausur = defRule({ id: "gbl-klausur", label: "GBL-Klausur", allowedDays: ["Do","Fr"], turnus: "jährlich (November)", couplingForbiddenWith: "klausur-sw", note: "Regel 4: nie in derselben ISO-Woche wie die Leistungsklausur Sozialwirtschaft.", editable: true });
     var rFiD = defRule({ id: "fuehrung-dialog", label: "Führung im Dialog", allowedDays: ["Do","Fr"], turnus: "jährlich (Feb/März)", editable: true });
@@ -791,6 +793,18 @@
     addEvent("2027-04-09", "Klausur Strategie (Tag 2)", "Klausur", "09:00", 240, "Platzhalter: Tag 2 von 2.", rStrategie, { placeholder: true, seriesId: "klausur-strategie" });
     addEvent("2027-09-30", "Klausur Strategie (Tag 1)", "Klausur", "09:00", 480, "Platzhalter: Halbjahrestakt, 2. Termin, noch offen.", rStrategie, { placeholder: true, seriesId: "klausur-strategie" });
     addEvent("2027-10-01", "Klausur Strategie (Tag 2)", "Klausur", "09:00", 240, "Platzhalter: Tag 2 von 2.", rStrategie, { placeholder: true, seriesId: "klausur-strategie" });
+
+    // ---- 1b. Steuerungsgruppen: feste Termine laut Einladungen (unverändert übernommen, Datum und Uhrzeit exakt wie geliefert) ----
+    // Sie stehen vor allen übrigen Terminen, damit diese ausweichen. Abweichungen zu Fokuszeit, Urlaub u. a. meldet die Prüfung.
+    [
+      ["Steuerungsgruppe Personal", rSGP, "steuerungsgruppe-personal", "Sven Pernak", [["2027-02-01", "09:00", 180], ["2027-05-20", "13:00", 180], ["2027-08-19", "14:00", 180], ["2027-11-22", "13:00", 180]]],
+      ["Steuerungsgruppe Digitalisierung DR", rSGD, "steuerungsgruppe-digitalisierung", "Jens Koch", [["2027-03-08", "13:00", 60], ["2027-06-07", "13:00", 60], ["2027-09-06", "13:00", 60], ["2027-12-06", "13:00", 60]]],
+      ["Steuerungsgruppe UK DR", rSGU, "steuerungsgruppe-uk-dr", "Sven Pernak", [["2027-03-06", "09:00", 180], ["2027-06-02", "13:00", 180], ["2027-09-13", "10:00", 180], ["2027-12-16", "09:00", 180]]]
+    ].forEach(function(g) {
+      g[4].forEach(function(t) {
+        addEvent(t[0], g[0], "Steuerkreis", t[1], t[2], "Quartalsweise. Bochum, Westring 26, Raum 209. Einladung von " + g[3] + ".", g[1], { seriesId: g[2], ort: "Westring 26, Raum 209" });
+      });
+    });
 
     // ---- 2. Blocker (Regel 5 + 6) ----
     for (m = 0; m < 12; m++) {
@@ -941,8 +955,6 @@
     placeOnDay("2027-09-15", "AG-FW Stadt Bochum", "Gremium", "10:00", 90, "Platzhalter: unregelmäßig, extern – Termin noch offen.", rExtern, { placeholder: true, seriesId: "ag-fw", ort: "Stadt Bochum" });
 
     // ---- 6. Donnerstag: Steuerung, Gremien, Puffer ----
-    var rotation = ["Steuerungsgruppe UK DR", "Steuerungsgruppe Personal", "Steuerungsgruppe Digitalisierung"];
-    var rotationIds = ["uk-dr", "personal", "digitalisierung"]; // je Gruppe eine eigene Serie
     for (m = 0; m < 12; m++) {
       // Steuerkreis-Tag: Wirtschaft & Finanzen monatlich, QM & Regulatorik alle 2 Monate direkt im Anschluss (ein Block, einmal Anreise)
       var do4 = avoidKlausur(getNthWeekdayOfMonth(YEAR, m, 4, 4)); k = dateToKey(do4.date);
@@ -951,8 +963,6 @@
         if (m % 2 === 0) skSessions.push({ title: "Steuerkreis QM & Regulatorik", rule: rSKQM, seriesId: "sk-qm", desc: "Alle 2 Monate, 2 Std. – direkt im Anschluss (15 Min. Verabschieden), gleiche Einrichtung, GF dabei." });
         placeSKBlock(k, skSessions, { an: rSKAn, ho: rSKHo }, shiftNote(do4));
       }
-      var do1 = avoidKlausur(getNthWeekdayOfMonth(YEAR, m, 4, 1)); k = dateToKey(do1.date);
-      if (!do1.dropped) placeOnDay(k, rotation[m % 3], "Steuerkreis", "09:00", 180, "Alte Steuerungsgruppe, Do-Rotation, 3 Std. – bis zur Klärung mit den neuen Steuerkreisen beibehalten, Zuordnung noch zu klären." + shiftNote(do1), rSG, { seriesId: "steuerungsgruppe-" + rotationIds[m % 3], ort: "Diakonie Ruhr" });
       var do3 = avoidKlausur(getNthWeekdayOfMonth(YEAR, m, 4, 3)); k = dateToKey(do3.date);
       // Wurde der 3. Donnerstag wegen einer Klausur auf den Steuerkreis-Tag geschoben, geht es stattdessen eine Woche zurück
       if (do3.shifted && (eventsData[k] || []).some(function(e) { return e.seriesId === "sk-hospitation"; }) && isFreeDay(addDays(parseDateKey(do3.from), -7))) { do3 = { date: addDays(parseDateKey(do3.from), -7), shifted: true, from: do3.from }; k = dateToKey(do3.date); }
@@ -2317,7 +2327,7 @@
       { series: sids("partner-", PARTNER_IM) }, { series: ["imk", "imk-asa-im"] }, { series: ["vorstand-im"] }, { series: ["verwaltungsrat-im"] }, { series: ["ag-wohlfahrt", "ag-fw"] }] },
     { name: "Diakonie Ruhr", items: [
       { series: ["lk-sozialwirtschaft"] }, { series: ["klausur-sw"] },
-      { series: ["steuerungsgruppe-uk-dr", "steuerungsgruppe-personal", "steuerungsgruppe-digitalisierung"], label: "Steuerungsgruppen UK DR / Personal / Digitalisierung", rhythm: "Do-Rotation" }] },
+      { series: ["steuerungsgruppe-uk-dr", "steuerungsgruppe-personal", "steuerungsgruppe-digitalisierung"], label: "Steuerungsgruppen UK DR / Personal / Digitalisierung DR", rhythm: "quartalsweise" }] },
     { name: "EVAR", items: [{ series: ["ekl"] }, { series: ["machleit-ebner"] }] },
     { name: "SBO", items: [
       { series: ["wirtschaftsausschuss"] }, { series: ["ar-gv-sbo"] }, { series: ["mav-br-sbo"] },

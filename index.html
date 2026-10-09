@@ -185,6 +185,18 @@
   .tag.bad { background: var(--bad-bg); color: var(--bad); }
   .tag.grey { background: #eceff1; color: #546e7a; }
   .tag.cyan { background: #e1f3fb; color: #006a99; }
+  .tag.nein { background: #5b0f24; color: #fff; }
+  .cell.has-matrix::before {
+    content: ""; position: absolute; bottom: 0; left: 0; width: 0; height: 0;
+    border-bottom: 9px solid #e65100; border-right: 9px solid transparent;
+  }
+  .mx-bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 10px 0; font-size: 0.8rem; }
+  .mx-sum { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+  .mx-table td.diff { font-size: 0.74rem; color: #6b4a00; }
+  .mx-table tr.mx-hide { display: none; }
+  .mx-table select { font-size: 0.74rem; max-width: 190px; }
+  .mx-final { margin-top: 12px; font-size: 0.8rem; line-height: 1.5; }
+  .mx-final strong { color: var(--primary); }
   ul.open-list { font-size: 0.82rem; padding-left: 18px; line-height: 1.5; }
 
   /* ===== Fokusmodus (Overlay) ===== */
@@ -305,6 +317,7 @@
   <button type="button" class="filter-btn" data-filter="Gremium" aria-pressed="false">Gremien / Puffer</button>
   <button type="button" class="filter-btn" data-filter="Blocker" aria-pressed="false">Blocker &amp; Klausur</button>
   <button type="button" class="filter-btn" data-filter="Platzhalter" aria-pressed="false">Nur Platzhalter</button>
+  <button type="button" class="filter-btn" data-filter="Matrix" aria-pressed="false">Matrix-Abweichung</button>
   <input type="search" id="searchInput" class="search-input" placeholder="Suche in Titel, Beschreibung, Ort" aria-label="Termine suchen (Titel, Beschreibung, Ort)" autocomplete="off">
   <span class="filter-info" id="filterInfo" aria-live="polite"></span>
 
@@ -322,6 +335,7 @@
     <div class="legend-item"><span class="dot" style="background:#e65100"></span> Leitungskonferenz stationär</div>
     <div class="legend-item"><span class="dot" style="background:#fbe4ea;border:1px solid #b0304f"></span> Feiertag (NRW)</div>
     <div class="legend-item"><span class="dot" style="background:#fff3cd;border:1px solid #8a6100"></span> Urlaub</div>
+    <div class="legend-item"><span class="dot" style="background:#e65100;border-radius:0;width:8px;height:8px"></span> Abweichung zur Kommunikationsmatrix (Ecke unten links)</div>
     <div class="legend-item"><span class="dot ph" style="background:#6c757d"></span> Platzhalter (unbestätigt)</div>
     <div class="legend-item"><span class="dot" style="background:var(--bad);border-radius:0;width:8px;height:8px"></span> Regelverstoß am Tag</div>
   </div>
@@ -342,6 +356,13 @@
     </div>
 
     <div class="panel">
+      <details class="fl" id="matrixDetails">
+        <summary>Abgleich Kommunikationsmatrix („Wünsch-dir-was“-Papier) ↔ Kalender – Kongruenz, Abweichungen, Entscheidung Fritsch</summary>
+        <div id="matrixContainer"></div>
+      </details>
+    </div>
+
+    <div class="panel">
       <details class="fl">
         <summary>Formatliste 2027 (Stand 27.09.2026) – Bezeichnungen, Rhythmus, Slot, Status</summary>
         <div id="formatListContainer"></div>
@@ -352,10 +373,11 @@
       <details class="fl">
         <summary>Offene Punkte (zu klären mit Sandra Merino-Kesting / Kerstin Tomnitz / GF)</summary>
         <ul class="open-list" style="margin-top:8px">
-          <li><strong>Wochengespräch mit GF-Beteiligung und Projektarbeit:</strong> Struktur mit Herrn Fritsch bestätigen. Im Tool als Arbeitsannahme jeden Mittwoch: Projektarbeit 12:00–14:00 Uhr, direkt danach Wochengespräch 14:00–16:00 Uhr.</li>
+          <li><strong>Wochengespräch und Projektarbeit:</strong> Struktur mit Herrn Fritsch bestätigen. Im Tool als Arbeitsannahme jeden Mittwoch: Projektarbeit 12:00–14:00 Uhr, direkt danach Wochengespräch 14:00–16:00 Uhr. Das Wochengespräch findet wöchentlich statt, die GF ist nur 1× im Monat dabei (2. Mittwoch, „mit GF-Beteiligung“), sonst „ohne GF“.</li>
           <li><strong>Fokuszeit-Blocker Montag:</strong> 09:00–10:30 Uhr. Reguläre Termine beginnen grundsätzlich nicht vor 09:00 Uhr.</li>
           <li><strong>Urlaub und Feiertage 2027:</strong> Urlaub 01.–08.01., 26.03.–02.04., 26.–29.07., 04.–20.08., 22.10.–05.11. sowie die NRW-Feiertage sind frei. Termine an diesen Tagen entfallen ohne Ersatztermin; Intervall-JF (6–8 Wochen) rücken um eine Woche.</li>
           <li><strong>Innere Mission:</strong> IMK 6× im Jahr, davon 2 als „IMK + ASA IM“ (nicht identisch mit dem ASA-Team-Termin). Alle IM-Termine liegen außerhalb der NRW-Schulferien (Ferienliste bitte amtlich gegenprüfen). Vorstandssitzung IM 3 Std., Verwaltungsrat IM 4× und AG Wohlfahrt 8× je 90 Min. ab 17:00 Uhr.</li>
+          <li><strong>Kommunikationsmatrix („Wünsch-dir-was“-Papier):</strong> Der Abgleich unter dem Jahresraster zeigt je Matrixzeile Dauer, Rhythmus und GF-Beteiligung gegen den Kalender. Abweichende Termine tragen die Marke „Matrix ≠“. Die Entscheidung Fritsch (Matrix gilt / Kalender-Wert gilt / nicht gewünscht) lässt sich dort je Zeile setzen und als CSV exportieren.</li>
           <li><strong>Wirtschaftsausschuss SBO:</strong> 4. Dienstag 09:00–10:00 Uhr (1 Std.), danach 30 Min. Rückfahrtpuffer.</li>
           <li><strong>Dienstags-JF:</strong> Verteilung der 13 monatlichen Partner-JF (IM/LeWo) und der 13 GBL-/Referate-/A³-Formate auf die Dienstage ist eine gekennzeichnete Arbeitsannahme (bis zu 7 Slots je Dienstag, 50 Min., 10 Min. Wechsel). Keine bestätigte Einzelzuordnung.</li>
           <li><strong>JF-Dauer:</strong> 50 Min. lt. SEK-Liste; Arbeitsdatei rechnet vorsorglich mit 75 Min. Im Tool: 50 Min. je JF (SEK-Vorgabe), Dauer je Baustein editierbar.</li>
@@ -397,7 +419,7 @@
         4. GBL-Klausur (18.–19.11.) und Leistungsklausur Sozialwirtschaft (03.–04.05., 08.–09.11.) nie in derselben ISO-Woche.<br>
         5. Fokuszeit-Blocker: Montag 09:00–10:30 und Freitag 09:00–11:00, je inkl. 0,5 Std. Abstimmung Assistenz GF.<br>
         6. Projektarbeit-Blocker GF: wöchentlich Mittwoch 12:00–14:00, direkt vor dem Wochengespräch.<br>
-        7. Wochengespräch mit GF-Beteiligung: wöchentlich Mittwoch, 2 Std., 14:00–16:00 (mit Herrn Fritsch bestätigen).
+        7. Wochengespräch: wöchentlich Mittwoch, 2 Std., 14:00–16:00; die GF ist nur 1× im Monat dabei (2. Mittwoch, „mit GF-Beteiligung“), sonst „ohne GF“ (mit Herrn Fritsch bestätigen).
       </div>
     </div>
   </div>
@@ -742,7 +764,8 @@
     var rFokusMo = defRule({ id: "fokuszeit-mo", label: "Fokuszeit-Blocker (Mo)", allowedDays: ["Mo"], turnus: "wöchentlich", duration: 90, fixedTime: "09:00 – 10:30", note: "Regel 5: inkl. 0,5 Std. Abstimmung Assistenz GF. Montag 09:00–10:30, keine regulären Termine vor 09:00.", editable: true });
     var rFokusFr = defRule({ id: "fokuszeit-fr", label: "Fokuszeit-Blocker (Fr)", allowedDays: ["Fr"], turnus: "wöchentlich", duration: 120, fixedTime: "09:00 – 11:00", note: "Regel 5: inkl. 0,5 Std. Abstimmung Assistenz GF.", editable: true });
     var rProjekt = defRule({ id: "projektarbeit", label: "Projektarbeit-Blocker GF", allowedDays: ["Mi"], turnus: "wöchentlich", duration: 120, fixedTime: "12:00 – 14:00", note: "Regel 6: fest auf Mittwoch, direkt vor dem Wochengespräch.", editable: true });
-    var rWG = defRule({ id: "wochengespraech", label: "Wochengespräch mit GF-Beteiligung", allowedDays: ["Mi"], turnus: "wöchentlich", duration: 120, fixedTime: "14:00 – 16:00", note: "Regel 7: jeden Mittwoch, Projektarbeit davor. Struktur mit Herrn Fritsch bestätigen.", editable: true });
+    var rWG = defRule({ id: "wochengespraech", label: "Wochengespräch mit GF-Beteiligung", allowedDays: ["Mi"], turnus: "monatlich", duration: 120, fixedTime: "14:00 – 16:00", note: "Regel 7: Das Wochengespräch findet wöchentlich statt, die GF ist nur 1× im Monat dabei (2. Mittwoch). Struktur mit Herrn Fritsch bestätigen.", editable: true });
+    var rWGo = defRule({ id: "wochengespraech-ohne-gf", label: "Wochengespräch (ohne GF)", allowedDays: ["Mi"], turnus: "wöchentlich", duration: 120, fixedTime: "14:00 – 16:00", note: "Regel 7: wöchentliches Wochengespräch am Mittwoch; die GF nimmt nur 1× im Monat teil (dann „mit GF-Beteiligung“).", editable: true });
     var rPuffer = defRule({ id: "pufferslot", label: "Pufferslot Gremien", allowedDays: ["Do"], turnus: "monatlich", duration: 90, note: "Schutzslot für kurzfristige Gremienbelange.", editable: true });
     var rLK = defRule({ id: "lk-sozialwirtschaft", label: "Leitungskonferenz Sozialwirtschaft", allowedDays: ["Mo"], turnus: "monatlich", duration: 120, note: "1. Montag, 2 Std. (ehemals Betriebsleitungskonferenz).", editable: false });
     var rEKL = defRule({ id: "ekl", label: "Erweiterte Konzernleitung (eKL)", allowedDays: ["Mo"], turnus: "monatlich", duration: 180, note: "3. Montag, 3 Std. (EVAR).", editable: false });
@@ -822,7 +845,9 @@
       for (i = 0; i < weds.length; i++) {
         k = dateToKey(weds[i]); if (isOffDay(k) || hasKlausur(k)) continue;
         addEvent(k, "Projektarbeit-Blocker GF", "Projekt", "12:00", 120, "Statusmeetings, Telefonate, operative Klärung – fest Mittwoch, direkt vor dem Wochengespräch (Regel 6).", rProjekt);
-        addEvent(k, "Wochengespräch mit GF-Beteiligung", "Gremium", "14:00", 120, "Wöchentlich am Mittwoch, 2 Std., 14:00–16:00 Uhr (Regel 7). Struktur mit Herrn Fritsch bestätigen.", rWG, { assumption: true, seriesId: "wochengespraech" });
+        // Regel 7: jeden Mittwoch Wochengespräch, die GF ist nur 1× im Monat dabei (2. Mittwoch)
+        if (i === 1) addEvent(k, "Wochengespräch mit GF-Beteiligung", "Gremium", "14:00", 120, "Das Wochengespräch findet wöchentlich statt, die GF nimmt nur 1× im Monat teil (2. Mittwoch), 14:00–16:00 Uhr (Regel 7). Struktur mit Herrn Fritsch bestätigen.", rWG, { assumption: true, seriesId: "wochengespraech" });
+        else addEvent(k, "Wochengespräch (ohne GF)", "Gremium", "14:00", 120, "Wöchentliches Wochengespräch am Mittwoch, 14:00–16:00 Uhr, ohne GF-Beteiligung (die GF ist nur 1× im Monat dabei, Regel 7).", rWGo, { assumption: true, seriesId: "wochengespraech-ohne-gf" });
       }
     }
 
@@ -1198,6 +1223,8 @@
       if (ev.placeholder) hints.push("Platzhalter – Termin unbestätigt, mit Sekretariat abzustimmen.");
       if (ev.assumption) hints.push("Arbeitsannahme (Slot/Wochentag nicht bestätigt).");
       if (ev.deviation) hints.push("Bewusste Abweichung von der Vorgabe.");
+      var mxi = matrixInfo(ev);
+      if (mxi && mxi.status !== "kongruent") hints.push("Kommunikationsmatrix Nr. " + mxi.entry.nr + " „" + mxi.entry.titel + "“: " + mxi.diffs.join("; ") + ".");
       if (rule && rule.notSplittable) hints.push("Block nicht trennbar: " + rule.subslots + ", gesamt " + rule.totalDuration + " Min.");
       results.push({ ev: ev, ok: msgs.length === 0, messages: msgs, hints: hints });
     });
@@ -1206,7 +1233,7 @@
 
   var violationCache = {};
   function recomputeViolations() {
-    violationCache = {};
+    violationCache = {}; matrixCache = null;
     var total = 0, ctx = CTX();
     for (var dk in eventsData) {
       if (!eventsData[dk].length) continue;
@@ -1221,13 +1248,15 @@
   // Ein Filter für alle Ansichten (Jahresraster, Seitenspalte, Tag, Woche, Monat).
   var activeTypes = {};        // leer = alle Typen; sonst Vereinigung der gewählten
   var onlyPlaceholder = false; // unabhängiger Zusatzfilter
+  var onlyMatrix = false;      // nur Termine, die von der Kommunikationsmatrix abweichen
   var searchTerm = "";
   var selectedDateKey = null;
   function typeGroup(ev) { return (ev.type === "Projekt" || ev.type === "Klausur") ? "Blocker" : ev.type; }
   function anyTypeSelected() { for (var k in activeTypes) if (activeTypes[k]) return true; return false; }
-  function filterActive() { return anyTypeSelected() || onlyPlaceholder || !!searchTerm; }
+  function filterActive() { return anyTypeSelected() || onlyPlaceholder || onlyMatrix || !!searchTerm; }
   function passesFilter(ev) {
     if (onlyPlaceholder && !ev.placeholder) return false;
+    if (onlyMatrix && !matrixDeviates(ev)) return false;
     if (anyTypeSelected() && !activeTypes[typeGroup(ev)]) return false;
     if (searchTerm) {
       var blob = (ev.title + " " + (ev.desc || "") + " " + (ev.ort || "")).toLowerCase();
@@ -1242,6 +1271,7 @@
       var f = btns[i].getAttribute("data-filter"), on;
       if (f === "all") on = !filterActive();
       else if (f === "Platzhalter") on = onlyPlaceholder;
+      else if (f === "Matrix") on = onlyMatrix;
       else on = !!activeTypes[f];
       btns[i].classList.toggle("active", on);
       btns[i].setAttribute("aria-pressed", on ? "true" : "false");
@@ -1261,6 +1291,7 @@
     opts = opts || {};
     if (opts.types) { activeTypes = {}; opts.types.forEach(function(t) { activeTypes[t] = true; }); }
     if (opts.onlyPlaceholder !== undefined) onlyPlaceholder = !!opts.onlyPlaceholder;
+    if (opts.onlyMatrix !== undefined) onlyMatrix = !!opts.onlyMatrix;
     if (opts.search !== undefined) searchTerm = String(opts.search).trim().toLowerCase();
     refreshAfterFilter();
   }
@@ -1356,6 +1387,7 @@
           if (list.length > 4) { var more = document.createElement("span"); more.className = "more"; more.textContent = "+" + (list.length - 4); dotRow.appendChild(more); }
           cell.appendChild(dotRow);
           if (list.some(function(e) { return e.placeholder; })) cell.classList.add("has-placeholder");
+          if (list.some(matrixDeviates)) cell.classList.add("has-matrix");
         }
         if (vio) {
           cell.classList.add("has-violation");
@@ -1416,7 +1448,7 @@
         var card = document.createElement("div");
         card.className = "detail-card"; card.style.borderLeftColor = ev.color;
         card.setAttribute("role", "button"); card.setAttribute("tabindex", "0");
-        card.innerHTML = '<div class="detail-title">' + escapeHtml(ev.title) + (ev.placeholder ? ' <span class="tag warn">Platzhalter</span>' : '') + '</div><div class="detail-meta">' + escapeHtml(ev.time) + ' · ' + escapeHtml(typeLabels[ev.type] || ev.type) + '</div>';
+        card.innerHTML = '<div class="detail-title">' + escapeHtml(ev.title) + (ev.placeholder ? ' <span class="tag warn">Platzhalter</span>' : '') + matrixTag(ev) + '</div><div class="detail-meta">' + escapeHtml(ev.time) + ' · ' + escapeHtml(typeLabels[ev.type] || ev.type) + '</div>';
         card.addEventListener("click", function() { openFocus(dateKey, "day"); });
         card.addEventListener("keydown", function(e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openFocus(dateKey, "day"); } });
         listContainer.appendChild(card);
@@ -1522,7 +1554,7 @@
       var head = document.createElement("div"); head.className = "baustein-head";
       var timeSpan = document.createElement("span"); timeSpan.className = "baustein-time"; timeSpan.textContent = ev.time;
       var titleSpan = document.createElement("span"); titleSpan.className = "baustein-title";
-      titleSpan.innerHTML = escapeHtml(ev.title) + ' <span class="tag grey">' + escapeHtml(typeLabels[ev.type] || ev.type) + '</span>' + (ev.placeholder ? ' <span class="tag warn">Platzhalter</span>' : '') + (ev.assumption ? ' <span class="tag cyan">Annahme</span>' : '') + (ev.deviation ? ' <span class="tag warn">Abweichung</span>' : '') + (ev.source === "manuell" ? ' <span class="tag ok">manuell</span>' : '');
+      titleSpan.innerHTML = escapeHtml(ev.title) + ' <span class="tag grey">' + escapeHtml(typeLabels[ev.type] || ev.type) + '</span>' + (ev.placeholder ? ' <span class="tag warn">Platzhalter</span>' : '') + matrixTag(ev) + (ev.assumption ? ' <span class="tag cyan">Annahme</span>' : '') + (ev.deviation ? ' <span class="tag warn">Abweichung</span>' : '') + (ev.source === "manuell" ? ' <span class="tag ok">manuell</span>' : '');
       var actions = document.createElement("div"); actions.className = "baustein-actions";
       var editBtn = document.createElement("button"); editBtn.type = "button"; editBtn.className = "icon-btn"; editBtn.title = "Bearbeiten"; editBtn.textContent = "✎ Bearbeiten";
       var delBtn = document.createElement("button"); delBtn.type = "button"; delBtn.className = "icon-btn del"; delBtn.title = "Löschen"; delBtn.textContent = "✕ Löschen";
@@ -2345,7 +2377,7 @@
       { series: ["sk-anreise"], noCount: true }, { series: ["sk-hospitation"], noCount: true }] },
     { name: "Klausuren, Blocker, offene Formate", items: [
       { series: ["gbl-klausur"] }, { series: ["fuehrung-dialog"] }, { series: ["klausur-strategie"] },
-      { series: ["lk-ambulant", "lk-stationaer"] }, { series: ["lk-hospitation"], noCount: true }, { series: ["asa"] }, { series: ["wochengespraech"] }, { series: ["pufferslot"] },
+      { series: ["lk-ambulant", "lk-stationaer"] }, { series: ["lk-hospitation"], noCount: true }, { series: ["asa"] }, { series: ["wochengespraech", "wochengespraech-ohne-gf"], label: "Wochengespräch (wöchentlich, GF 1× monatlich)" }, { series: ["pufferslot"] },
       { series: ["fokuszeit-mo", "fokuszeit-fr"], label: "Fokuszeit-Blocker" }, { series: ["projektarbeit"] }] }
   ];
   function fmtDurMin(d) { return (d >= 60 && d % 60 === 0) ? (d / 60) + " Std." : d + " Min."; }
@@ -2428,6 +2460,217 @@
     });
     html += "</tbody></table>";
     document.getElementById("formatListContainer").innerHTML = html;
+    renderMatrixAbgleich();
+  }
+
+  // ================= Abgleich Kommunikationsmatrix ↔ Kalender =================
+  // Quelle: Matrizen_Entscheidungen_Kommunikation_00-18.xlsx, Blatt „Kommunikationsmatrix“ („Wünsch-dir-was“-Papier).
+  // Je Matrixzeile stehen hier nur die Soll-Werte der Matrix. Die Kalenderseite wird live aus den Terminen gerechnet.
+  // dauer: zulässige Minuten (null = keine Angabe), rhythmus: kanonische Takte (weekly, monthly, bimonthly, quarterly, halfyear, yearly, event, open),
+  // gf: Geschäftsführung ist Verantwortlicher oder Teilnehmer, serien: Serien-IDs im Kalender, cluster: Mehrtagesformat (Summe je Vorkommen),
+  // status: festes Ergebnis ohne Kalendertermine (gestrichen = laut Korrektur gestrichen, klaeren = Zuordnung offen), unsicher: Zuordnung unsicher.
+  var GBL_JF_SERIEN = GBL_JF.map(function(n) { return "gbl-" + n; });
+  var MATRIX = [
+    { nr: "1", titel: "Jour fixe EL", dauerText: "1,5 Std.", dauer: [90], rhythmusText: "monatlich", rhythmus: ["monthly"], gf: false, wer: "GBL mit Einrichtungsleitungen", serien: [] },
+    { nr: "2", titel: "Jour fixe GBL", dauerText: "50 Min.", dauer: [50], rhythmusText: "monatlich (ggf. später zweimonatlich)", rhythmus: ["monthly"], gf: true, wer: "GF mit GBL", serien: GBL_JF_SERIEN },
+    { nr: "3a", titel: "Jour fixe Referat Personal", dauerText: "1,25 Std. (inkl. 20 Min. Poolspringer, 5 Min. Wechsel)", dauer: [75], rhythmusText: "zweimonatlich", rhythmus: ["bimonthly"], gf: true, wer: "GF mit Referat", serien: ["jf-personal"] },
+    { nr: "3b", titel: "Jour fixe Referat QM und Regulatorik", dauerText: "50 Min.", dauer: [50], rhythmusText: "zweimonatlich", rhythmus: ["bimonthly"], gf: true, wer: "GF mit Referat", serien: ["jf-qm"] },
+    { nr: "3c", titel: "Jour fixe Wirtschaft und Finanzen", dauerText: "50 Min.", dauer: [50], rhythmusText: "monatlich", rhythmus: ["monthly"], gf: true, wer: "GF mit Referat", serien: ["referat-JF Wirtschaft & Finanzen"] },
+    { nr: "3d", titel: "Jour fixe Referat Marketing und Vertrieb", dauerText: "50 Min.", dauer: [50], rhythmusText: "monatlich", rhythmus: ["monthly"], gf: true, wer: "GF mit Referat", serien: ["referat-JF Marketing & Vertrieb"] },
+    { nr: "4", titel: "Jour fixe A³-Team", dauerText: "1,5 Std.", dauer: [90], rhythmusText: "monatlich", rhythmus: ["monthly"], gf: true, wer: "GF mit A³-Team", serien: ["jf-a3"] },
+    { nr: "5", titel: "Wochengespräch", dauerText: "2 Std.", dauer: [120], rhythmusText: "wöchentlich, GF-Beteiligung 1× monatlich", rhythmus: ["weekly", "monthly"], gf: true, wer: "GF mit Referat und A³-Team", serien: ["wochengespraech", "wochengespraech-ohne-gf"] },
+    { nr: "6", titel: "Leitungskonferenz, stationär", dauerText: "3 Std.", dauer: [180], rhythmusText: "noch offen (ggf. quartalsweise)", rhythmus: ["open"], gf: true, wer: "GF mit GBL, Referat, A³, MAV/BR, EL", serien: ["lk-stationaer"] },
+    { nr: "7", titel: "GBL-Klausurtagung", dauerText: "13 Std. (2 Tage)", dauer: [780], rhythmusText: "jährlich", rhythmus: ["yearly"], gf: true, wer: "GF mit GBL, Referat, A³", serien: ["gbl-klausur"], cluster: true },
+    { nr: "8", titel: "Referateklausurtagung", dauerText: "7 Std.", dauer: [420], rhythmusText: "ereignisabhängig (nur in der Anfangszeit)", rhythmus: ["event"], gf: true, wer: "GF mit Referat, A³, Referatsmitarbeitenden", serien: [], hinweis: "Matrix: nur in der Anfangszeit, mittelfristig nicht notwendig" },
+    { nr: "9", titel: "After Work", dauerText: "individuell", dauer: null, rhythmusText: "quartalsweise", rhythmus: ["quarterly"], gf: true, wer: "GF mit Leitungskräften bis PDL, Referat, Referatsmitarbeitenden", serien: [] },
+    { nr: "10", titel: "Führung im Dialog: Strategie und Zusammenarbeit (stationär)", dauerText: "13 Std. (2 Tage)", dauer: [780], rhythmusText: "jährlich", rhythmus: ["yearly"], gf: true, wer: "GF mit GBL, EL, A³", serien: ["fuehrung-dialog"], cluster: true },
+    { nr: "11", titel: "Statusmeeting (projektbezogen)", dauerText: "1 Std.", dauer: [60], rhythmusText: "ereignisabhängig", rhythmus: ["event"], gf: false, wer: "Projektleitung", serien: [] },
+    { nr: "12", titel: "Projektmeeting", dauerText: "1 Std.", dauer: [60], rhythmusText: "zweiwöchentlich / ereignisabhängig", rhythmus: ["event"], gf: false, wer: "Projektleitung", serien: [] },
+    { nr: "13", titel: "Steuerkreis, allgemeine Beschreibung", dauerText: "3 Std.", dauer: [180], rhythmusText: "—", rhythmus: ["open"], gf: false, wer: "Referat", serien: [], hinweis: "Allgemeine Beschreibung; alle Steuerkreise im Kalender dauern 120 Min." },
+    { nr: "14", titel: "Steuerkreis Personal", dauerText: "3 Std.", dauer: [180], rhythmusText: "quartalsweise", rhythmus: ["quarterly"], gf: true, wer: "Referat; GF, GBL, MAV/BR, Personalabteilung", serien: ["sk-personal"] },
+    { nr: "15", titel: "Steuerkreis Wirtschaft & Finanzen", dauerText: "3 Std.", dauer: [180], rhythmusText: "monatlich", rhythmus: ["monthly"], gf: true, wer: "Referat; GF, GBL, Referatsmitarbeitende, BR", serien: ["sk-wifi"] },
+    { nr: "16", titel: "JF Immobilienverwaltung", dauerText: "1 Std.", dauer: [60], rhythmusText: "quartalsweise", rhythmus: ["quarterly"], gf: false, wer: "Referat mit TL Immobilienverwaltung", serien: ["partner-JF Sonnenschein (Immobilien)"], unsicher: true,
+      hinweis: "Zuordnung unsicher: Der Kalender führt „JF Sonnenschein (Immobilien)“ als GF-Termin" },
+    { nr: "17", titel: "Steuerkreis Fuhrpark ambulant", dauerText: "—", dauer: null, rhythmusText: "quartalsweise", rhythmus: ["quarterly"], gf: false, wer: "Referat", serien: [] },
+    { nr: "18", titel: "Teammeeting Ref. Fin", dauerText: "—", dauer: null, rhythmusText: "quartalsweise", rhythmus: ["quarterly"], gf: false, wer: "Referat", serien: [] },
+    { nr: "19", titel: "Steuerkreis Marketing und Vertrieb", dauerText: "3 Std.", dauer: [180], rhythmusText: "quartalsweise", rhythmus: ["quarterly"], gf: true, wer: "Referatsmitarbeitende; EL, GBL, GF", serien: ["sk-mv"] },
+    { nr: "20", titel: "Jour Fixe Marketing und Vertrieb (Referat)", dauerText: "1,5 Std.", dauer: [90], rhythmusText: "wöchentlich", rhythmus: ["weekly"], gf: false, wer: "Referat", serien: [] },
+    { nr: "21", titel: "Steuerkreis Regulatorik-QM", dauerText: "3 Std.", dauer: [180], rhythmusText: "alle 2 Monate", rhythmus: ["bimonthly"], gf: true, wer: "Referat; GF, GBL, EL, BR, Wirtschaftsausschuss SBO", serien: ["sk-qm"] },
+    { nr: "22", titel: "Jour fixe Regulatorik-QM (Referat)", dauerText: "2 Std.", dauer: [120], rhythmusText: "wöchentlich / monatlich", rhythmus: ["weekly", "monthly"], gf: false, wer: "Referat", serien: [] },
+    { nr: "23", titel: "Workshop PDLs", dauerText: "—", dauer: null, rhythmusText: "quartalsweise", rhythmus: ["quarterly"], gf: false, wer: "Referat", serien: [] },
+    { nr: "24", titel: "Steuerkreis zQM, Vivendi Administration", dauerText: "—", dauer: null, rhythmusText: "monatlich", rhythmus: ["monthly"], gf: false, wer: "Referat", serien: [] },
+    { nr: "25a", titel: "Mitarbeiterjahresgespräch GF mit GBL", dauerText: "1,5 Std.", dauer: [90], rhythmusText: "jährlich", rhythmus: ["yearly"], gf: true, wer: "GF mit GBL", serien: [] },
+    { nr: "25b", titel: "Mitarbeiterjahresgespräch GF mit Referat / Sekretariat", dauerText: "1,5 Std.", dauer: [90], rhythmusText: "jährlich", rhythmus: ["yearly"], gf: true, wer: "GF mit Referat / Sekretariat", serien: [] },
+    { nr: "25c", titel: "Mitarbeiterjahresgespräche GBL/EL, Referat/Referatsmitarbeitende, A³-Team", dauerText: "1,5 Std.", dauer: [90], rhythmusText: "jährlich", rhythmus: ["yearly"], gf: false, wer: "ohne GF", serien: [] },
+    { nr: "26", titel: "Teammeeting A³-Team", dauerText: "1 Std.", dauer: [60], rhythmusText: "wöchentlich", rhythmus: ["weekly"], gf: false, wer: "A³-Team", serien: [] },
+    { nr: "27", titel: "Teamentwicklung A³-Team", dauerText: "6 Std.", dauer: [360], rhythmusText: "halbjährlich", rhythmus: ["halfyear"], gf: false, wer: "A³-Team", serien: [] },
+    { nr: "28", titel: "Leitungskonferenz, ambulant", dauerText: "2 Std.", dauer: [120], rhythmusText: "noch offen (ggf. quartalsweise)", rhythmus: ["open"], gf: true, wer: "GF mit GBL, Controlling", serien: ["lk-ambulant"] },
+    { nr: "29", titel: "JF Culina, MiR, DfM, ApD", dauerText: "je 1,5 Std.", dauer: [90], rhythmusText: "monatlich", rhythmus: ["monthly"], gf: true, wer: "GF mit Einrichtungsleitungen", serien: ["gbl-JF Frerich/Culina", "partner-JF Rethfeldt (MiR)"], unsicher: true,
+      hinweis: "Zuordnung unsicher: DfM und ApD sind im Kalender nicht eindeutig zu finden" },
+    { nr: "30", titel: "JF MAVen und BR", dauerText: "50 Min.", dauer: [50], rhythmusText: "zweimonatlich", rhythmus: ["bimonthly"], gf: true, wer: "GF mit MAV und BR", serien: ["mav-br-sbo"] },
+    { nr: "31", titel: "Zeit für Info", dauerText: "1 Std.", dauer: [60], rhythmusText: "halbjährlich", rhythmus: ["halfyear"], gf: true, wer: "GF", serien: [] },
+    { nr: "32", titel: "Monatsgespräch GBL / BR SBO / MAV", dauerText: "1,5 Std.", dauer: [90], rhythmusText: "monatlich", rhythmus: ["monthly"], gf: false, wer: "GBL mit BR und MAV", serien: [], status: "gestrichen", hinweis: "Kalender: Monatsgespräch SBO gestrichen (ersetzt durch JF MAV+BR SBO)" },
+    { nr: "33", titel: "Wirtschaftsausschuss SBO", dauerText: "2 Std. (monatlich) / 3 Std. (zweimonatlich)", dauer: [120, 180], rhythmusText: "monatlich / zweimonatlich (zunächst befristet auf 6 Monate)", rhythmus: ["monthly", "bimonthly"], gf: true, wer: "GF bzw. A³-Team mit Wirtschaftsausschuss, GBL", serien: ["wirtschaftsausschuss"] },
+    { nr: "34", titel: "GBL-Konferenz stationär", dauerText: "—", dauer: null, rhythmusText: "wöchentlich", rhythmus: ["weekly"], gf: false, wer: "GBL", serien: [] },
+    { nr: "35a", titel: "Wochenbesprechung (SBO)", dauerText: "1 Std.", dauer: [60], rhythmusText: "—", rhythmus: ["open"], gf: false, wer: "SBO-Gesprächsstruktur", serien: [], status: "klaeren", hinweis: "Matrix: bestehende SBO-Gesprächsstrukturen müssen mit den Referaten abgeglichen werden" },
+    { nr: "35b", titel: "Arbeitskreis soziale Dienste", dauerText: "1 Std.", dauer: [60], rhythmusText: "—", rhythmus: ["open"], gf: false, wer: "SBO-Gesprächsstruktur", serien: [], status: "klaeren", hinweis: "Matrix: Abgleich mit den Referaten offen" },
+    { nr: "35c", titel: "Arbeitskreis BVP", dauerText: "1 Std.", dauer: [60], rhythmusText: "—", rhythmus: ["open"], gf: false, wer: "SBO-Gesprächsstruktur", serien: [], status: "klaeren", hinweis: "Matrix: Abgleich mit den Referaten offen" },
+    { nr: "35d", titel: "Betriebsversammlungen (SBO)", dauerText: "1 Std.", dauer: [60], rhythmusText: "—", rhythmus: ["open"], gf: false, wer: "Betriebsrat", serien: [], status: "gestrichen", hinweis: "Kalender: Betriebsversammlung SBO gestrichen" }
+  ];
+  // Entscheidungen von Fritsch, die aus Vorgaben und Korrekturen bereits feststehen. Alles andere bleibt „offen“ und lässt sich im Abgleich setzen.
+  var FRITSCH_VORGABE = { "14": "kalender", "15": "kalender", "19": "kalender", "21": "kalender", "30": "kalender", "33": "kalender", "32": "nein", "35d": "nein" };
+  var FRITSCH_OPTIONEN = [["offen", "offen"], ["matrix", "Matrix gilt"], ["kalender", "Kalender-Wert gilt (Fritsch)"], ["nein", "nicht gewünscht (Fritsch)"]];
+  var MATRIX_STATUS = {
+    kongruent: { label: "kongruent", tag: "ok" }, abweichend: { label: "abweichend", tag: "warn" }, fehlt: { label: "fehlt im Kalender", tag: "bad" },
+    gestrichen: { label: "Fritsch: gestrichen", tag: "nein" }, "ohne-gf": { label: "ohne GF", tag: "grey" }, klaeren: { label: "zu klären", tag: "cyan" }
+  };
+  var MATRIX_KEY = "gf-matrix-fritsch-2027";
+  var matrixCache = null, matrixFilter = "alle", matrixDecisions = null;
+
+  function canonTurnus(text) {
+    var t = String(text || "").toLowerCase().replace(/[–—]/g, "-");
+    if (/^w(ö|oe)chentlich/.test(t)) return "weekly";
+    if (/^monatlich/.test(t)) return "monthly";
+    if (/^alle (2 monate|6-8 wochen|7 wochen|8 wochen)|^zweimonat/.test(t)) return "bimonthly";
+    if (/^quartal/.test(t)) return "quarterly";
+    if (/^halbj|^2x j(ä|ae)hrlich/.test(t)) return "halfyear";
+    if (/^j(ä|ae)hrlich/.test(t)) return "yearly";
+    if (!t || /offen|unregelm/.test(t)) return "open";
+    return t;
+  }
+  function dauerListText(list) { return list.map(fmtDurMin).join(" / "); }
+  // Kalenderwerte eines Matrixformats: Dauer je Vorkommen (Blöcke und Mehrtagesformate zusammengezählt), Takt der Regel, Anzahl
+  function matrixFacts(entry) {
+    var evs = [];
+    entry.serien.forEach(function(id) { findEventsBySeries(id).forEach(function(x) { evs.push(x); }); });
+    if (!evs.length) return null;
+    var occ = {};
+    if (entry.cluster) {
+      var cl = clustersOf(occurrenceDates(evs));
+      cl.forEach(function(c, i) { occ[i] = 0; });
+      evs.forEach(function(x) { cl.forEach(function(c, i) { if (c.indexOf(x.dateKey) >= 0) occ[i] += x.ev.duration; }); });
+    } else {
+      evs.forEach(function(x) { var k = x.ev.blockKey || x.ev.uid; occ[k] = (occ[k] || 0) + x.ev.duration; });
+    }
+    var vals = Object.keys(occ).map(function(k) { return occ[k]; }), dur = [];
+    vals.forEach(function(v) { if (dur.indexOf(v) < 0) dur.push(v); });
+    dur.sort(function(a, b) { return a - b; });
+    var turnus = (evs[0].ev.rule && evs[0].ev.rule.turnus) || "";
+    return { n: vals.length, dauer: dur, turnus: turnus, canon: canonTurnus(turnus) };
+  }
+  function matrixCompute() {
+    if (matrixCache) return matrixCache;
+    var used = {}, rows = MATRIX.map(function(e) {
+      e.serien.forEach(function(id) { used[id] = 1; });
+      var f = matrixFacts(e), diffs = [], status;
+      if (!f) {
+        status = e.status || (e.gf ? "fehlt" : "ohne-gf");
+        if (status === "fehlt") diffs.push("kein Termin im Kalender");
+        if (e.hinweis) diffs.push(e.hinweis);
+        return { entry: e, status: status, diffs: diffs, cal: null };
+      }
+      if (e.dauer) {
+        var bad = f.dauer.filter(function(d) { return e.dauer.indexOf(d) < 0; });
+        if (bad.length) diffs.push("Dauer: Matrix " + e.dauerText + ", Kalender " + dauerListText(bad));
+      }
+      if (e.rhythmus.indexOf("open") < 0 && f.canon !== "open" && e.rhythmus.indexOf(f.canon) < 0) diffs.push("Rhythmus: Matrix " + e.rhythmusText + ", Kalender " + (f.turnus || "—"));
+      if (e.hinweisAbweichung) diffs.push(e.hinweisAbweichung);
+      if (e.unsicher && e.hinweis) diffs.push(e.hinweis);
+      status = diffs.length ? (e.unsicher ? "klaeren" : "abweichend") : "kongruent";
+      return { entry: e, status: status, diffs: diffs, cal: f };
+    });
+    var bySeries = {};
+    rows.forEach(function(r) { r.entry.serien.forEach(function(id) { bySeries[id] = r; }); });
+    // Kalenderformate ohne Matrixzeile, nach Regelbezeichnung zusammengefasst
+    var ex = {}, order = [];
+    allEventsFlat().forEach(function(x) {
+      var e = x.ev;
+      if (e.seriesId && used[e.seriesId]) return;
+      var key = (e.rule && e.rule.label) || e.title;
+      if (!ex[key]) { ex[key] = { label: key, n: 0, dauer: [], turnus: (e.rule && e.rule.turnus) || "" }; order.push(key); }
+      ex[key].n++;
+      if (!e.blockKey && ex[key].dauer.indexOf(e.duration) < 0) ex[key].dauer.push(e.duration);
+    });
+    matrixCache = { rows: rows, bySeries: bySeries, extra: order.sort().map(function(k) { ex[k].dauer.sort(function(a, b) { return a - b; }); return ex[k]; }) };
+    return matrixCache;
+  }
+  function matrixInfo(ev) { return ev && ev.seriesId ? matrixCompute().bySeries[ev.seriesId] || null : null; }
+  function matrixDeviates(ev) { var i = matrixInfo(ev); return !!i && i.status !== "kongruent"; }
+  function matrixTag(ev) {
+    var i = matrixInfo(ev);
+    return (i && i.status !== "kongruent") ? ' <span class="tag warn" title="' + escapeHtml("Matrix Nr. " + i.entry.nr + ": " + i.diffs.join("; ")) + '">Matrix ≠</span>' : "";
+  }
+  function matrixLoadDecisions() {
+    if (matrixDecisions) return matrixDecisions;
+    var saved = {};
+    try { saved = JSON.parse(window.localStorage.getItem(MATRIX_KEY) || "{}") || {}; } catch (e) { saved = {}; }
+    matrixDecisions = saved;
+    return matrixDecisions;
+  }
+  function matrixDecision(nr) { var d = matrixLoadDecisions(); return d[nr] || FRITSCH_VORGABE[nr] || "offen"; }
+  function matrixSetDecision(nr, v) {
+    var d = matrixLoadDecisions(); d[nr] = v;
+    try { window.localStorage.setItem(MATRIX_KEY, JSON.stringify(d)); } catch (e) { /* Speicher nicht verfügbar */ }
+  }
+  function matrixSelectable(r) { return r.status === "abweichend" || r.status === "fehlt" || r.status === "gestrichen" || r.status === "klaeren"; }
+  function matrixDecisionLabel(r) {
+    if (r.status === "kongruent") return "übereinstimmend";
+    if (r.status === "ohne-gf") return "—";
+    var v = matrixDecision(r.entry.nr), l = FRITSCH_OPTIONEN.filter(function(o) { return o[0] === v; })[0];
+    return l ? l[1] : v;
+  }
+  function matrixCounts() {
+    var c = { kongruent: 0, abweichend: 0, fehlt: 0, gestrichen: 0, "ohne-gf": 0, klaeren: 0 };
+    matrixCompute().rows.forEach(function(r) { c[r.status]++; });
+    return c;
+  }
+  function matrixCsv() {
+    var q = function(v) { return '"' + String(v === undefined || v === null ? "" : v).replace(/"/g, '""') + '"'; };
+    var head = ["Nr.", "Format (Matrix)", "Matrix: Dauer", "Matrix: Rhythmus", "Matrix: Wer / Teilnehmer", "GF beteiligt", "Kalender: Dauer", "Kalender: Rhythmus", "Kalender: Termine", "Befund", "Abweichungen / Hinweise", "Entscheidung Fritsch"];
+    var lines = [head.map(q).join(";")];
+    matrixCompute().rows.forEach(function(r) {
+      var e = r.entry;
+      lines.push([e.nr, e.titel, e.dauerText, e.rhythmusText, e.wer, e.gf ? "ja" : "nein", r.cal ? dauerListText(r.cal.dauer) : "", r.cal ? r.cal.turnus : "", r.cal ? r.cal.n : 0, MATRIX_STATUS[r.status].label, r.diffs.join(" | "), matrixDecisionLabel(r)].map(q).join(";"));
+    });
+    matrixCompute().extra.forEach(function(x) {
+      lines.push(["—", x.label, "", "", "", "", dauerListText(x.dauer), x.turnus, x.n, "im Kalender, nicht in der Matrix", "", ""].map(q).join(";"));
+    });
+    return "﻿" + lines.join("\r\n") + "\r\n";
+  }
+  function renderMatrixAbgleich() {
+    var box = document.getElementById("matrixContainer");
+    if (!box) return;
+    var m = matrixCompute(), cnt = matrixCounts(), tag = function(st) { return '<span class="tag ' + MATRIX_STATUS[st].tag + '">' + MATRIX_STATUS[st].label + "</span>"; };
+    var html = '<p style="font-size:0.8rem;margin-top:8px">Quelle: <em>Matrizen_Entscheidungen_Kommunikation_00-18.xlsx</em>, Blatt „Kommunikationsmatrix“. Die Kalenderwerte werden live aus den Terminen gerechnet. ' +
+      '„Kalender-Wert gilt (Fritsch)“ bedeutet: Der Wunsch der Matrix wird nicht übernommen, der Kalender gibt die Vorgabe der GF wieder. Abweichende Termine tragen im Kalender die Marke „Matrix ≠“ (Ecke unten links im Jahresraster, Filter „Matrix-Abweichung“).</p>';
+    html += '<div class="mx-sum">' + ["kongruent", "abweichend", "fehlt", "gestrichen", "klaeren", "ohne-gf"].map(function(st) { return tag(st) + " " + cnt[st]; }).join(" &nbsp; ") + ' &nbsp; <span class="tag grey">nur im Kalender ' + m.extra.length + '</span></div>';
+    html += '<div class="mx-bar"><label for="mxFilter">Anzeigen:</label><select id="mxFilter">' + [["alle", "alle Zeilen"], ["abweichend", "Abweichungen"], ["fehlt", "fehlt im Kalender"], ["gestrichen", "Fritsch: gestrichen"], ["klaeren", "zu klären"], ["kongruent", "kongruent"], ["ohne-gf", "ohne GF"]].map(function(o) {
+      return '<option value="' + o[0] + '"' + (matrixFilter === o[0] ? " selected" : "") + ">" + o[1] + "</option>"; }).join("") + '</select><button type="button" class="btn small" id="mxCsv">Abgleich als CSV</button></div>';
+    html += '<table class="fl-table mx-table"><thead><tr><th>Nr.</th><th>Format (Matrix)</th><th>Matrix: Dauer · Rhythmus</th><th>Kalender: Dauer · Rhythmus · Termine</th><th>Befund</th><th>Abweichung / Hinweis</th><th>Entscheidung Fritsch</th></tr></thead><tbody>';
+    m.rows.forEach(function(r) {
+      var e = r.entry, hide = (matrixFilter !== "alle" && matrixFilter !== r.status) ? " mx-hide" : "";
+      var cal = r.cal ? escapeHtml(dauerListText(r.cal.dauer) + " · " + (r.cal.turnus || "—") + " · " + r.cal.n + (r.cal.n === 1 ? " Termin" : " Termine")) : "—";
+      var dec;
+      if (matrixSelectable(r)) {
+        var cur = matrixDecision(e.nr);
+        dec = '<select data-nr="' + escapeHtml(e.nr) + '" aria-label="Entscheidung Fritsch zu ' + escapeHtml(e.titel) + '">' + FRITSCH_OPTIONEN.map(function(o) { return '<option value="' + o[0] + '"' + (cur === o[0] ? " selected" : "") + ">" + o[1] + "</option>"; }).join("") + "</select>";
+      } else dec = escapeHtml(matrixDecisionLabel(r));
+      html += '<tr class="' + hide.trim() + '"><td>' + escapeHtml(e.nr) + "</td><td>" + escapeHtml(e.titel) + (e.gf ? "" : ' <span class="tag grey">ohne GF</span>') + "</td><td>" + escapeHtml(e.dauerText + " · " + e.rhythmusText) + "</td><td>" + cal + "</td><td>" + tag(r.status) +
+        '</td><td class="diff">' + escapeHtml(r.diffs.join("; ")) + "</td><td>" + dec + "</td></tr>";
+    });
+    if (matrixFilter === "alle" && m.extra.length) {
+      html += '<tr class="group"><td colspan="7">Im Kalender, aber nicht in der Kommunikationsmatrix (Ergänzung der Matrix prüfen)</td></tr>';
+      m.extra.forEach(function(x) { html += "<tr><td>—</td><td>" + escapeHtml(x.label) + "</td><td>—</td><td>" + escapeHtml(dauerListText(x.dauer) + " · " + (x.turnus || "—") + " · " + x.n + (x.n === 1 ? " Termin" : " Termine")) + '</td><td><span class="tag grey">nur im Kalender</span></td><td class="diff"></td><td>—</td></tr>'; });
+    }
+    html += "</tbody></table>";
+    var by = function(v) { return m.rows.filter(function(r) { return matrixSelectable(r) && matrixDecision(r.entry.nr) === v; }).map(function(r) { return r.entry.nr + " " + r.entry.titel; }); };
+    var nein = by("nein"), kal = by("kalender"), off = by("offen");
+    html += '<div class="mx-final"><strong>Von Fritsch nicht gewünscht (' + nein.length + '):</strong> ' + escapeHtml(nein.join("; ") || "—") + '<br><strong>Kalender-Wert statt Matrix (' + kal.length + '):</strong> ' + escapeHtml(kal.join("; ") || "—") + '<br><strong>Noch offen (' + off.length + '):</strong> ' + escapeHtml(off.join("; ") || "—") + "</div>";
+    box.innerHTML = html;
+    document.getElementById("mxFilter").addEventListener("change", function() { matrixFilter = this.value; renderMatrixAbgleich(); });
+    document.getElementById("mxCsv").addEventListener("click", function() { downloadText("kommunikationsmatrix-abgleich-2027.csv", matrixCsv(), "text/csv"); });
+    var sels = box.querySelectorAll("select[data-nr]");
+    for (var i = 0; i < sels.length; i++) sels[i].addEventListener("change", function() { matrixSetDecision(this.getAttribute("data-nr"), this.value); renderMatrixAbgleich(); });
   }
 
   // ================= Modale Dialoge: Fokus-Käfig, Fokus zurück =================
@@ -2484,8 +2727,9 @@
     for (var b = 0; b < filterButtons.length; b++) {
       filterButtons[b].addEventListener("click", function() {
         var f = this.getAttribute("data-filter");
-        if (f === "all") { activeTypes = {}; onlyPlaceholder = false; searchTerm = ""; document.getElementById("searchInput").value = ""; }
+        if (f === "all") { activeTypes = {}; onlyPlaceholder = false; onlyMatrix = false; searchTerm = ""; document.getElementById("searchInput").value = ""; }
         else if (f === "Platzhalter") onlyPlaceholder = !onlyPlaceholder;
+        else if (f === "Matrix") onlyMatrix = !onlyMatrix;
         else activeTypes[f] = !activeTypes[f];
         refreshAfterFilter();
       });
@@ -2564,7 +2808,7 @@
     openFocus: openFocus, openForm: openForm, saveForm: saveForm, deleteEvent: deleteEvent, moveEvent: moveEvent, swapEventTimes: swapEventTimes,
     serialize: serialize, deserialize: deserialize, validateData: validateData, afterChange: afterChange, addEvent: addEvent, buildInitialData: buildInitialData,
     undo: undo, undoDepth: function() { return undoStack.length; }, snapshot: snapshot, setFilter: setFilter, passesFilter: passesFilter,
-    buildICS: buildICS, buildFormatList: buildFormatList, findSlot: findSlot, placeOnDay: placeOnDay, importJSON: importJSON
+    buildICS: buildICS, buildFormatList: buildFormatList, matrixCompute: matrixCompute, matrixCsv: matrixCsv, findSlot: findSlot, placeOnDay: placeOnDay, importJSON: importJSON
   };
 })();
 </script>

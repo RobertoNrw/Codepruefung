@@ -53,7 +53,7 @@ function eq(a, b, msg) { if (JSON.stringify(a) !== JSON.stringify(b)) throw new 
         for (var i = 1; i < e.length; i++) {
           if (e[i].blockKey && e[i].blockKey === e[i - 1].blockKey) continue;
           if (e[i].rule && e[i].rule.id === "lk-ambulant-stationaer") continue;
-          if (e[i].seriesId === "wochengespraech" && e[i - 1].seriesId === "projektarbeit") continue;   // Projektarbeit 12–14 Uhr direkt vor dem Wochengespräch
+          if ((e[i].seriesId === "wochengespraech" || e[i].seriesId === "wochengespraech-ohne-gf") && e[i - 1].seriesId === "projektarbeit") continue;   // Projektarbeit 12–14 Uhr direkt vor dem Wochengespräch
           if (e[i].seriesId === "projektarbeit" && ["imk", "imk-asa-im", "vorstand-im"].indexOf(e[i - 1].seriesId) >= 0) continue;              // IMK 09–12 Uhr direkt vor der Projektarbeit
           var gap = tm(e[i].start) - (tm(e[i - 1].start) + e[i - 1].duration);
           if (gap >= 0 && gap < 10) small++;
@@ -252,7 +252,7 @@ function eq(a, b, msg) { if (JSON.stringify(a) !== JSON.stringify(b)) throw new 
       out.nachher = G.allEventsFlat().filter(function(x) { return x.ev.seriesId === "wochengespraech" && x.ev.assumption; }).length;
       return out;
     });
-    eq(r, { vorher: 44, zeileSichtbar: true, nachher: 0 }, "Annahme");
+    eq(r, { vorher: 11, zeileSichtbar: true, nachher: 0 }, "Annahme");
   });
 
   // ---------- Verschieben, Drag ----------
@@ -635,13 +635,13 @@ function eq(a, b, msg) { if (JSON.stringify(a) !== JSON.stringify(b)) throw new 
     });
     eq(r, { urlaub: true, feiertag: true, verschieden: true, uTitel: "Urlaub", fTitel: "Feiertag: Christi Himmelfahrt" }, "Einfärbung");
   });
-  await test("Wochengespräch jeden Mittwoch 14:00–16:00, Projektarbeit 12:00–14:00 davor", async function(p) {
+  await test("Wochengespräch jeden Mittwoch 14:00–16:00 (GF nur am 2. Mittwoch), Projektarbeit 12:00–14:00 davor", async function(p) {
     var r = await p.evaluate(function() {
-      var G = window.GFKAL, wg = G.allEventsFlat().filter(function(x) { return x.ev.seriesId === "wochengespraech"; }), pr = G.allEventsFlat().filter(function(x) { return x.ev.seriesId === "projektarbeit"; });
+      var G = window.GFKAL, wg = G.allEventsFlat().filter(function(x) { return x.ev.seriesId === "wochengespraech" || x.ev.seriesId === "wochengespraech-ohne-gf"; }), mitGF = G.allEventsFlat().filter(function(x) { return x.ev.seriesId === "wochengespraech"; }), pr = G.allEventsFlat().filter(function(x) { return x.ev.seriesId === "projektarbeit"; });
       var tag = function(k) { return new Date(k + "T12:00:00").getDay(); };
-      return { wgMi: wg.every(function(x) { return tag(x.dateKey) === 3; }), wgZeit: Array.from(new Set(wg.map(function(x) { return x.ev.time; }))), prZeit: Array.from(new Set(pr.map(function(x) { return x.ev.time; }))), gleich: wg.length === pr.length };
+      return { wgMi: wg.every(function(x) { return tag(x.dateKey) === 3; }), wgZeit: Array.from(new Set(wg.map(function(x) { return x.ev.time; }))), prZeit: Array.from(new Set(pr.map(function(x) { return x.ev.time; }))), gleich: wg.length === pr.length, gfProMonat: mitGF.length === 11 && mitGF.every(function(x) { return x.ev.title === "Wochengespräch mit GF-Beteiligung" && new Date(x.dateKey + "T12:00:00").getDate() >= 8 && new Date(x.dateKey + "T12:00:00").getDate() <= 14; }) };
     });
-    eq(r, { wgMi: true, wgZeit: ["14:00 – 16:00"], prZeit: ["12:00 – 14:00"], gleich: true }, "Mittwoch");
+    eq(r, { wgMi: true, wgZeit: ["14:00 – 16:00"], prZeit: ["12:00 – 14:00"], gleich: true, gfProMonat: true }, "Mittwoch");
   });
   await test("Dauern: Steuerkreise 120, LK ambulant 120 und stationär 180 (getrennte Farbe), ASA 2× 120", async function(p) {
     var r = await p.evaluate(function() {
@@ -766,6 +766,41 @@ function eq(a, b, msg) { if (JSON.stringify(a) !== JSON.stringify(b)) throw new 
     eq(r.uk, ["2027-03-06 09:00 – 12:00", "2027-06-02 13:00 – 16:00", "2027-09-13 10:00 – 13:00", "2027-12-16 09:00 – 12:00"], "UK DR");
     eq(r.orte, ["Westring 26, Raum 209"], "Ort");
     eq(r.befund, { "2027-02-01": 2, "2027-08-19": 1, "2027-03-06": 1, "2027-06-02": 3, "2027-09-13": 2 }, "Bekannte Befunde (Fokuszeit, Urlaub, Samstag, Projektarbeit/Wochengespräch)");
+  });
+
+  // ---------- Abgleich Kommunikationsmatrix ↔ Kalender ----------
+  await test("Matrix-Abgleich: Befunde je Zeile, Steuerkreise 3 Std. gegen 120 Min., gestrichene Formate von Fritsch", async function(p) {
+    var r = await p.evaluate(function() {
+      var m = window.GFKAL.matrixCompute(), c = {}, st = {};
+      m.rows.forEach(function(x) { c[x.status] = (c[x.status] || 0) + 1; st[x.entry.nr] = x.status; });
+      return { n: m.rows.length, c: c, sk: [st["14"], st["15"], st["19"], st["21"]], wa: st["33"], mav: st["30"], gestrichen: [st["32"], st["35d"]], wg: st["5"], fehlt: [st["8"], st["9"], st["25a"], st["25b"], st["31"]], gbl: st["2"], extra: m.extra.length };
+    });
+    eq(r, { n: 43, c: { "ohne-gf": 14, kongruent: 11, fehlt: 5, abweichend: 6, klaeren: 5, gestrichen: 2 }, sk: ["abweichend", "abweichend", "abweichend", "abweichend"], wa: "abweichend", mav: "abweichend", gestrichen: ["gestrichen", "gestrichen"], wg: "kongruent", fehlt: ["fehlt", "fehlt", "fehlt", "fehlt", "fehlt"], gbl: "kongruent", extra: 23 }, "Matrix-Abgleich");
+  });
+  await test("Matrix-Abgleich: Marke „Matrix ≠“ im Jahresraster, Hinweis in der Prüfung, Filter „Matrix-Abweichung“", async function(p) {
+    var r = await p.evaluate(function() {
+      var G = window.GFKAL, sk = G.allEventsFlat().filter(function(x) { return x.ev.seriesId === "sk-personal"; })[0];
+      var res = G.checkPlausibility(sk.dateKey).filter(function(y) { return y.ev.uid === sk.ev.uid; })[0];
+      G.setFilter({ onlyMatrix: true });
+      var vis = G.allEventsFlat().filter(function(x) { return G.passesFilter(x.ev); }), ids = {};
+      vis.forEach(function(x) { ids[x.ev.seriesId] = 1; });
+      var marks = document.querySelectorAll(".cell.has-matrix").length, btn = document.querySelector('.filter-btn[data-filter="Matrix"]').getAttribute("aria-pressed");
+      G.setFilter({ onlyMatrix: false });
+      return { hint: res.hints.some(function(h) { return h.indexOf("Kommunikationsmatrix Nr. 14") === 0; }), ok: res.ok, nur: vis.length > 0 && !ids["jf-a3"] && !!ids["sk-personal"] && !!ids["wirtschaftsausschuss"], marks: marks > 20, btn: btn };
+    });
+    eq(r, { hint: true, ok: true, nur: true, marks: true, btn: "true" }, "Marken");
+  });
+  await test("Matrix-Abgleich: Entscheidung Fritsch speicherbar, Zusammenfassung „nicht gewünscht“, CSV-Export", async function(p) {
+    var r = await p.evaluate(function() {
+      var G = window.GFKAL;
+      document.getElementById("matrixDetails").open = true;
+      var before = document.querySelector(".mx-final").textContent;
+      var sel = document.querySelector('select[data-nr="9"]'); sel.value = "nein"; sel.dispatchEvent(new Event("change"));
+      var after = document.querySelector(".mx-final").textContent, saved = JSON.parse(window.localStorage.getItem("gf-matrix-fritsch-2027") || "{}");
+      var csv = G.matrixCsv().split("\r\n").filter(Boolean);
+      return { vorher: before.indexOf("After Work") < 0 || before.indexOf("nicht gewünscht (2)") >= 0, nachher: after.indexOf("Von Fritsch nicht gewünscht (3)") >= 0 && after.indexOf("9 After Work") >= 0, saved: saved["9"], csvZeilen: csv.length, kopf: csv[0].indexOf("Entscheidung Fritsch") > 0 };
+    });
+    eq(r, { vorher: true, nachher: true, saved: "nein", csvZeilen: 1 + 43 + 23, kopf: true }, "Entscheidung");
   });
 
   await browser.close();

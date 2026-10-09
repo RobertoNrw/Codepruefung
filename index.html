@@ -373,7 +373,7 @@
       <details class="fl">
         <summary>Offene Punkte (zu klären mit Sandra Merino-Kesting / Kerstin Tomnitz / GF)</summary>
         <ul class="open-list" style="margin-top:8px">
-          <li><strong>Wochengespräch mit GF-Beteiligung und Projektarbeit:</strong> Struktur mit Herrn Fritsch bestätigen. Im Tool als Arbeitsannahme jeden Mittwoch: Projektarbeit 12:00–14:00 Uhr, direkt danach Wochengespräch 14:00–16:00 Uhr.</li>
+          <li><strong>Wochengespräch und Projektarbeit:</strong> Struktur mit Herrn Fritsch bestätigen. Im Tool als Arbeitsannahme jeden Mittwoch: Projektarbeit 12:00–14:00 Uhr, direkt danach Wochengespräch 14:00–16:00 Uhr. Das Wochengespräch findet wöchentlich statt, die GF ist nur 1× im Monat dabei (2. Mittwoch, „mit GF-Beteiligung“), sonst „ohne GF“.</li>
           <li><strong>Fokuszeit-Blocker Montag:</strong> 09:00–10:30 Uhr. Reguläre Termine beginnen grundsätzlich nicht vor 09:00 Uhr.</li>
           <li><strong>Urlaub und Feiertage 2027:</strong> Urlaub 01.–08.01., 26.03.–02.04., 26.–29.07., 04.–20.08., 22.10.–05.11. sowie die NRW-Feiertage sind frei. Termine an diesen Tagen entfallen ohne Ersatztermin; Intervall-JF (6–8 Wochen) rücken um eine Woche.</li>
           <li><strong>Innere Mission:</strong> IMK 6× im Jahr, davon 2 als „IMK + ASA IM“ (nicht identisch mit dem ASA-Team-Termin). Alle IM-Termine liegen außerhalb der NRW-Schulferien (Ferienliste bitte amtlich gegenprüfen). Vorstandssitzung IM 3 Std., Verwaltungsrat IM 4× und AG Wohlfahrt 8× je 90 Min. ab 17:00 Uhr.</li>
@@ -419,7 +419,7 @@
         4. GBL-Klausur (18.–19.11.) und Leistungsklausur Sozialwirtschaft (03.–04.05., 08.–09.11.) nie in derselben ISO-Woche.<br>
         5. Fokuszeit-Blocker: Montag 09:00–10:30 und Freitag 09:00–11:00, je inkl. 0,5 Std. Abstimmung Assistenz GF.<br>
         6. Projektarbeit-Blocker GF: wöchentlich Mittwoch 12:00–14:00, direkt vor dem Wochengespräch.<br>
-        7. Wochengespräch mit GF-Beteiligung: wöchentlich Mittwoch, 2 Std., 14:00–16:00 (mit Herrn Fritsch bestätigen).
+        7. Wochengespräch: wöchentlich Mittwoch, 2 Std., 14:00–16:00; die GF ist nur 1× im Monat dabei (2. Mittwoch, „mit GF-Beteiligung“), sonst „ohne GF“ (mit Herrn Fritsch bestätigen).
       </div>
     </div>
   </div>
@@ -764,7 +764,8 @@
     var rFokusMo = defRule({ id: "fokuszeit-mo", label: "Fokuszeit-Blocker (Mo)", allowedDays: ["Mo"], turnus: "wöchentlich", duration: 90, fixedTime: "09:00 – 10:30", note: "Regel 5: inkl. 0,5 Std. Abstimmung Assistenz GF. Montag 09:00–10:30, keine regulären Termine vor 09:00.", editable: true });
     var rFokusFr = defRule({ id: "fokuszeit-fr", label: "Fokuszeit-Blocker (Fr)", allowedDays: ["Fr"], turnus: "wöchentlich", duration: 120, fixedTime: "09:00 – 11:00", note: "Regel 5: inkl. 0,5 Std. Abstimmung Assistenz GF.", editable: true });
     var rProjekt = defRule({ id: "projektarbeit", label: "Projektarbeit-Blocker GF", allowedDays: ["Mi"], turnus: "wöchentlich", duration: 120, fixedTime: "12:00 – 14:00", note: "Regel 6: fest auf Mittwoch, direkt vor dem Wochengespräch.", editable: true });
-    var rWG = defRule({ id: "wochengespraech", label: "Wochengespräch mit GF-Beteiligung", allowedDays: ["Mi"], turnus: "wöchentlich", duration: 120, fixedTime: "14:00 – 16:00", note: "Regel 7: jeden Mittwoch, Projektarbeit davor. Struktur mit Herrn Fritsch bestätigen.", editable: true });
+    var rWG = defRule({ id: "wochengespraech", label: "Wochengespräch mit GF-Beteiligung", allowedDays: ["Mi"], turnus: "monatlich", duration: 120, fixedTime: "14:00 – 16:00", note: "Regel 7: Das Wochengespräch findet wöchentlich statt, die GF ist nur 1× im Monat dabei (2. Mittwoch). Struktur mit Herrn Fritsch bestätigen.", editable: true });
+    var rWGo = defRule({ id: "wochengespraech-ohne-gf", label: "Wochengespräch (ohne GF)", allowedDays: ["Mi"], turnus: "wöchentlich", duration: 120, fixedTime: "14:00 – 16:00", note: "Regel 7: wöchentliches Wochengespräch am Mittwoch; die GF nimmt nur 1× im Monat teil (dann „mit GF-Beteiligung“).", editable: true });
     var rPuffer = defRule({ id: "pufferslot", label: "Pufferslot Gremien", allowedDays: ["Do"], turnus: "monatlich", duration: 90, note: "Schutzslot für kurzfristige Gremienbelange.", editable: true });
     var rLK = defRule({ id: "lk-sozialwirtschaft", label: "Leitungskonferenz Sozialwirtschaft", allowedDays: ["Mo"], turnus: "monatlich", duration: 120, note: "1. Montag, 2 Std. (ehemals Betriebsleitungskonferenz).", editable: false });
     var rEKL = defRule({ id: "ekl", label: "Erweiterte Konzernleitung (eKL)", allowedDays: ["Mo"], turnus: "monatlich", duration: 180, note: "3. Montag, 3 Std. (EVAR).", editable: false });
@@ -844,7 +845,9 @@
       for (i = 0; i < weds.length; i++) {
         k = dateToKey(weds[i]); if (isOffDay(k) || hasKlausur(k)) continue;
         addEvent(k, "Projektarbeit-Blocker GF", "Projekt", "12:00", 120, "Statusmeetings, Telefonate, operative Klärung – fest Mittwoch, direkt vor dem Wochengespräch (Regel 6).", rProjekt);
-        addEvent(k, "Wochengespräch mit GF-Beteiligung", "Gremium", "14:00", 120, "Wöchentlich am Mittwoch, 2 Std., 14:00–16:00 Uhr (Regel 7). Struktur mit Herrn Fritsch bestätigen.", rWG, { assumption: true, seriesId: "wochengespraech" });
+        // Regel 7: jeden Mittwoch Wochengespräch, die GF ist nur 1× im Monat dabei (2. Mittwoch)
+        if (i === 1) addEvent(k, "Wochengespräch mit GF-Beteiligung", "Gremium", "14:00", 120, "Das Wochengespräch findet wöchentlich statt, die GF nimmt nur 1× im Monat teil (2. Mittwoch), 14:00–16:00 Uhr (Regel 7). Struktur mit Herrn Fritsch bestätigen.", rWG, { assumption: true, seriesId: "wochengespraech" });
+        else addEvent(k, "Wochengespräch (ohne GF)", "Gremium", "14:00", 120, "Wöchentliches Wochengespräch am Mittwoch, 14:00–16:00 Uhr, ohne GF-Beteiligung (die GF ist nur 1× im Monat dabei, Regel 7).", rWGo, { assumption: true, seriesId: "wochengespraech-ohne-gf" });
       }
     }
 
@@ -2374,7 +2377,7 @@
       { series: ["sk-anreise"], noCount: true }, { series: ["sk-hospitation"], noCount: true }] },
     { name: "Klausuren, Blocker, offene Formate", items: [
       { series: ["gbl-klausur"] }, { series: ["fuehrung-dialog"] }, { series: ["klausur-strategie"] },
-      { series: ["lk-ambulant", "lk-stationaer"] }, { series: ["lk-hospitation"], noCount: true }, { series: ["asa"] }, { series: ["wochengespraech"] }, { series: ["pufferslot"] },
+      { series: ["lk-ambulant", "lk-stationaer"] }, { series: ["lk-hospitation"], noCount: true }, { series: ["asa"] }, { series: ["wochengespraech", "wochengespraech-ohne-gf"], label: "Wochengespräch (wöchentlich, GF 1× monatlich)" }, { series: ["pufferslot"] },
       { series: ["fokuszeit-mo", "fokuszeit-fr"], label: "Fokuszeit-Blocker" }, { series: ["projektarbeit"] }] }
   ];
   function fmtDurMin(d) { return (d >= 60 && d % 60 === 0) ? (d / 60) + " Std." : d + " Min."; }
@@ -2475,8 +2478,7 @@
     { nr: "3c", titel: "Jour fixe Wirtschaft und Finanzen", dauerText: "50 Min.", dauer: [50], rhythmusText: "monatlich", rhythmus: ["monthly"], gf: true, wer: "GF mit Referat", serien: ["referat-JF Wirtschaft & Finanzen"] },
     { nr: "3d", titel: "Jour fixe Referat Marketing und Vertrieb", dauerText: "50 Min.", dauer: [50], rhythmusText: "monatlich", rhythmus: ["monthly"], gf: true, wer: "GF mit Referat", serien: ["referat-JF Marketing & Vertrieb"] },
     { nr: "4", titel: "Jour fixe A³-Team", dauerText: "1,5 Std.", dauer: [90], rhythmusText: "monatlich", rhythmus: ["monthly"], gf: true, wer: "GF mit A³-Team", serien: ["jf-a3"] },
-    { nr: "5", titel: "Wochengespräch", dauerText: "2 Std.", dauer: [120], rhythmusText: "wöchentlich, GF-Beteiligung 1× monatlich", rhythmus: ["weekly"], gf: true, wer: "GF mit Referat und A³-Team", serien: ["wochengespraech"],
-      hinweisAbweichung: "GF-Beteiligung laut Matrix nur 1× monatlich (im Kalender kenntlich zu machen), im Kalender trägt jeder Mittwoch den Titel „mit GF-Beteiligung“" },
+    { nr: "5", titel: "Wochengespräch", dauerText: "2 Std.", dauer: [120], rhythmusText: "wöchentlich, GF-Beteiligung 1× monatlich", rhythmus: ["weekly", "monthly"], gf: true, wer: "GF mit Referat und A³-Team", serien: ["wochengespraech", "wochengespraech-ohne-gf"] },
     { nr: "6", titel: "Leitungskonferenz, stationär", dauerText: "3 Std.", dauer: [180], rhythmusText: "noch offen (ggf. quartalsweise)", rhythmus: ["open"], gf: true, wer: "GF mit GBL, Referat, A³, MAV/BR, EL", serien: ["lk-stationaer"] },
     { nr: "7", titel: "GBL-Klausurtagung", dauerText: "13 Std. (2 Tage)", dauer: [780], rhythmusText: "jährlich", rhythmus: ["yearly"], gf: true, wer: "GF mit GBL, Referat, A³", serien: ["gbl-klausur"], cluster: true },
     { nr: "8", titel: "Referateklausurtagung", dauerText: "7 Std.", dauer: [420], rhythmusText: "ereignisabhängig (nur in der Anfangszeit)", rhythmus: ["event"], gf: true, wer: "GF mit Referat, A³, Referatsmitarbeitenden", serien: [], hinweis: "Matrix: nur in der Anfangszeit, mittelfristig nicht notwendig" },

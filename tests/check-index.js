@@ -53,7 +53,7 @@ function eq(a, b, msg) { if (JSON.stringify(a) !== JSON.stringify(b)) throw new 
         for (var i = 1; i < e.length; i++) {
           if (e[i].blockKey && e[i].blockKey === e[i - 1].blockKey) continue;
           if (e[i].rule && e[i].rule.id === "lk-ambulant-stationaer") continue;
-          if (e[i].seriesId === "wochengespraech" && e[i - 1].seriesId === "projektarbeit") continue;   // Projektarbeit 12–14 Uhr direkt vor dem Wochengespräch
+          if ((e[i].seriesId === "wochengespraech" || e[i].seriesId === "wochengespraech-ohne-gf") && e[i - 1].seriesId === "projektarbeit") continue;   // Projektarbeit 12–14 Uhr direkt vor dem Wochengespräch
           if (e[i].seriesId === "projektarbeit" && ["imk", "imk-asa-im", "vorstand-im"].indexOf(e[i - 1].seriesId) >= 0) continue;              // IMK 09–12 Uhr direkt vor der Projektarbeit
           var gap = tm(e[i].start) - (tm(e[i - 1].start) + e[i - 1].duration);
           if (gap >= 0 && gap < 10) small++;
@@ -252,7 +252,7 @@ function eq(a, b, msg) { if (JSON.stringify(a) !== JSON.stringify(b)) throw new 
       out.nachher = G.allEventsFlat().filter(function(x) { return x.ev.seriesId === "wochengespraech" && x.ev.assumption; }).length;
       return out;
     });
-    eq(r, { vorher: 44, zeileSichtbar: true, nachher: 0 }, "Annahme");
+    eq(r, { vorher: 11, zeileSichtbar: true, nachher: 0 }, "Annahme");
   });
 
   // ---------- Verschieben, Drag ----------
@@ -635,13 +635,13 @@ function eq(a, b, msg) { if (JSON.stringify(a) !== JSON.stringify(b)) throw new 
     });
     eq(r, { urlaub: true, feiertag: true, verschieden: true, uTitel: "Urlaub", fTitel: "Feiertag: Christi Himmelfahrt" }, "Einfärbung");
   });
-  await test("Wochengespräch jeden Mittwoch 14:00–16:00, Projektarbeit 12:00–14:00 davor", async function(p) {
+  await test("Wochengespräch jeden Mittwoch 14:00–16:00 (GF nur am 2. Mittwoch), Projektarbeit 12:00–14:00 davor", async function(p) {
     var r = await p.evaluate(function() {
-      var G = window.GFKAL, wg = G.allEventsFlat().filter(function(x) { return x.ev.seriesId === "wochengespraech"; }), pr = G.allEventsFlat().filter(function(x) { return x.ev.seriesId === "projektarbeit"; });
+      var G = window.GFKAL, wg = G.allEventsFlat().filter(function(x) { return x.ev.seriesId === "wochengespraech" || x.ev.seriesId === "wochengespraech-ohne-gf"; }), mitGF = G.allEventsFlat().filter(function(x) { return x.ev.seriesId === "wochengespraech"; }), pr = G.allEventsFlat().filter(function(x) { return x.ev.seriesId === "projektarbeit"; });
       var tag = function(k) { return new Date(k + "T12:00:00").getDay(); };
-      return { wgMi: wg.every(function(x) { return tag(x.dateKey) === 3; }), wgZeit: Array.from(new Set(wg.map(function(x) { return x.ev.time; }))), prZeit: Array.from(new Set(pr.map(function(x) { return x.ev.time; }))), gleich: wg.length === pr.length };
+      return { wgMi: wg.every(function(x) { return tag(x.dateKey) === 3; }), wgZeit: Array.from(new Set(wg.map(function(x) { return x.ev.time; }))), prZeit: Array.from(new Set(pr.map(function(x) { return x.ev.time; }))), gleich: wg.length === pr.length, gfProMonat: mitGF.length === 11 && mitGF.every(function(x) { return x.ev.title === "Wochengespräch mit GF-Beteiligung" && new Date(x.dateKey + "T12:00:00").getDate() >= 8 && new Date(x.dateKey + "T12:00:00").getDate() <= 14; }) };
     });
-    eq(r, { wgMi: true, wgZeit: ["14:00 – 16:00"], prZeit: ["12:00 – 14:00"], gleich: true }, "Mittwoch");
+    eq(r, { wgMi: true, wgZeit: ["14:00 – 16:00"], prZeit: ["12:00 – 14:00"], gleich: true, gfProMonat: true }, "Mittwoch");
   });
   await test("Dauern: Steuerkreise 120, LK ambulant 120 und stationär 180 (getrennte Farbe), ASA 2× 120", async function(p) {
     var r = await p.evaluate(function() {
@@ -775,7 +775,7 @@ function eq(a, b, msg) { if (JSON.stringify(a) !== JSON.stringify(b)) throw new 
       m.rows.forEach(function(x) { c[x.status] = (c[x.status] || 0) + 1; st[x.entry.nr] = x.status; });
       return { n: m.rows.length, c: c, sk: [st["14"], st["15"], st["19"], st["21"]], wa: st["33"], mav: st["30"], gestrichen: [st["32"], st["35d"]], wg: st["5"], fehlt: [st["8"], st["9"], st["25a"], st["25b"], st["31"]], gbl: st["2"], extra: m.extra.length };
     });
-    eq(r, { n: 43, c: { "ohne-gf": 14, kongruent: 10, abweichend: 7, fehlt: 5, klaeren: 5, gestrichen: 2 }, sk: ["abweichend", "abweichend", "abweichend", "abweichend"], wa: "abweichend", mav: "abweichend", gestrichen: ["gestrichen", "gestrichen"], wg: "abweichend", fehlt: ["fehlt", "fehlt", "fehlt", "fehlt", "fehlt"], gbl: "kongruent", extra: 23 }, "Matrix-Abgleich");
+    eq(r, { n: 43, c: { "ohne-gf": 14, kongruent: 11, fehlt: 5, abweichend: 6, klaeren: 5, gestrichen: 2 }, sk: ["abweichend", "abweichend", "abweichend", "abweichend"], wa: "abweichend", mav: "abweichend", gestrichen: ["gestrichen", "gestrichen"], wg: "kongruent", fehlt: ["fehlt", "fehlt", "fehlt", "fehlt", "fehlt"], gbl: "kongruent", extra: 23 }, "Matrix-Abgleich");
   });
   await test("Matrix-Abgleich: Marke „Matrix ≠“ im Jahresraster, Hinweis in der Prüfung, Filter „Matrix-Abweichung“", async function(p) {
     var r = await p.evaluate(function() {

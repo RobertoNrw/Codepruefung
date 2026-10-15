@@ -2289,7 +2289,7 @@
   }
 
   // ---- ICS (Austauschformat für Kalenderprogramme) ----
-  function icsEscape(t) { return String(t).replace(/\\/g, "\\\\").replace(/;/g, "\;").replace(/,/g, "\\,").replace(/\r?\n/g, "\\n"); }
+  function icsEscape(t) { return String(t).replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\r?\n/g, "\\n"); }
   function icsFold(line) {
     var enc = typeof TextEncoder !== "undefined" ? new TextEncoder() : null;
     var out = [], cur = "", bytes = 0;
@@ -2306,44 +2306,174 @@
     return d.getFullYear() + pad2(d.getMonth() + 1) + pad2(d.getDate()) + "T" + pad2(d.getHours()) + pad2(d.getMinutes()) + "00";
   }
   // includePlaceholders=false lässt unbestätigte Platzhalter aus. Regelobjekte stehen nicht in der Datei, nur ihr Hinweistext.
-  function buildICS(includePlaceholders) {
+
+  // ---- ICS-Assistenzversion: erster Termin je Reihe mit vollständiger Serienanleitung, weitere Termine mit Kurznotiz ----
+  function icsShortDate(dateKey) { var d = parseDateKey(dateKey); return WEEKDAY_SHORT[d.getDay()] + " " + pad2(d.getDate()) + "." + pad2(d.getMonth() + 1) + "."; }
+  var MONTH_SHORT = ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"];
+  function topKey(counts) { var best = null; for (var k in counts) if (best === null || counts[k] > counts[best]) best = k; return +best; }
+  // Wiederholungsmuster aus den ersten Tagen der Vorkommen ableiten, damit Assistenzen die Serie in ihrem Kalenderprogramm einstellen können
+  // opt: placeholder (unbestätigte Termine), turnus (Rhythmus laut Regel), follows (Termin hängt an einem anderen Termintag), exclude (Tage, die in einer Schwesterreihe liegen)
+  function icsSeriesPattern(dates, opt) {
+    opt = opt || {};
+    var n = dates.length;
+    if (n === 1) return { text: "Einzeltermin, keine Wiederholung", exc: [] };
+    if (opt.follows) return { text: opt.follows, exc: [] };
+    if (opt.placeholder) return { text: "Platzhalter, Termine noch nicht bestätigt (Rhythmus laut Regel: " + (opt.turnus || "offen") + "). Bitte jeden Termin einzeln und vorläufig nach der Terminliste anlegen.", exc: [] };
+    var ds = dates.map(parseDateKey), wdc = {}, nthc = {};
+    ds.forEach(function(d) { wdc[d.getDay()] = (wdc[d.getDay()] || 0) + 1; var q = Math.ceil(d.getDate() / 7); nthc[q] = (nthc[q] || 0) + 1; });
+    var wd = topKey(wdc), nth = topKey(nthc), wdName = WEEKDAY_LONG[wd], months = ds.map(function(d) { return d.getMonth(); });
+    var distinct = months.every(function(m, i) { return months.indexOf(m) === i; });
+    if (distinct && nthc[nth] / n >= 0.6) {
+      var exc = dates.filter(function(k) { var d = parseDateKey(k); return d.getDay() !== wd || Math.ceil(d.getDate() / 7) !== nth; });
+      var steps = months.slice(1).map(function(m, i) { return m - months[i]; }), same = steps.every(function(x) { return x === steps[0]; });
+      var cover;
+      if (same && steps[0] === 1) cover = months[0] === 0 && months[n - 1] === 11 ? "in jedem Monat" : "monatlich von " + MONTH_SHORT[months[0]] + " bis " + MONTH_SHORT[months[n - 1]];
+      else if (same) cover = "alle " + steps[0] + " Monate (" + months.map(function(m) { return MONTH_SHORT[m]; }).join(", ") + ")";
+      else {
+        var missing = []; for (var m = 0; m < 12; m++) if (months.indexOf(m) < 0) missing.push(MONTH_SHORT[m]);
+        cover = missing.length <= 4 ? "in jedem Monat außer " + missing.join(", ") + " (Urlaub, Feiertag oder Klausur, entfällt ohne Ersatz)" : "in den Monaten " + months.map(function(m) { return MONTH_SHORT[m]; }).join(", ");
+      }
+      return { text: "jeden " + nth + ". " + wdName + " im Monat, " + cover, exc: exc.length ? ["abweichend (verschoben): " + exc.map(icsShortDate).join(", ")] : [] };
+    }
+    var gaps = dates.slice(1).map(function(k, i) { return daysBetween(k, dates[i]); });
+    if (gaps.every(function(g) { return g % 7 === 0; })) {
+      var weeks = gaps.map(function(g) { return g / 7; }), lo = Math.min.apply(null, weeks), hi = Math.max.apply(null, weeks);
+      if (lo === 1) {
+        var have = {}; dates.forEach(function(k) { have[k] = 1; });
+        var miss = [], other = [], c = parseDateKey(dates[0]), last = parseDateKey(dates[n - 1]);
+        while (c <= last) { var ck = dateToKey(c); if (!have[ck]) (opt.exclude && opt.exclude[ck] ? other : miss).push(ck); c = addDays(c, 7); }
+        var wexc = [];
+        if (other.length) wexc.push("an diesen Mittwochen steht die Schwesterreihe („mit GF-Beteiligung“): " + other.map(icsShortDate).join(", "));
+        if (miss.length) wexc.push("entfällt am (Urlaub, Feiertag oder Klausur, kein Ersatz): " + miss.map(icsShortDate).join(", "));
+        if (gaps.filter(function(g) { return g === 7; }).length / gaps.length >= 0.7 || other.length) return { text: "wöchentlich, jeden " + wdName, exc: wexc };
+      }
+      if (lo === hi) return { text: "alle " + lo + " Wochen, jeweils " + wdName, exc: [] };
+      return { text: "etwa alle " + lo + " bis " + hi + " Wochen, jeweils " + wdName + (opt.turnus ? " (Rhythmus laut Regel: " + opt.turnus + ")" : "") + ". Die Termine liegen wegen Urlaub, Feiertag oder Klausur teils versetzt, bitte nach der Terminliste anlegen.", exc: [] };
+    }
+    return { text: "kein festes Wochenmuster" + (opt.turnus ? " (Rhythmus laut Regel: " + opt.turnus + ")" : "") + ": bitte jeden Termin einzeln nach der Terminliste anlegen", exc: [] };
+  }
+  function icsRuleLines(rule) {
+    var out = [];
+    if (!rule) return out;
+    if (rule.note) out.push("Regel: " + rule.note);
+    if (rule.allowedDays) out.push("Erlaubte Wochentage: " + rule.allowedDays.join(", "));
+    if (rule.fixedTime) out.push("Festes Zeitfenster: " + rule.fixedTime);
+    if (rule.bufferAfterMin) out.push("Danach " + rule.bufferAfterMin + " Min. Puffer einplanen (kein Termin direkt im Anschluss).");
+    if (rule.notSplittable) out.push("Block nicht trennbar: " + rule.subslots);
+    if (rule.couplingForbiddenWith && RULES[rule.couplingForbiddenWith]) out.push("Nie in derselben Kalenderwoche wie: " + RULES[rule.couplingForbiddenWith].label);
+    return out;
+  }
+  function icsAssistIndex(flat) {
+    var by = {};
+    flat.forEach(function(x) { var id = x.ev.seriesId || ("einzel-" + x.ev.uid); (by[id] = by[id] || []).push(x); });
+    var idx = {};
+    Object.keys(by).forEach(function(id) {
+      var list = by[id].slice().sort(function(a, b) { return a.dateKey < b.dateKey ? -1 : a.dateKey > b.dateKey ? 1 : toMin(a.ev.start) - toMin(b.ev.start); });
+      var clusters = clustersOf(occurrenceDates(list)), firstDates = clusters.map(function(c) { return c[0]; });
+      var e0 = list[0].ev, opt = { placeholder: e0.placeholder, turnus: e0.rule && e0.rule.turnus };
+      if (id === "sk-anreise" || id === "sk-hospitation") opt.follows = "Steht immer am Tag der Steuerkreise, direkt vor bzw. nach dem Steuerkreis-Block. Zusammen mit dem Steuerkreis anlegen (siehe Terminliste).";
+      if (id === "lk-hospitation") opt.follows = "Steht immer am Tag der Leitungskonferenzen ambulant und stationär, direkt im Anschluss. Zusammen mit diesen anlegen (siehe Terminliste).";
+      if (id === "wochengespraech-ohne-gf" && by["wochengespraech"]) { opt.exclude = {}; by["wochengespraech"].forEach(function(y) { opt.exclude[y.dateKey] = 1; }); }
+      idx[id] = { list: list, clusters: clusters, pattern: icsSeriesPattern(firstDates, opt), lead: e0.uid, single: id.indexOf("einzel-") === 0 };
+    });
+    return idx;
+  }
+  function icsAssistNote(x, info) {
+    var e = x.ev, ci = 0, i;
+    for (i = 0; i < info.clusters.length; i++) if (info.clusters[i].indexOf(x.dateKey) >= 0) ci = i;
+    var n = info.clusters.length, firstDay = info.clusters[0][0], lines = [], mx = matrixInfo(e), isLead = e.uid === info.lead;
+    var title = (e.rule && e.rule.label) || e.title;
+    if (info.single) {
+      lines.push("EINZELTERMIN (keine Serie)");
+      if (e.desc) lines.push("Hintergrund: " + e.desc);
+      icsRuleLines(e.rule).forEach(function(l) { lines.push(l); });
+      if (e.placeholder) lines.push("PLATZHALTER: Termin noch nicht bestätigt. Vorläufig anlegen und mit dem Sekretariat abstimmen.");
+      return lines;
+    }
+    if (isLead) {
+      var evs = info.list.filter(function(y) { return y.dateKey === x.dateKey; }), durs = [];
+      lines.push("SERIENANLEITUNG – bitte diesen Termin einmalig als Serie anlegen");
+      lines.push("Format: " + title + (title !== e.title ? " (hier: " + e.title + ")" : ""));
+      lines.push("Serie: " + info.pattern.text);
+      info.pattern.exc.forEach(function(t) { lines.push("Ausnahmen: " + t); });
+      lines.push("Beginn und Dauer: " + rangeStr(e.start, e.duration) + " (" + fmtDurMin(e.duration) + ")" + (info.clusters[0].length > 1 ? "; mehrtägig, Folgetag siehe Terminliste" : ""));
+      if (e.ort) lines.push("Ort / Träger: " + e.ort);
+      var perOcc = info.clusters.map(function(c) { return c[0]; });
+      lines.push("Termine 2027 (" + n + "): " + perOcc.map(icsShortDate).join(", "));
+      icsRuleLines(e.rule).forEach(function(l) { lines.push(l); });
+      if (e.desc) lines.push("Hintergrund: " + e.desc);
+      if (mx) {
+        lines.push("Kommunikationsmatrix Nr. " + mx.entry.nr + " „" + mx.entry.titel + "“: Matrix " + mx.entry.dauerText + ", " + mx.entry.rhythmusText + " – Befund: " + MATRIX_STATUS[mx.status].label + (mx.diffs.length ? " (" + mx.diffs.join("; ") + ")" : "") + ".");
+        if (mx.status !== "kongruent") lines.push("Entscheidung Fritsch: " + (FRITSCH_OPTIONEN.filter(function(o) { return o[0] === matrixDecision(mx.entry.nr); })[0] || [0, "offen"])[1]);
+      }
+      if (e.placeholder) lines.push("PLATZHALTER: Termin noch nicht bestätigt. Vorläufig anlegen und mit dem Sekretariat abstimmen.");
+      if (e.assumption) lines.push("ARBEITSANNAHME: Slot oder Wochentag noch nicht bestätigt.");
+      lines.push("So gehst du vor: 1) Termin mit Titel, Uhrzeit, Ort und dieser Notiz anlegen. 2) Wiederholung wie bei „Serie“ einstellen (bei Platzhaltern und unregelmäßigen Terminen jeden Termin einzeln nach der Terminliste anlegen). 3) Mit der Terminliste abgleichen: Es müssen " + n + " Termine entstehen. 4) Urlaub und Feiertage entfallen ohne Ersatztermin.");
+      lines.push("Die weiteren Termine dieser Reihe tragen nur noch eine Kurznotiz.");
+      return lines;
+    }
+    lines.push("Reihe: " + title + " – Termin " + (ci + 1) + " von " + n + (info.clusters[ci].length > 1 ? " (Tag " + (info.clusters[ci].indexOf(x.dateKey) + 1) + " von " + info.clusters[ci].length + ")" : ""));
+    if (ci === 0) lines.push("Gehört zum ersten Termin der Reihe, Anleitung dort (" + icsShortDate(firstDay) + ").");
+    else {
+      lines.push("Muster: " + info.pattern.text);
+      lines.push("Anleitung steht im ersten Termin der Reihe (" + icsShortDate(firstDay) + ").");
+    }
+    if (e.rule && e.rule.note) lines.push("Regel: " + e.rule.note);
+    if (/Verschoben von/.test(e.desc || "")) lines.push("Hinweis: " + e.desc.substr(e.desc.indexOf("Verschoben von")));
+    if (ci + 1 < n) lines.push("Nächster Termin: " + icsShortDate(info.clusters[ci + 1][0]));
+    else lines.push("Letzter Termin dieser Reihe in 2027.");
+    if (e.placeholder) lines.push("PLATZHALTER: Termin noch nicht bestätigt.");
+    return lines;
+  }
+  function buildICS(includePlaceholders, assist) {
     var n = new Date();
     var stamp = n.getUTCFullYear() + pad2(n.getUTCMonth() + 1) + pad2(n.getUTCDate()) + "T" + pad2(n.getUTCHours()) + pad2(n.getUTCMinutes()) + pad2(n.getUTCSeconds()) + "Z";
     var flat = allEventsFlat().filter(function(x) { return includePlaceholders || !x.ev.placeholder; }).sort(function(a, b) {
       return a.dateKey < b.dateKey ? -1 : a.dateKey > b.dateKey ? 1 : (toMin(a.ev.start) - toMin(b.ev.start)) || (a.ev.uid < b.ev.uid ? -1 : 1);
     });
+    var aidx = assist ? icsAssistIndex(flat) : null;
     var L = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Diakonie Ruhr//GF Jahreskalender " + YEAR + "//DE", "CALSCALE:GREGORIAN", "METHOD:PUBLISH",
-      "X-WR-CALNAME:GF Jahreskalender " + YEAR, "X-WR-TIMEZONE:Europe/Berlin",
+      "X-WR-CALNAME:GF Jahreskalender " + YEAR + (assist ? " (Assistenz)" : ""), "X-WR-TIMEZONE:Europe/Berlin"]
+      .concat(assist ? ["X-WR-CALDESC:" + icsEscape("Assistenzversion: Der erste Termin jeder Reihe (Kategorie Serienstart) enthält die vollständige Serienanleitung mit Muster, Regeln und Hintergrund. Die weiteren Termine tragen nur eine Kurznotiz. Urlaub und Feiertage entfallen ohne Ersatztermin.")] : []).concat([
       "BEGIN:VTIMEZONE", "TZID:Europe/Berlin",
       "BEGIN:STANDARD", "DTSTART:19701025T030000", "TZOFFSETFROM:+0200", "TZOFFSETTO:+0100", "TZNAME:CET", "RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU", "END:STANDARD",
       "BEGIN:DAYLIGHT", "DTSTART:19700329T020000", "TZOFFSETFROM:+0100", "TZOFFSETTO:+0200", "TZNAME:CEST", "RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=-1SU", "END:DAYLIGHT",
-      "END:VTIMEZONE"];
+      "END:VTIMEZONE"]);
     flat.forEach(function(x) {
-      var e = x.ev, st = toMin(e.start), descParts = [];
-      if (e.desc) descParts.push(e.desc);
-      if (e.rule && e.rule.note) descParts.push("Regel: " + e.rule.note);
-      if (e.placeholder) descParts.push("Platzhalter – Termin unbestätigt.");
-      if (e.assumption) descParts.push("Arbeitsannahme – Slot nicht bestätigt.");
+      var e = x.ev, st = toMin(e.start), descParts = [], ainfo = null;
+      if (assist) {
+        ainfo = aidx[e.seriesId || ("einzel-" + e.uid)];
+        descParts = icsAssistNote(x, ainfo);
+      } else {
+        if (e.desc) descParts.push(e.desc);
+        if (e.rule && e.rule.note) descParts.push("Regel: " + e.rule.note);
+        if (e.placeholder) descParts.push("Platzhalter – Termin unbestätigt.");
+        if (e.assumption) descParts.push("Arbeitsannahme – Slot nicht bestätigt.");
+      }
       L.push("BEGIN:VEVENT", "UID:" + e.uid + "@gf-jahreskalender-" + YEAR, "DTSTAMP:" + stamp,
         "DTSTART;TZID=Europe/Berlin:" + icsLocal(x.dateKey, st), "DTEND;TZID=Europe/Berlin:" + icsLocal(x.dateKey, st + e.duration),
         "SUMMARY:" + icsEscape(e.title));
       if (descParts.length) L.push("DESCRIPTION:" + icsEscape(descParts.join("\n")));
       if (e.ort) L.push("LOCATION:" + icsEscape(e.ort));
-      L.push("CATEGORIES:" + icsEscape(typeLabels[e.type] || e.type), "STATUS:" + ((e.placeholder || e.assumption) ? "TENTATIVE" : "CONFIRMED"), "END:VEVENT");
+      var cats = [typeLabels[e.type] || e.type];
+      if (assist && ainfo && !ainfo.single && e.uid === ainfo.lead) cats.push("Serienstart");
+      L.push("CATEGORIES:" + cats.map(icsEscape).join(","));
+      if (assist && ainfo && !ainfo.single) L.push("X-GF-SERIE:" + icsEscape(e.seriesId));
+      L.push("STATUS:" + ((e.placeholder || e.assumption) ? "TENTATIVE" : "CONFIRMED"), "END:VEVENT");
     });
     L.push("END:VCALENDAR");
     return { text: L.map(icsFold).join("\r\n") + "\r\n", count: flat.length };
   }
-  function exportICS(includePlaceholders) {
-    var r = buildICS(includePlaceholders);
-    var name = "jahreskalender-2027-fritsch-" + nowISO().substr(0, 10) + ".ics";
+  function exportICS(includePlaceholders, assist) {
+    var r = buildICS(includePlaceholders, assist);
+    var name = "jahreskalender-2027-fritsch" + (assist ? "-assistenz" : "") + "-" + nowISO().substr(0, 10) + ".ics";
     downloadText(name, r.text, "text/calendar");
     showDialog({ title: "Export ICS – " + r.count + " Termine", text: "Die Datei „" + name + "“ wurde zum Download angeboten (Zeitzone Europe/Berlin, " + (includePlaceholders ? "inklusive" : "ohne") + " unbestätigte Platzhalter). Falls der Browser keinen Download zulässt: Inhalt kopieren und als .ics-Datei speichern.", textarea: r.text, buttons: [{ label: "Schließen" }, copyButton("In Zwischenablage kopieren")] });
-    logChange("Export ICS erstellt (" + r.count + " Termine" + (includePlaceholders ? ", mit Platzhaltern" : ", ohne Platzhalter") + ")");
+    logChange("Export ICS erstellt (" + r.count + " Termine" + (includePlaceholders ? ", mit Platzhaltern" : ", ohne Platzhalter") + (assist ? ", Assistenzversion mit Serienanleitung" : "") + ")");
   }
   function askICS() {
-    showDialog({ title: "Export ICS", text: "Welche Termine sollen in die Kalenderdatei?\nBestätigte Termine und Arbeitsannahmen sind immer enthalten. Unbestätigte Platzhalter lassen sich auslassen.",
-      buttons: [{ label: "Abbrechen" }, { label: "Ohne Platzhalter", primary: true, onClick: function() { setTimeout(function() { exportICS(false); }, 0); } }, { label: "Mit Platzhaltern", onClick: function() { setTimeout(function() { exportICS(true); }, 0); } }] });
+    showDialog({ title: "Export ICS", text: "Welche Termine sollen in die Kalenderdatei?\nBestätigte Termine und Arbeitsannahmen sind immer enthalten. Unbestätigte Platzhalter lassen sich auslassen. Die Assistenzversion enthält alle Termine mit Serienanleitung im ersten Termin jeder Reihe und Kurznotizen in den weiteren.",
+      buttons: [{ label: "Abbrechen" }, { label: "Ohne Platzhalter", primary: true, onClick: function() { setTimeout(function() { exportICS(false); }, 0); } }, { label: "Mit Platzhaltern", onClick: function() { setTimeout(function() { exportICS(true); }, 0); } }, { label: "Assistenzversion (mit Serienanleitung)", onClick: function() { setTimeout(function() { exportICS(true, true); }, 0); } }] });
   }
 
   // ================= Formatliste (aus Serien und Regeln erzeugt) =================
@@ -2807,7 +2937,7 @@
     openFocus: openFocus, openForm: openForm, saveForm: saveForm, deleteEvent: deleteEvent, moveEvent: moveEvent, swapEventTimes: swapEventTimes,
     serialize: serialize, deserialize: deserialize, validateData: validateData, afterChange: afterChange, addEvent: addEvent, buildInitialData: buildInitialData,
     undo: undo, undoDepth: function() { return undoStack.length; }, snapshot: snapshot, setFilter: setFilter, passesFilter: passesFilter,
-    buildICS: buildICS, buildFormatList: buildFormatList, matrixCompute: matrixCompute, matrixCsv: matrixCsv, findSlot: findSlot, placeOnDay: placeOnDay, importJSON: importJSON
+    buildICS: buildICS, icsAssistIndex: icsAssistIndex, buildFormatList: buildFormatList, matrixCompute: matrixCompute, matrixCsv: matrixCsv, findSlot: findSlot, placeOnDay: placeOnDay, importJSON: importJSON
   };
 })();
 </script>

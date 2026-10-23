@@ -1,0 +1,3387 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Diakonie Ruhr//GF Jahreskalender 2027//DE
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:GF Jahreskalender 2027 (Outlook)
+X-WR-TIMEZONE:Europe/Berlin
+X-WR-CALDESC:Outlook-Version: Regelmäßige Reihen sind als echte Serie (Wi
+ ederholung mit Ausnahmen) angelegt\, alle anderen Termine als Einzeltermin
+ e. Alle Termine tragen die Kategorie GFK2027\, damit man sie gezielt wiede
+ rfinden oder löschen kann. Importieren Sie zuerst in einen Test-Kalender.
+BEGIN:VTIMEZONE
+TZID:Europe/Berlin
+BEGIN:STANDARD
+DTSTART:19701025T030000
+TZOFFSETFROM:+0200
+TZOFFSETTO:+0100
+TZNAME:CET
+RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU
+END:STANDARD
+BEGIN:DAYLIGHT
+DTSTART:19700329T020000
+TZOFFSETFROM:+0100
+TZOFFSETTO:+0200
+TZNAME:CEST
+RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=-1SU
+END:DAYLIGHT
+END:VTIMEZONE
+BEGIN:VEVENT
+UID:ev25@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270111T090000
+DTEND;TZID=Europe/Berlin:20270111T103000
+SUMMARY:Fokuszeit-Blocker (Mo)
+RRULE:FREQ=WEEKLY;BYDAY=MO;COUNT=51
+EXDATE;TZID=Europe/Berlin:20270329T090000,20270503T090000,20270517T090000,2
+ 0270726T090000,20270809T090000,20270816T090000,20271025T090000,20271101T09
+ 0000,20271108T090000
+DESCRIPTION:SERIE (als Wiederholung angelegt\, 42 von 42 Terminen 2027): w
+ öchentlich\, jeden Montag\nEntfällt in der Serie (Urlaub\, Feiertag\, Kl
+ ausur oder verschoben): Mo 29.03.\, Mo 03.05.\, Mo 17.05.\, Mo 26.07.\, Mo
+  09.08.\, Mo 16.08.\, Mo 25.10.\, Mo 01.11.\, Mo 08.11.\nHintergrund: Wiss
+ ensmanagement\, Selbstorganisation\, Vor-/Nachbereitung – inkl. 0\,5 Std
+ . Abstimmung mit Assistenz GF.\nRegel: Regel 5: inkl. 0\,5 Std. Abstimmung
+  Assistenz GF. Montag 09:00–10:30\, keine regulären Termine vor 09:00.\
+ nErlaubte Wochentage: Mo\nFestes Zeitfenster: 09:00 – 10:30
+CATEGORIES:Fokuszeit,GFK2027
+X-GF-SERIE:fokuszeit-mo
+X-GF-ID:ev25
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev222@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270112T090000
+DTEND;TZID=Europe/Berlin:20270112T095000
+SUMMARY:JF Weisang
+RRULE:FREQ=MONTHLY;INTERVAL=1;BYDAY=2TU;COUNT=12
+EXDATE;TZID=Europe/Berlin:20270810T090000,20271109T090000
+DESCRIPTION:SERIE (als Wiederholung angelegt\, 10 von 11 Terminen 2027\, 1 
+ weitere als Einzeltermine): jeden 2. Dienstag im Monat\, in jedem Monat au
+ ßer Aug (Urlaub\, Feiertag oder Klausur\, entfällt ohne Ersatz)\nEntfäl
+ lt in der Serie (Urlaub\, Feiertag\, Klausur oder verschoben): Di 10.08.\,
+  Di 09.11.\nHintergrund: Monatlicher Jour fixe\, 50 Min. Träger: Innere M
+ ission. Slotzuordnung = Arbeitsannahme.\nRegel: Dienstag = JF-Tag (Arbeits
+ annahme Slotverteilung).\nErlaubte Wochentage: Di\nARBEITSANNAHME: Slot od
+ er Wochentag noch nicht bestätigt.
+LOCATION:Innere Mission
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:partner-JF Weisang
+X-GF-ID:ev222
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev223@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270112T100000
+DTEND;TZID=Europe/Berlin:20270112T105000
+SUMMARY:JF Pernak
+RRULE:FREQ=MONTHLY;INTERVAL=1;BYDAY=2TU;COUNT=12
+EXDATE;TZID=Europe/Berlin:20270810T100000,20271109T100000
+DESCRIPTION:SERIE (als Wiederholung angelegt\, 10 von 11 Terminen 2027\, 1 
+ weitere als Einzeltermine): jeden 2. Dienstag im Monat\, in jedem Monat au
+ ßer Aug (Urlaub\, Feiertag oder Klausur\, entfällt ohne Ersatz)\nEntfäl
+ lt in der Serie (Urlaub\, Feiertag\, Klausur oder verschoben): Di 10.08.\,
+  Di 09.11.\nHintergrund: Monatlicher Jour fixe\, 50 Min. Träger: Innere M
+ ission. Slotzuordnung = Arbeitsannahme.\nRegel: Dienstag = JF-Tag (Arbeits
+ annahme Slotverteilung).\nErlaubte Wochentage: Di\nARBEITSANNAHME: Slot od
+ er Wochentag noch nicht bestätigt.
+LOCATION:Innere Mission
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:partner-JF Pernak
+X-GF-ID:ev223
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev224@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270112T110000
+DTEND;TZID=Europe/Berlin:20270112T115000
+SUMMARY:JF MAV IM
+RRULE:FREQ=MONTHLY;INTERVAL=1;BYDAY=2TU;COUNT=12
+EXDATE;TZID=Europe/Berlin:20270810T110000,20271109T110000
+DESCRIPTION:SERIE (als Wiederholung angelegt\, 10 von 11 Terminen 2027\, 1 
+ weitere als Einzeltermine): jeden 2. Dienstag im Monat\, in jedem Monat au
+ ßer Aug (Urlaub\, Feiertag oder Klausur\, entfällt ohne Ersatz)\nEntfäl
+ lt in der Serie (Urlaub\, Feiertag\, Klausur oder verschoben): Di 10.08.\,
+  Di 09.11.\nHintergrund: Monatlicher Jour fixe\, 50 Min. Träger: Innere M
+ ission. Slotzuordnung = Arbeitsannahme.\nRegel: Dienstag = JF-Tag (Arbeits
+ annahme Slotverteilung).\nErlaubte Wochentage: Di\nARBEITSANNAHME: Slot od
+ er Wochentag noch nicht bestätigt.
+LOCATION:Innere Mission
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:partner-JF MAV IM
+X-GF-ID:ev224
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev225@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270112T120000
+DTEND;TZID=Europe/Berlin:20270112T125000
+SUMMARY:JF Möller/Hagenbrock
+RRULE:FREQ=MONTHLY;INTERVAL=1;BYDAY=2TU;COUNT=12
+EXDATE;TZID=Europe/Berlin:20270810T120000,20271109T120000
+DESCRIPTION:SERIE (als Wiederholung angelegt\, 10 von 11 Terminen 2027\, 1 
+ weitere als Einzeltermine): jeden 2. Dienstag im Monat\, in jedem Monat au
+ ßer Aug (Urlaub\, Feiertag oder Klausur\, entfällt ohne Ersatz)\nEntfäl
+ lt in der Serie (Urlaub\, Feiertag\, Klausur oder verschoben): Di 10.08.\,
+  Di 09.11.\nHintergrund: Monatlicher Jour fixe\, 50 Min. Träger: Innere M
+ ission. Slotzuordnung = Arbeitsannahme.\nRegel: Dienstag = JF-Tag (Arbeits
+ annahme Slotverteilung).\nErlaubte Wochentage: Di\nARBEITSANNAHME: Slot od
+ er Wochentag noch nicht bestätigt.
+LOCATION:Innere Mission
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:partner-JF Möller/Hagenbrock
+X-GF-ID:ev225
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev226@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270112T130000
+DTEND;TZID=Europe/Berlin:20270112T135000
+SUMMARY:JF Moreira
+RRULE:FREQ=MONTHLY;INTERVAL=1;BYDAY=2TU;COUNT=12
+EXDATE;TZID=Europe/Berlin:20270810T130000,20271109T130000
+DESCRIPTION:SERIE (als Wiederholung angelegt\, 10 von 11 Terminen 2027\, 1 
+ weitere als Einzeltermine): jeden 2. Dienstag im Monat\, in jedem Monat au
+ ßer Aug (Urlaub\, Feiertag oder Klausur\, entfällt ohne Ersatz)\nEntfäl
+ lt in der Serie (Urlaub\, Feiertag\, Klausur oder verschoben): Di 10.08.\,
+  Di 09.11.\nHintergrund: Monatlicher Jour fixe GBL\, 50 Min. Di-Mittagsban
+ d.\nRegel: GBL-JF liegen auf dem Dienstag-Mittagsband.\nErlaubte Wochentag
+ e: Di\nKommunikationsmatrix Nr. 2 „Jour fixe GBL“: kongruent.\nARBEITS
+ ANNAHME: Slot oder Wochentag noch nicht bestätigt.
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:gbl-JF Moreira
+X-GF-ID:ev226
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev227@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270112T140000
+DTEND;TZID=Europe/Berlin:20270112T145000
+SUMMARY:JF Marketing & Vertrieb
+RRULE:FREQ=MONTHLY;INTERVAL=1;BYDAY=2TU;COUNT=12
+EXDATE;TZID=Europe/Berlin:20270810T140000,20271109T140000
+DESCRIPTION:SERIE (als Wiederholung angelegt\, 10 von 11 Terminen 2027\, 1 
+ weitere als Einzeltermine): jeden 2. Dienstag im Monat\, in jedem Monat au
+ ßer Aug (Urlaub\, Feiertag oder Klausur\, entfällt ohne Ersatz)\nEntfäl
+ lt in der Serie (Urlaub\, Feiertag\, Klausur oder verschoben): Di 10.08.\,
+  Di 09.11.\nHintergrund: Monatlicher Jour fixe Referat Marketing & Vertrie
+ b\, 50 Min. Di-Mittagsband.\nErlaubte Wochentage: Di\nKommunikationsmatrix
+  Nr. 3d „Jour fixe Referat Marketing und Vertrieb“: kongruent.\nARBEIT
+ SANNAHME: Slot oder Wochentag noch nicht bestätigt.
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:referat-JF Marketing & Vertrieb
+X-GF-ID:ev227
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev219@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270112T163000
+DTEND;TZID=Europe/Berlin:20270112T172000
+SUMMARY:JF Personal
+DESCRIPTION:Reihe: etwa alle 7 bis 8 Wochen\, jeweils Dienstag (Rhythmus la
+ ut Regel: alle 6-8 Wochen). Die Termine liegen wegen Urlaub\, Feiertag ode
+ r Klausur teils versetzt\, bitte nach der Terminliste anlegen. (7 Termine 
+ 2027\, Einzeltermine)\nHintergrund: Referat Personal\, 50 Min. – Teil 1 
+ von 3 des unteilbaren 75-Min.-Blocks (Regel 3).\nRegel: Regeln 2+3: Mala-T
+ eilslot im Block\, Block nicht trennbar.\nErlaubte Wochentage: Di\nBlock n
+ icht trennbar: 50 Min. Referat + 20 Min. Poolspringer Frau Mala + 5 Min. W
+ echselpuffer\nKommunikationsmatrix Nr. 3a „Jour fixe Referat Personal“
+ : kongruent.
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:jf-personal
+X-GF-ID:ev219
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev220@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270112T172000
+DTEND;TZID=Europe/Berlin:20270112T174000
+SUMMARY:JF Personal – Poolspringer-Slot Frau Mala
+DESCRIPTION:Reihe: etwa alle 7 bis 8 Wochen\, jeweils Dienstag (Rhythmus la
+ ut Regel: alle 6-8 Wochen). Die Termine liegen wegen Urlaub\, Feiertag ode
+ r Klausur teils versetzt\, bitte nach der Terminliste anlegen. (7 Termine 
+ 2027\, Einzeltermine)\nHintergrund: Teilslot für Frau Mala innerhalb JF P
+ ersonal\, 20 Min. – Teil 2 von 3 (Regel 2: kein eigener Termin).\nRegel:
+  Regeln 2+3: Mala-Teilslot im Block\, Block nicht trennbar.\nErlaubte Woch
+ entage: Di\nBlock nicht trennbar: 50 Min. Referat + 20 Min. Poolspringer F
+ rau Mala + 5 Min. Wechselpuffer\nKommunikationsmatrix Nr. 3a „Jour fixe 
+ Referat Personal“: kongruent.
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:jf-personal
+X-GF-ID:ev220
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev221@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270112T174000
+DTEND;TZID=Europe/Berlin:20270112T174500
+SUMMARY:JF Personal – Wechselpuffer
+DESCRIPTION:Reihe: etwa alle 7 bis 8 Wochen\, jeweils Dienstag (Rhythmus la
+ ut Regel: alle 6-8 Wochen). Die Termine liegen wegen Urlaub\, Feiertag ode
+ r Klausur teils versetzt\, bitte nach der Terminliste anlegen. (7 Termine 
+ 2027\, Einzeltermine)\nHintergrund: Wechselpuffer\, 5 Min. – Teil 3 von 
+ 3\, Block gesamt 75 Min.\nRegel: Regeln 2+3: Mala-Teilslot im Block\, Bloc
+ k nicht trennbar.\nErlaubte Wochentage: Di\nBlock nicht trennbar: 50 Min. 
+ Referat + 20 Min. Poolspringer Frau Mala + 5 Min. Wechselpuffer\nKommunika
+ tionsmatrix Nr. 3a „Jour fixe Referat Personal“: kongruent.
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:jf-personal
+X-GF-ID:ev221
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev505@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270113T090000
+DTEND;TZID=Europe/Berlin:20270113T120000
+SUMMARY:IMK
+RRULE:FREQ=MONTHLY;INTERVAL=1;BYDAY=2WE;COUNT=11
+EXDATE;TZID=Europe/Berlin:20270210T090000,20270310T090000,20270414T090000,2
+ 0270714T090000,20270811T090000,20270908T090000,20271013T090000
+DESCRIPTION:SERIE (als Wiederholung angelegt\, 4 von 4 Terminen 2027): jede
+ n 2. Mittwoch im Monat\, in den Monaten Jan\, Mai\, Jun\, Nov\nEntfällt i
+ n der Serie (Urlaub\, Feiertag\, Klausur oder verschoben): Mi 10.02.\, Mi 
+ 10.03.\, Mi 14.04.\, Mi 14.07.\, Mi 11.08.\, Mi 08.09.\, Mi 13.10.\nHinter
+ grund: Innere Mission Konferenz\, 6× im Jahr\, 3 Std.\, extern.\nRegel: 6
+  Sitzungen im Jahr\, davon 2 mit ASA IM. Nicht in den NRW-Schulferien.\nEr
+ laubte Wochentage: Mi
+LOCATION:Innere Mission
+CATEGORIES:Gremium / Puffer,GFK2027
+X-GF-SERIE:imk
+X-GF-ID:ev505
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev31@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270113T120000
+DTEND;TZID=Europe/Berlin:20270113T140000
+SUMMARY:Projektarbeit-Blocker GF
+RRULE:FREQ=WEEKLY;BYDAY=WE;COUNT=51
+EXDATE;TZID=Europe/Berlin:20270331T120000,20270728T120000,20270804T120000,2
+ 0270811T120000,20270818T120000,20271027T120000,20271103T120000
+DESCRIPTION:SERIE (als Wiederholung angelegt\, 44 von 44 Terminen 2027): w
+ öchentlich\, jeden Mittwoch\nEntfällt in der Serie (Urlaub\, Feiertag\, 
+ Klausur oder verschoben): Mi 31.03.\, Mi 28.07.\, Mi 04.08.\, Mi 11.08.\, 
+ Mi 18.08.\, Mi 27.10.\, Mi 03.11.\nHintergrund: Statusmeetings\, Telefonat
+ e\, operative Klärung – fest Mittwoch\, direkt vor dem Wochengespräch 
+ (Regel 6).\nRegel: Regel 6: fest auf Mittwoch\, direkt vor dem Wochengespr
+ äch.\nErlaubte Wochentage: Mi\nFestes Zeitfenster: 12:00 – 14:00
+CATEGORIES:Projektzeit,GFK2027
+X-GF-SERIE:projektarbeit
+X-GF-ID:ev31
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev32@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270113T140000
+DTEND;TZID=Europe/Berlin:20270113T160000
+SUMMARY:Wochengespräch mit GF-Beteiligung
+RRULE:FREQ=MONTHLY;INTERVAL=1;BYDAY=2WE;COUNT=12
+EXDATE;TZID=Europe/Berlin:20270811T140000
+DESCRIPTION:SERIE (als Wiederholung angelegt\, 11 von 11 Terminen 2027): je
+ den 2. Mittwoch im Monat\, in jedem Monat außer Aug (Urlaub\, Feiertag od
+ er Klausur\, entfällt ohne Ersatz)\nEntfällt in der Serie (Urlaub\, Feie
+ rtag\, Klausur oder verschoben): Mi 11.08.\nHintergrund: Das Wochengesprä
+ ch findet wöchentlich statt\, die GF nimmt nur 1× im Monat teil (2. Mitt
+ woch)\, 14:00–16:00 Uhr (Regel 7). Struktur mit Herrn Fritsch bestätige
+ n.\nRegel: Regel 7: Das Wochengespräch findet wöchentlich statt\, die GF
+  ist nur 1× im Monat dabei (2. Mittwoch). Struktur mit Herrn Fritsch best
+ ätigen.\nErlaubte Wochentage: Mi\nFestes Zeitfenster: 14:00 – 16:00\nKo
+ mmunikationsmatrix Nr. 5 „Wochengespräch“: kongruent.\nARBEITSANNAHME
+ : Slot oder Wochentag noch nicht bestätigt.
+CATEGORIES:Gremium / Puffer,GFK2027
+X-GF-SERIE:wochengespraech
+X-GF-ID:ev32
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev598@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270114T090000
+DTEND;TZID=Europe/Berlin:20270114T093000
+SUMMARY:Anreise Steuerkreis-Tag
+DESCRIPTION:Einzeltermin der Reihe „Anreise Steuerkreis-Tag“: verschobe
+ n bzw. außerhalb des Serienmusters (siehe Hintergrund).\nHintergrund: Anr
+ eise zum Steuerkreis\, nur vor dem ersten Termin des Tages (kein Westring)
+ .\nRegel: Anreisepuffer nur vor dem ersten Steuerkreis des Tages (Steuerkr
+ eise finden nicht am Westring statt).
+LOCATION:unterwegs
+CATEGORIES:Fokuszeit,GFK2027
+X-GF-SERIE:sk-anreise
+X-GF-ID:ev598
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev599@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270114T093000
+DTEND;TZID=Europe/Berlin:20270114T113000
+SUMMARY:Steuerkreis Personal
+DESCRIPTION:Reihe: etwa alle 10 bis 15 Wochen\, jeweils Donnerstag (Rhythmu
+ s laut Regel: quartalsweise). Die Termine liegen wegen Urlaub\, Feiertag o
+ der Klausur teils versetzt\, bitte nach der Terminliste anlegen. (4 Termin
+ e 2027\, Einzeltermine)\nHintergrund: Quartalsweise\, 2 Std. – GF dabei\
+ , außer Haus.\nRegel: Quartalsweise\, 2 Std.\, zusammen mit dem Steuerkre
+ is Marketing & Vertrieb an einem Termintag (außer Haus).\nErlaubte Wochen
+ tage: Do\nKommunikationsmatrix Nr. 14 „Steuerkreis Personal“: abweiche
+ nd (Dauer: Matrix 3 Std.\, Kalender 2 Std.).
+LOCATION:Einrichtung (Vor-Ort)
+CATEGORIES:Steuerkreis,GFK2027
+X-GF-SERIE:sk-personal
+X-GF-ID:ev599
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev600@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270114T114500
+DTEND;TZID=Europe/Berlin:20270114T134500
+SUMMARY:Steuerkreis Marketing & Vertrieb
+DESCRIPTION:Reihe: etwa alle 10 bis 15 Wochen\, jeweils Donnerstag (Rhythmu
+ s laut Regel: quartalsweise). Die Termine liegen wegen Urlaub\, Feiertag o
+ der Klausur teils versetzt\, bitte nach der Terminliste anlegen. (4 Termin
+ e 2027\, Einzeltermine)\nHintergrund: Quartalsweise\, 2 Std. – direkt im
+  Anschluss (15 Min. Verabschieden)\, GF dabei.\nRegel: Quartalsweise\, 2 S
+ td.\, zusammen mit dem Steuerkreis Personal an einem Termintag (außer Hau
+ s).\nErlaubte Wochentage: Do\nKommunikationsmatrix Nr. 19 „Steuerkreis M
+ arketing und Vertrieb“: abweichend (Dauer: Matrix 3 Std.\, Kalender 2 St
+ d.).
+LOCATION:Einrichtung (Vor-Ort)
+CATEGORIES:Steuerkreis,GFK2027
+X-GF-SERIE:sk-mv
+X-GF-ID:ev600
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev601@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270114T134500
+DTEND;TZID=Europe/Berlin:20270114T154500
+SUMMARY:Hospitation vor Ort
+DESCRIPTION:Reihe: Steht immer am Tag der Steuerkreise\, direkt vor bzw. na
+ ch dem Steuerkreis-Block. Zusammen mit dem Steuerkreis anlegen (siehe Term
+ inliste). (14 Termine 2027\, Einzeltermine)\nHintergrund: Hospitationsbloc
+ ker\, 2 Std.\, direkt im Anschluss: der GF bleibt ggf. vor Ort und schaut 
+ sich um.\nRegel: Direkt im Anschluss an den Steuerkreis-Block: der GF blei
+ bt vor Ort und schaut sich um.
+LOCATION:Einrichtung (Vor-Ort)
+CATEGORIES:Fokuszeit,GFK2027
+X-GF-SERIE:sk-hospitation
+X-GF-ID:ev601
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev28@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270115T090000
+DTEND;TZID=Europe/Berlin:20270115T110000
+SUMMARY:Fokuszeit-Blocker (Fr)
+RRULE:FREQ=WEEKLY;BYDAY=FR;COUNT=51
+EXDATE;TZID=Europe/Berlin:20270205T090000,20270326T090000,20270402T090000,2
+ 0270409T090000,20270806T090000,20270813T090000,20270820T090000,20271001T09
+ 0000,20271022T090000,20271029T090000,20271105T090000,20271119T090000
+DESCRIPTION:SERIE (als Wiederholung angelegt\, 39 von 39 Terminen 2027): w
+ öchentlich\, jeden Freitag\nEntfällt in der Serie (Urlaub\, Feiertag\, K
+ lausur oder verschoben): Fr 05.02.\, Fr 26.03.\, Fr 02.04.\, Fr 09.04.\, F
+ r 06.08.\, Fr 13.08.\, Fr 20.08.\, Fr 01.10.\, Fr 22.10.\, Fr 29.10.\, Fr 
+ 05.11.\, Fr 19.11.\nHintergrund: Wissensmanagement\, Selbstorganisation\, 
+ Vor-/Nachbereitung – inkl. 0\,5 Std. Abstimmung mit Assistenz GF.\nRegel
+ : Regel 5: inkl. 0\,5 Std. Abstimmung Assistenz GF.\nErlaubte Wochentage: 
+ Fr\nFestes Zeitfenster: 09:00 – 11:00
+CATEGORIES:Fokuszeit,GFK2027
+X-GF-SERIE:fokuszeit-fr
+X-GF-ID:ev28
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev194@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270118T120000
+DTEND;TZID=Europe/Berlin:20270118T150000
+SUMMARY:Erweiterte Konzernleitung (eKL)
+RRULE:FREQ=MONTHLY;INTERVAL=1;BYDAY=3MO;COUNT=12
+EXDATE;TZID=Europe/Berlin:20270517T120000,20270816T120000
+DESCRIPTION:SERIE (als Wiederholung angelegt\, 10 von 10 Terminen 2027): je
+ den 3. Montag im Monat\, in jedem Monat außer Mai\, Aug (Urlaub\, Feierta
+ g oder Klausur\, entfällt ohne Ersatz)\nEntfällt in der Serie (Urlaub\, 
+ Feiertag\, Klausur oder verschoben): Mo 17.05.\, Mo 16.08.\nHintergrund: M
+ onatlicher Montag-Anker (EVAR)\, 3. Montag\, 3 Std.\nRegel: 3. Montag\, 3 
+ Std. (EVAR).\nErlaubte Wochentage: Mo
+LOCATION:EVAR
+CATEGORIES:Gremium / Puffer,GFK2027
+X-GF-SERIE:ekl
+X-GF-ID:ev194
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev195@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270118T151500
+DTEND;TZID=Europe/Berlin:20270118T160500
+SUMMARY:JF Machleit Ebner
+RRULE:FREQ=MONTHLY;INTERVAL=3;BYDAY=3MO;COUNT=4
+DESCRIPTION:SERIE (als Wiederholung angelegt\, 4 von 4 Terminen 2027): jede
+ n 3. Montag im Monat\, alle 3 Monate (Jan\, Apr\, Jul\, Okt)\nHintergrund:
+  Quartalsweise direkt im Anschluss an die eKL\, ab 01/2027 (EVAR)\, 50 Min
+ .\nRegel: Quartalsweise direkt nach der eKL\, ab 01/2027.\nErlaubte Wochen
+ tage: Mo
+LOCATION:EVAR
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:machleit-ebner
+X-GF-ID:ev195
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev229@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270119T090000
+DTEND;TZID=Europe/Berlin:20270119T095000
+SUMMARY:JF Lahn
+RRULE:FREQ=MONTHLY;INTERVAL=1;BYDAY=3TU;COUNT=12
+EXDATE;TZID=Europe/Berlin:20270817T090000
+DESCRIPTION:SERIE (als Wiederholung angelegt\, 11 von 11 Terminen 2027): je
+ den 3. Dienstag im Monat\, in jedem Monat außer Aug (Urlaub\, Feiertag od
+ er Klausur\, entfällt ohne Ersatz)\nEntfällt in der Serie (Urlaub\, Feie
+ rtag\, Klausur oder verschoben): Di 17.08.\nHintergrund: Monatlicher Jour 
+ fixe\, 50 Min. Träger: LeWo. Slotzuordnung = Arbeitsannahme.\nRegel: Dien
+ stag = JF-Tag (Arbeitsannahme Slotverteilung).\nErlaubte Wochentage: Di\nA
+ RBEITSANNAHME: Slot oder Wochentag noch nicht bestätigt.
+LOCATION:LeWo
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:partner-JF Lahn
+X-GF-ID:ev229
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev230@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270119T100000
+DTEND;TZID=Europe/Berlin:20270119T105000
+SUMMARY:JF Rethfeldt (MiR)
+RRULE:FREQ=MONTHLY;INTERVAL=1;BYDAY=3TU;COUNT=12
+EXDATE;TZID=Europe/Berlin:20270817T100000
+DESCRIPTION:SERIE (als Wiederholung angelegt\, 11 von 11 Terminen 2027): je
+ den 3. Dienstag im Monat\, in jedem Monat außer Aug (Urlaub\, Feiertag od
+ er Klausur\, entfällt ohne Ersatz)\nEntfällt in der Serie (Urlaub\, Feie
+ rtag\, Klausur oder verschoben): Di 17.08.\nHintergrund: Monatlicher Jour 
+ fixe\, 50 Min. Träger: LeWo. Slotzuordnung = Arbeitsannahme.\nRegel: Dien
+ stag = JF-Tag (Arbeitsannahme Slotverteilung).\nErlaubte Wochentage: Di\nK
+ ommunikationsmatrix Nr. 29 „JF Culina\, MiR\, DfM\, ApD“: zu klären (
+ Dauer: Matrix je 1\,5 Std.\, Kalender 50 Min.\; Zuordnung unsicher: DfM un
+ d ApD sind im Kalender nicht eindeutig zu finden).\nARBEITSANNAHME: Slot o
+ der Wochentag noch nicht bestätigt.
+LOCATION:LeWo
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:partner-JF Rethfeldt (MiR)
+X-GF-ID:ev230
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev231@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270119T110000
+DTEND;TZID=Europe/Berlin:20270119T115000
+SUMMARY:JF Raatz
+RRULE:FREQ=MONTHLY;INTERVAL=1;BYDAY=3TU;COUNT=12
+EXDATE;TZID=Europe/Berlin:20270817T110000
+DESCRIPTION:SERIE (als Wiederholung angelegt\, 11 von 11 Terminen 2027): je
+ den 3. Dienstag im Monat\, in jedem Monat außer Aug (Urlaub\, Feiertag od
+ er Klausur\, entfällt ohne Ersatz)\nEntfällt in der Serie (Urlaub\, Feie
+ rtag\, Klausur oder verschoben): Di 17.08.\nHintergrund: Monatlicher Jour 
+ fixe\, 50 Min. Träger: LeWo. Slotzuordnung = Arbeitsannahme.\nRegel: Dien
+ stag = JF-Tag (Arbeitsannahme Slotverteilung).\nErlaubte Wochentage: Di\nA
+ RBEITSANNAHME: Slot oder Wochentag noch nicht bestätigt.
+LOCATION:LeWo
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:partner-JF Raatz
+X-GF-ID:ev231
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev232@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270119T120000
+DTEND;TZID=Europe/Berlin:20270119T125000
+SUMMARY:JF Kutlu
+RRULE:FREQ=MONTHLY;INTERVAL=1;BYDAY=3TU;COUNT=12
+EXDATE;TZID=Europe/Berlin:20270817T120000
+DESCRIPTION:SERIE (als Wiederholung angelegt\, 11 von 11 Terminen 2027): je
+ den 3. Dienstag im Monat\, in jedem Monat außer Aug (Urlaub\, Feiertag od
+ er Klausur\, entfällt ohne Ersatz)\nEntfällt in der Serie (Urlaub\, Feie
+ rtag\, Klausur oder verschoben): Di 17.08.\nHintergrund: Monatlicher Jour 
+ fixe GBL\, 50 Min. Di-Mittagsband.\nRegel: GBL-JF liegen auf dem Dienstag-
+ Mittagsband.\nErlaubte Wochentage: Di\nKommunikationsmatrix Nr. 2 „Jour 
+ fixe GBL“: kongruent.\nARBEITSANNAHME: Slot oder Wochentag noch nicht be
+ stätigt.
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:gbl-JF Kutlu
+X-GF-ID:ev232
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev233@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270119T130000
+DTEND;TZID=Europe/Berlin:20270119T135000
+SUMMARY:JF Rieckert
+RRULE:FREQ=MONTHLY;INTERVAL=1;BYDAY=3TU;COUNT=12
+EXDATE;TZID=Europe/Berlin:20270817T130000
+DESCRIPTION:SERIE (als Wiederholung angelegt\, 11 von 11 Terminen 2027): je
+ den 3. Dienstag im Monat\, in jedem Monat außer Aug (Urlaub\, Feiertag od
+ er Klausur\, entfällt ohne Ersatz)\nEntfällt in der Serie (Urlaub\, Feie
+ rtag\, Klausur oder verschoben): Di 17.08.\nHintergrund: Monatlicher Jour 
+ fixe GBL\, ambulanter Bereich\, 50 Min. (ersetzt die frühere 3-Std.-Sitzu
+ ng DB/DD). Di-Mittagsband.\nRegel: GBL-JF liegen auf dem Dienstag-Mittagsb
+ and.\nErlaubte Wochentage: Di\nKommunikationsmatrix Nr. 2 „Jour fixe GBL
+ “: kongruent.\nARBEITSANNAHME: Slot oder Wochentag noch nicht bestätigt
+ .
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:gbl-JF Rieckert
+X-GF-ID:ev233
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev234@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270119T140000
+DTEND;TZID=Europe/Berlin:20270119T153000
+SUMMARY:JF A³-Team
+RRULE:FREQ=MONTHLY;INTERVAL=1;BYDAY=3TU;COUNT=12
+EXDATE;TZID=Europe/Berlin:20270817T140000,20271019T140000
+DESCRIPTION:SERIE (als Wiederholung angelegt\, 10 von 11 Terminen 2027\, 1 
+ weitere als Einzeltermine): jeden 3. Dienstag im Monat\, in jedem Monat au
+ ßer Aug (Urlaub\, Feiertag oder Klausur\, entfällt ohne Ersatz)\nEntfäl
+ lt in der Serie (Urlaub\, Feiertag\, Klausur oder verschoben): Di 17.08.\,
+  Di 19.10.\nHintergrund: Strategie & Controlling\, 90 Min. monatlich (Leit
+ ung Merino-Kesting)\, Dienstagnachmittag.\nRegel: 90 Min.\, abweichend von
+  der 50-Min.-Norm.\nErlaubte Wochentage: Di\nKommunikationsmatrix Nr. 4 
+ „Jour fixe A³-Team“: kongruent.
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:jf-a3
+X-GF-ID:ev234
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev228@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270119T161500
+DTEND;TZID=Europe/Berlin:20270119T175500
+SUMMARY:JF Jahndorf
+DESCRIPTION:Reihe: etwa alle 7 bis 8 Wochen\, jeweils Dienstag (Rhythmus la
+ ut Regel: alle 8 Wochen). Die Termine liegen wegen Urlaub\, Feiertag oder 
+ Klausur teils versetzt\, bitte nach der Terminliste anlegen. (7 Termine 20
+ 27\, Einzeltermine)\nHintergrund: Regel 1: Turnus etwa alle 8 Wochen (nich
+ t monatlich)\, 100 Min. Träger: LeWo.\nRegel: Regel 1: etwa alle 8 Wochen
+  (nicht monatlich)\, 100 Min.\nErlaubte Wochentage: Di
+LOCATION:LeWo
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:jahndorf
+X-GF-ID:ev228
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev34@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270120T140000
+DTEND;TZID=Europe/Berlin:20270120T160000
+SUMMARY:Wochengespräch (ohne GF)
+RRULE:FREQ=WEEKLY;BYDAY=WE;COUNT=50
+EXDATE;TZID=Europe/Berlin:20270210T140000,20270310T140000,20270331T140000,2
+ 0270414T140000,20270512T140000,20270609T140000,20270714T140000,20270728T14
+ 0000,20270804T140000,20270811T140000,20270818T140000,20270908T140000,20271
+ 013T140000,20271027T140000,20271103T140000,20271110T140000,20271208T140000
+DESCRIPTION:SERIE (als Wiederholung angelegt\, 33 von 33 Terminen 2027): w
+ öchentlich\, jeden Mittwoch\nEntfällt in der Serie (Urlaub\, Feiertag\, 
+ Klausur oder verschoben): Mi 10.02.\, Mi 10.03.\, Mi 31.03.\, Mi 14.04.\, 
+ Mi 12.05.\, Mi 09.06.\, Mi 14.07.\, Mi 28.07.\, Mi 04.08.\, Mi 11.08.\, Mi
+  18.08.\, Mi 08.09.\, Mi 13.10.\, Mi 27.10.\, Mi 03.11.\, Mi 10.11.\, Mi 0
+ 8.12.\nHintergrund: Wöchentliches Wochengespräch am Mittwoch\, 14:00–1
+ 6:00 Uhr\, ohne GF-Beteiligung (die GF ist nur 1× im Monat dabei\, Regel 
+ 7).\nRegel: Regel 7: wöchentliches Wochengespräch am Mittwoch\; die GF n
+ immt nur 1× im Monat teil (dann „mit GF-Beteiligung“).\nErlaubte Woch
+ entage: Mi\nFestes Zeitfenster: 14:00 – 16:00\nKommunikationsmatrix Nr. 
+ 5 „Wochengespräch“: kongruent.\nARBEITSANNAHME: Slot oder Wochentag n
+ och nicht bestätigt.
+CATEGORIES:Gremium / Puffer,GFK2027
+X-GF-SERIE:wochengespraech-ohne-gf
+X-GF-ID:ev34
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev533@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270121T140000
+DTEND;TZID=Europe/Berlin:20270121T154000
+SUMMARY:JF MAV+BR SBO
+RRULE:FREQ=MONTHLY;INTERVAL=2;BYDAY=3TH;COUNT=5
+DESCRIPTION:SERIE (als Wiederholung angelegt\, 5 von 6 Terminen 2027\, 1 we
+ itere als Einzeltermine): jeden 3. Donnerstag im Monat\, alle 2 Monate (Ja
+ n\, Mär\, Mai\, Jul\, Sep\, Nov)\nHintergrund: Alle 2 Monate\, 100 Min. p
+ lus 20 Min. Puffer. Ersetzt Monatsgespräch SBO und Betriebsversammlung SB
+ O (gestrichen).\nRegel: 100 Min. plus 20 Min. Puffer. Ersetzt Monatsgespr
+ äch SBO und Betriebsversammlung SBO (beide gestrichen).\nErlaubte Wochent
+ age: Do\nDanach 20 Min. Puffer einplanen (kein Termin direkt im Anschluss)
+ .\nKommunikationsmatrix Nr. 30 „JF MAVen und BR“: abweichend (Dauer: M
+ atrix 50 Min.\, Kalender 100 Min.).
+LOCATION:SBO Sommerdelle
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:mav-br-sbo
+X-GF-ID:ev533
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev534@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270121T160000
+DTEND;TZID=Europe/Berlin:20270121T173000
+SUMMARY:Pufferslot Gremien
+RRULE:FREQ=MONTHLY;INTERVAL=1;BYDAY=3TH;COUNT=12
+EXDATE;TZID=Europe/Berlin:20270819T160000,20271118T160000
+DESCRIPTION:SERIE (als Wiederholung angelegt\, 10 von 11 Terminen 2027\, 1 
+ weitere als Einzeltermine): jeden 3. Donnerstag im Monat\, in jedem Monat 
+ außer Aug (Urlaub\, Feiertag oder Klausur\, entfällt ohne Ersatz)\nEntf
+ ällt in der Serie (Urlaub\, Feiertag\, Klausur oder verschoben): Do 19.08
+ .\, Do 18.11.\nHintergrund: Fester Schutzslot für kurzfristige Gremienbel
+ ange\, 3. Donnerstag\, 16:00–17:30.\nRegel: Schutzslot für kurzfristige
+  Gremienbelange.\nErlaubte Wochentage: Do
+CATEGORIES:Gremium / Puffer,GFK2027
+X-GF-SERIE:pufferslot
+X-GF-ID:ev534
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev218@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270126T090000
+DTEND;TZID=Europe/Berlin:20270126T100000
+SUMMARY:Wirtschaftsausschuss SBO
+RRULE:FREQ=MONTHLY;INTERVAL=1;BYDAY=4TU;COUNT=12
+EXDATE;TZID=Europe/Berlin:20270727T090000,20271026T090000
+DESCRIPTION:SERIE (als Wiederholung angelegt\, 10 von 10 Terminen 2027): je
+ den 4. Dienstag im Monat\, in jedem Monat außer Jul\, Okt (Urlaub\, Feier
+ tag oder Klausur\, entfällt ohne Ersatz)\nEntfällt in der Serie (Urlaub\
+ , Feiertag\, Klausur oder verschoben): Di 27.07.\, Di 26.10.\nHintergrund:
+  Monatlich\, 4. Dienstag\, 1 Std.\, 09:00–10:00 Uhr\, danach 30 Min. Rü
+ ckfahrtpuffer (Modell A1).\nRegel: 4. Dienstag\, 09:00–10:00 (1 Std.)\, 
+ danach 30 Min. Rückfahrtpuffer (Modell A1).\nErlaubte Wochentage: Di\nFes
+ tes Zeitfenster: 09:00 – 10:00\nDanach 30 Min. Puffer einplanen (kein Te
+ rmin direkt im Anschluss).\nKommunikationsmatrix Nr. 33 „Wirtschaftsauss
+ chuss SBO“: abweichend (Dauer: Matrix 2 Std. (monatlich) / 3 Std. (zweim
+ onatlich)\, Kalender 1 Std.).
+LOCATION:SBO Sommerdelle
+CATEGORIES:Gremium / Puffer,GFK2027
+X-GF-SERIE:wirtschaftsausschuss
+X-GF-ID:ev218
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev236@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270126T103000
+DTEND;TZID=Europe/Berlin:20270126T112000
+SUMMARY:JF Malcher (Bau)
+RRULE:FREQ=MONTHLY;INTERVAL=1;BYDAY=4TU;COUNT=12
+EXDATE;TZID=Europe/Berlin:20270727T103000,20271026T103000
+DESCRIPTION:SERIE (als Wiederholung angelegt\, 10 von 10 Terminen 2027): je
+ den 4. Dienstag im Monat\, in jedem Monat außer Jul\, Okt (Urlaub\, Feier
+ tag oder Klausur\, entfällt ohne Ersatz)\nEntfällt in der Serie (Urlaub\
+ , Feiertag\, Klausur oder verschoben): Di 27.07.\, Di 26.10.\nHintergrund:
+  Monatlicher Jour fixe\, 50 Min. Träger: LeWo. Slotzuordnung = Arbeitsann
+ ahme.\nRegel: Dienstag = JF-Tag (Arbeitsannahme Slotverteilung).\nErlaubte
+  Wochentage: Di\nARBEITSANNAHME: Slot oder Wochentag noch nicht bestätigt
+ .
+LOCATION:LeWo
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:partner-JF Malcher (Bau)
+X-GF-ID:ev236
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev237@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270126T113000
+DTEND;TZID=Europe/Berlin:20270126T122000
+SUMMARY:JF Sonnenschein (Immobilien)
+RRULE:FREQ=MONTHLY;INTERVAL=1;BYDAY=4TU;COUNT=12
+EXDATE;TZID=Europe/Berlin:20270727T113000,20271026T113000
+DESCRIPTION:SERIE (als Wiederholung angelegt\, 10 von 10 Terminen 2027): je
+ den 4. Dienstag im Monat\, in jedem Monat außer Jul\, Okt (Urlaub\, Feier
+ tag oder Klausur\, entfällt ohne Ersatz)\nEntfällt in der Serie (Urlaub\
+ , Feiertag\, Klausur oder verschoben): Di 27.07.\, Di 26.10.\nHintergrund:
+  Monatlicher Jour fixe\, 50 Min. Träger: LeWo. Slotzuordnung = Arbeitsann
+ ahme.\nRegel: Dienstag = JF-Tag (Arbeitsannahme Slotverteilung).\nErlaubte
+  Wochentage: Di\nKommunikationsmatrix Nr. 16 „JF Immobilienverwaltung“
+ : zu klären (Dauer: Matrix 1 Std.\, Kalender 50 Min.\; Rhythmus: Matrix q
+ uartalsweise\, Kalender monatlich\; Zuordnung unsicher: Der Kalender führ
+ t „JF Sonnenschein (Immobilien)“ als GF-Termin).\nARBEITSANNAHME: Slot
+  oder Wochentag noch nicht bestätigt.
+LOCATION:LeWo
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:partner-JF Sonnenschein (Immobilien)
+X-GF-ID:ev237
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev238@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270126T123000
+DTEND;TZID=Europe/Berlin:20270126T132000
+SUMMARY:JF Bradtke
+RRULE:FREQ=MONTHLY;INTERVAL=1;BYDAY=4TU;COUNT=12
+EXDATE;TZID=Europe/Berlin:20270727T123000,20271026T123000
+DESCRIPTION:SERIE (als Wiederholung angelegt\, 10 von 10 Terminen 2027): je
+ den 4. Dienstag im Monat\, in jedem Monat außer Jul\, Okt (Urlaub\, Feier
+ tag oder Klausur\, entfällt ohne Ersatz)\nEntfällt in der Serie (Urlaub\
+ , Feiertag\, Klausur oder verschoben): Di 27.07.\, Di 26.10.\nHintergrund:
+  Monatlicher Jour fixe GBL\, 50 Min. Di-Mittagsband.\nRegel: GBL-JF liegen
+  auf dem Dienstag-Mittagsband.\nErlaubte Wochentage: Di\nKommunikationsmat
+ rix Nr. 2 „Jour fixe GBL“: kongruent.\nARBEITSANNAHME: Slot oder Woche
+ ntag noch nicht bestätigt.
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:gbl-JF Bradtke
+X-GF-ID:ev238
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev239@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270126T133000
+DTEND;TZID=Europe/Berlin:20270126T142000
+SUMMARY:JF Eull
+RRULE:FREQ=MONTHLY;INTERVAL=1;BYDAY=4TU;COUNT=12
+EXDATE;TZID=Europe/Berlin:20270727T133000,20271026T133000
+DESCRIPTION:SERIE (als Wiederholung angelegt\, 10 von 10 Terminen 2027): je
+ den 4. Dienstag im Monat\, in jedem Monat außer Jul\, Okt (Urlaub\, Feier
+ tag oder Klausur\, entfällt ohne Ersatz)\nEntfällt in der Serie (Urlaub\
+ , Feiertag\, Klausur oder verschoben): Di 27.07.\, Di 26.10.\nHintergrund:
+  Monatlicher Jour fixe GBL\, 50 Min. Di-Mittagsband.\nRegel: GBL-JF liegen
+  auf dem Dienstag-Mittagsband.\nErlaubte Wochentage: Di\nKommunikationsmat
+ rix Nr. 2 „Jour fixe GBL“: kongruent.\nARBEITSANNAHME: Slot oder Woche
+ ntag noch nicht bestätigt.
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:gbl-JF Eull
+X-GF-ID:ev239
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev235@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270126T170000
+DTEND;TZID=Europe/Berlin:20270126T175000
+SUMMARY:JF QM & Regulatorik
+DESCRIPTION:Reihe: etwa alle 6 bis 8 Wochen\, jeweils Dienstag (Rhythmus la
+ ut Regel: alle 6-8 Wochen). Die Termine liegen wegen Urlaub\, Feiertag ode
+ r Klausur teils versetzt\, bitte nach der Terminliste anlegen. (7 Termine 
+ 2027\, Einzeltermine)\nHintergrund: Referat QM & Regulatorik\, alle 6–8 
+ Wochen\, 50 Min.\nErlaubte Wochentage: Di\nKommunikationsmatrix Nr. 3b „
+ Jour fixe Referat QM und Regulatorik“: kongruent.
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:jf-qm
+X-GF-ID:ev235
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev529@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270128T090000
+DTEND;TZID=Europe/Berlin:20270128T093000
+SUMMARY:Anreise Steuerkreis-Tag
+RRULE:FREQ=MONTHLY;INTERVAL=1;BYDAY=4TH;COUNT=12
+EXDATE;TZID=Europe/Berlin:20270527T090000,20271028T090000
+DESCRIPTION:SERIE (als Wiederholung angelegt\, 10 von 14 Terminen 2027\, 4 
+ weitere als Einzeltermine): Steht immer am Tag der Steuerkreise\, direkt v
+ or bzw. nach dem Steuerkreis-Block. Zusammen mit dem Steuerkreis anlegen (
+ siehe Terminliste).\nEntfällt in der Serie (Urlaub\, Feiertag\, Klausur o
+ der verschoben): Do 27.05.\, Do 28.10.\nHintergrund: Anreise zum Steuerkre
+ is\, nur vor dem ersten Termin des Tages (kein Westring).\nRegel: Anreisep
+ uffer nur vor dem ersten Steuerkreis des Tages (Steuerkreise finden nicht 
+ am Westring statt).
+LOCATION:unterwegs
+CATEGORIES:Fokuszeit,GFK2027
+X-GF-SERIE:sk-anreise
+X-GF-ID:ev529
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev530@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270128T093000
+DTEND;TZID=Europe/Berlin:20270128T113000
+SUMMARY:Steuerkreis Wirtschaft & Finanzen
+RRULE:FREQ=MONTHLY;INTERVAL=1;BYDAY=4TH;COUNT=12
+EXDATE;TZID=Europe/Berlin:20270527T093000,20271028T093000
+DESCRIPTION:SERIE (als Wiederholung angelegt\, 10 von 10 Terminen 2027): je
+ den 4. Donnerstag im Monat\, in jedem Monat außer Mai\, Okt (Urlaub\, Fei
+ ertag oder Klausur\, entfällt ohne Ersatz)\nEntfällt in der Serie (Urlau
+ b\, Feiertag\, Klausur oder verschoben): Do 27.05.\, Do 28.10.\nHintergrun
+ d: Monatlich\, 2 Std. – GF dabei\, außer Haus.\nRegel: Teil 1 Doppelpac
+ k in derselben Einrichtung\, GF dabei.\nErlaubte Wochentage: Do\nKommunika
+ tionsmatrix Nr. 15 „Steuerkreis Wirtschaft & Finanzen“: abweichend (Da
+ uer: Matrix 3 Std.\, Kalender 2 Std.).
+LOCATION:Einrichtung (Vor-Ort)
+CATEGORIES:Steuerkreis,GFK2027
+X-GF-SERIE:sk-wifi
+X-GF-ID:ev530
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev531@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270128T114500
+DTEND;TZID=Europe/Berlin:20270128T134500
+SUMMARY:Steuerkreis QM & Regulatorik
+RRULE:FREQ=MONTHLY;INTERVAL=2;BYDAY=4TH;COUNT=6
+EXDATE;TZID=Europe/Berlin:20270527T114500
+DESCRIPTION:SERIE (als Wiederholung angelegt\, 5 von 5 Terminen 2027): jede
+ n 4. Donnerstag im Monat\, in den Monaten Jan\, Mär\, Jul\, Sep\, Nov\nEn
+ tfällt in der Serie (Urlaub\, Feiertag\, Klausur oder verschoben): Do 27.
+ 05.\nHintergrund: Alle 2 Monate\, 2 Std. – direkt im Anschluss (15 Min. 
+ Verabschieden)\, gleiche Einrichtung\, GF dabei.\nRegel: Teil 2 Doppelpack
+  direkt im Anschluss\, gleiche Einrichtung.\nErlaubte Wochentage: Do\nKomm
+ unikationsmatrix Nr. 21 „Steuerkreis Regulatorik-QM“: abweichend (Daue
+ r: Matrix 3 Std.\, Kalender 2 Std.).
+LOCATION:Einrichtung (Vor-Ort)
+CATEGORIES:Steuerkreis,GFK2027
+X-GF-SERIE:sk-qm
+X-GF-ID:ev531
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev532@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270128T134500
+DTEND;TZID=Europe/Berlin:20270128T154500
+SUMMARY:Hospitation vor Ort
+DESCRIPTION:Reihe: Steht immer am Tag der Steuerkreise\, direkt vor bzw. na
+ ch dem Steuerkreis-Block. Zusammen mit dem Steuerkreis anlegen (siehe Term
+ inliste). (14 Termine 2027\, Einzeltermine)\nHintergrund: Hospitationsbloc
+ ker\, 2 Std.\, direkt im Anschluss: der GF bleibt ggf. vor Ort und schaut 
+ sich um.\nRegel: Direkt im Anschluss an den Steuerkreis-Block: der GF blei
+ bt vor Ort und schaut sich um.
+LOCATION:Einrichtung (Vor-Ort)
+CATEGORIES:Fokuszeit,GFK2027
+X-GF-SERIE:sk-hospitation
+X-GF-ID:ev532
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev13@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270201T090000
+DTEND;TZID=Europe/Berlin:20270201T120000
+SUMMARY:Steuerungsgruppe Personal
+DESCRIPTION:Reihe: kein festes Wochenmuster (Rhythmus laut Regel: quartalsw
+ eise): bitte jeden Termin einzeln nach der Terminliste anlegen (4 Termine 
+ 2027\, Einzeltermine)\nHintergrund: Quartalsweise. Bochum\, Westring 26\, 
+ Raum 209. Einladung von Sven Pernak.\nRegel: Quartalsweise\, Westring 26\,
+  Raum 209 (Einladung Sven Pernak).\nErlaubte Wochentage: Mo\, Do
+LOCATION:Westring 26\, Raum 209
+CATEGORIES:Steuerkreis,GFK2027
+X-GF-SERIE:steuerungsgruppe-personal
+X-GF-ID:ev13
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev197@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270201T140000
+DTEND;TZID=Europe/Berlin:20270201T160000
+SUMMARY:Leitungskonferenz Sozialwirtschaft
+RRULE:FREQ=MONTHLY;INTERVAL=1;BYDAY=1MO;COUNT=11
+EXDATE;TZID=Europe/Berlin:20270503T140000,20271101T140000
+DESCRIPTION:SERIE (als Wiederholung angelegt\, 9 von 10 Terminen 2027\, 1 w
+ eitere als Einzeltermine): jeden 1. Montag im Monat\, in jedem Monat auße
+ r Jan\, Nov (Urlaub\, Feiertag oder Klausur\, entfällt ohne Ersatz)\nEntf
+ ällt in der Serie (Urlaub\, Feiertag\, Klausur oder verschoben): Mo 03.05
+ .\, Mo 01.11.\nHintergrund: Monatlicher Montag-Anker (Diakonie Ruhr)\, 1. 
+ Montag\, 2 Std.\nRegel: 1. Montag\, 2 Std. (ehemals Betriebsleitungskonfer
+ enz).\nErlaubte Wochentage: Mo
+LOCATION:Westring 26
+CATEGORIES:Gremium / Puffer,GFK2027
+X-GF-SERIE:lk-sozialwirtschaft
+X-GF-ID:ev197
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev241@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270202T090000
+DTEND;TZID=Europe/Berlin:20270202T095000
+SUMMARY:JF Zittlau
+RRULE:FREQ=MONTHLY;INTERVAL=1;BYDAY=1TU;COUNT=11
+EXDATE;TZID=Europe/Berlin:20270504T090000,20271102T090000
+DESCRIPTION:SERIE (als Wiederholung angelegt\, 9 von 10 Terminen 2027\, 1 w
+ eitere als Einzeltermine): jeden 1. Dienstag im Monat\, in jedem Monat au
+ ßer Jan\, Nov (Urlaub\, Feiertag oder Klausur\, entfällt ohne Ersatz)\nE
+ ntfällt in der Serie (Urlaub\, Feiertag\, Klausur oder verschoben): Di 04
+ .05.\, Di 02.11.\nHintergrund: Monatlicher Jour fixe\, 50 Min. Träger: In
+ nere Mission. Slotzuordnung = Arbeitsannahme.\nRegel: Dienstag = JF-Tag (A
+ rbeitsannahme Slotverteilung).\nErlaubte Wochentage: Di\nARBEITSANNAHME: S
+ lot oder Wochentag noch nicht bestätigt.
+LOCATION:Innere Mission
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:partner-JF Zittlau
+X-GF-ID:ev241
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev242@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270202T100000
+DTEND;TZID=Europe/Berlin:20270202T105000
+SUMMARY:JF Konter
+RRULE:FREQ=MONTHLY;INTERVAL=1;BYDAY=1TU;COUNT=11
+EXDATE;TZID=Europe/Berlin:20270504T100000,20271102T100000
+DESCRIPTION:SERIE (als Wiederholung angelegt\, 9 von 10 Terminen 2027\, 1 w
+ eitere als Einzeltermine): jeden 1. Dienstag im Monat\, in jedem Monat au
+ ßer Jan\, Nov (Urlaub\, Feiertag oder Klausur\, entfällt ohne Ersatz)\nE
+ ntfällt in der Serie (Urlaub\, Feiertag\, Klausur oder verschoben): Di 04
+ .05.\, Di 02.11.\nHintergrund: Monatlicher Jour fixe\, 50 Min. Träger: In
+ nere Mission. Slotzuordnung = Arbeitsannahme.\nRegel: Dienstag = JF-Tag (A
+ rbeitsannahme Slotverteilung).\nErlaubte Wochentage: Di\nARBEITSANNAHME: S
+ lot oder Wochentag noch nicht bestätigt.
+LOCATION:Innere Mission
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:partner-JF Konter
+X-GF-ID:ev242
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev243@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270202T110000
+DTEND;TZID=Europe/Berlin:20270202T115000
+SUMMARY:JF Rojano-Marin
+RRULE:FREQ=MONTHLY;INTERVAL=1;BYDAY=1TU;COUNT=11
+EXDATE;TZID=Europe/Berlin:20270504T110000,20271102T110000
+DESCRIPTION:SERIE (als Wiederholung angelegt\, 9 von 10 Terminen 2027\, 1 w
+ eitere als Einzeltermine): jeden 1. Dienstag im Monat\, in jedem Monat au
+ ßer Jan\, Nov (Urlaub\, Feiertag oder Klausur\, entfällt ohne Ersatz)\nE
+ ntfällt in der Serie (Urlaub\, Feiertag\, Klausur oder verschoben): Di 04
+ .05.\, Di 02.11.\nHintergrund: Monatlicher Jour fixe\, 50 Min. Träger: In
+ nere Mission. Slotzuordnung = Arbeitsannahme.\nRegel: Dienstag = JF-Tag (A
+ rbeitsannahme Slotverteilung).\nErlaubte Wochentage: Di\nARBEITSANNAHME: S
+ lot oder Wochentag noch nicht bestätigt.
+LOCATION:Innere Mission
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:partner-JF Rojano-Marin
+X-GF-ID:ev243
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev244@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270202T120000
+DTEND;TZID=Europe/Berlin:20270202T125000
+SUMMARY:JF Röper
+RRULE:FREQ=MONTHLY;INTERVAL=1;BYDAY=1TU;COUNT=11
+EXDATE;TZID=Europe/Berlin:20270504T120000,20271102T120000
+DESCRIPTION:SERIE (als Wiederholung angelegt\, 9 von 10 Terminen 2027\, 1 w
+ eitere als Einzeltermine): jeden 1. Dienstag im Monat\, in jedem Monat au
+ ßer Jan\, Nov (Urlaub\, Feiertag oder Klausur\, entfällt ohne Ersatz)\nE
+ ntfällt in der Serie (Urlaub\, Feiertag\, Klausur oder verschoben): Di 04
+ .05.\, Di 02.11.\nHintergrund: Monatlicher Jour fixe\, 50 Min. Träger: In
+ nere Mission. Slotzuordnung = Arbeitsannahme.\nRegel: Dienstag = JF-Tag (A
+ rbeitsannahme Slotverteilung).\nErlaubte Wochentage: Di\nARBEITSANNAHME: S
+ lot oder Wochentag noch nicht bestätigt.
+LOCATION:Innere Mission
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:partner-JF Röper
+X-GF-ID:ev244
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev245@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270202T130000
+DTEND;TZID=Europe/Berlin:20270202T135000
+SUMMARY:JF Melzig
+RRULE:FREQ=MONTHLY;INTERVAL=1;BYDAY=1TU;COUNT=11
+EXDATE;TZID=Europe/Berlin:20270504T130000,20271102T130000
+DESCRIPTION:SERIE (als Wiederholung angelegt\, 9 von 10 Terminen 2027\, 1 w
+ eitere als Einzeltermine): jeden 1. Dienstag im Monat\, in jedem Monat au
+ ßer Jan\, Nov (Urlaub\, Feiertag oder Klausur\, entfällt ohne Ersatz)\nE
+ ntfällt in der Serie (Urlaub\, Feiertag\, Klausur oder verschoben): Di 04
+ .05.\, Di 02.11.\nHintergrund: Monatlicher Jour fixe GBL\, 50 Min. Di-Mitt
+ agsband.\nRegel: GBL-JF liegen auf dem Dienstag-Mittagsband.\nErlaubte Woc
+ hentage: Di\nKommunikationsmatrix Nr. 2 „Jour fixe GBL“: kongruent.\nA
+ RBEITSANNAHME: Slot oder Wochentag noch nicht bestätigt.
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:gbl-JF Melzig
+X-GF-ID:ev245
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev246@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270202T140000
+DTEND;TZID=Europe/Berlin:20270202T145000
+SUMMARY:JF Frerich/Culina
+RRULE:FREQ=MONTHLY;INTERVAL=1;BYDAY=1TU;COUNT=11
+EXDATE;TZID=Europe/Berlin:20271102T140000
+DESCRIPTION:SERIE (als Wiederholung angelegt\, 10 von 10 Terminen 2027): je
+ den 1. Dienstag im Monat\, in jedem Monat außer Jan\, Nov (Urlaub\, Feier
+ tag oder Klausur\, entfällt ohne Ersatz)\nEntfällt in der Serie (Urlaub\
+ , Feiertag\, Klausur oder verschoben): Di 02.11.\nHintergrund: Monatlicher
+  Jour fixe GBL / Tochtergesellschaft Culina\, 50 Min. Di-Mittagsband (Takt
+ : monatlich als Obergrenze).\nRegel: GBL-JF liegen auf dem Dienstag-Mittag
+ sband.\nErlaubte Wochentage: Di\nKommunikationsmatrix Nr. 29 „JF Culina\
+ , MiR\, DfM\, ApD“: zu klären (Dauer: Matrix je 1\,5 Std.\, Kalender 50
+  Min.\; Zuordnung unsicher: DfM und ApD sind im Kalender nicht eindeutig z
+ u finden).\nARBEITSANNAHME: Slot oder Wochentag noch nicht bestätigt.
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:gbl-JF Frerich/Culina
+X-GF-ID:ev246
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev247@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270202T150000
+DTEND;TZID=Europe/Berlin:20270202T155000
+SUMMARY:JF Wirtschaft & Finanzen
+RRULE:FREQ=MONTHLY;INTERVAL=1;BYDAY=1TU;COUNT=11
+EXDATE;TZID=Europe/Berlin:20271102T150000
+DESCRIPTION:SERIE (als Wiederholung angelegt\, 10 von 10 Terminen 2027): je
+ den 1. Dienstag im Monat\, in jedem Monat außer Jan\, Nov (Urlaub\, Feier
+ tag oder Klausur\, entfällt ohne Ersatz)\nEntfällt in der Serie (Urlaub\
+ , Feiertag\, Klausur oder verschoben): Di 02.11.\nHintergrund: Monatlicher
+  Jour fixe Referat Wirtschaft & Finanzen\, 50 Min. Di-Mittagsband.\nErlaub
+ te Wochentage: Di\nKommunikationsmatrix Nr. 3c „Jour fixe Wirtschaft und
+  Finanzen“: kongruent.\nARBEITSANNAHME: Slot oder Wochentag noch nicht b
+ estätigt.
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:referat-JF Wirtschaft & Finanzen
+X-GF-ID:ev247
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev520@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270203T170000
+DTEND;TZID=Europe/Berlin:20270203T183000
+SUMMARY:AG Wohlfahrt Bochum
+DESCRIPTION:Reihe: Platzhalter\, Termine noch nicht bestätigt (Rhythmus la
+ ut Regel: 8x jährlich). Bitte jeden Termin einzeln und vorläufig nach de
+ r Terminliste anlegen. (8 Termine 2027\, Einzeltermine)\nHintergrund: Plat
+ zhalter: 8×/Jahr\, ab 17 Uhr\, 90 Min.\, extern – genaue Termine noch o
+ ffen.\nRegel: 8× im Jahr\, ab 17 Uhr\, 90 Min.\nErlaubte Wochentage: Mi\n
+ PLATZHALTER: Termin noch nicht bestätigt\, mit dem Sekretariat abstimmen.
+LOCATION:extern
+CATEGORIES:Gremium / Puffer,GFK2027
+X-GF-SERIE:ag-wohlfahrt
+X-GF-ID:ev520
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev7@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270204T090000
+DTEND;TZID=Europe/Berlin:20270204T180000
+SUMMARY:Führung im Dialog (Tag 1)
+DESCRIPTION:Reihe: Einzeltermin\, keine Wiederholung\nHintergrund: Jährlic
+ h Feb/März\, 1\,5 Tage Do–Fr\, Gesamtführung (Datum lt. Arbeitsdatei 2
+ 7.09.).\nErlaubte Wochentage: Do\, Fr\nKommunikationsmatrix Nr. 10 „Füh
+ rung im Dialog: Strategie und Zusammenarbeit (stationär)“: kongruent.
+CATEGORIES:Klausur,GFK2027
+X-GF-SERIE:fuehrung-dialog
+X-GF-ID:ev7
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev8@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270205T090000
+DTEND;TZID=Europe/Berlin:20270205T130000
+SUMMARY:Führung im Dialog (Tag 2)
+DESCRIPTION:Reihe: Einzeltermin\, keine Wiederholung\nHintergrund: Fortsetz
+ ung bis Freitagmittag.\nErlaubte Wochentage: Do\, Fr\nKommunikationsmatrix
+  Nr. 10 „Führung im Dialog: Strategie und Zusammenarbeit (stationär)
+ “: kongruent.
+CATEGORIES:Klausur,GFK2027
+X-GF-SERIE:fuehrung-dialog
+X-GF-ID:ev8
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev511@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270210T090000
+DTEND;TZID=Europe/Berlin:20270210T120000
+SUMMARY:Vorstandssitzung IM
+DESCRIPTION:Reihe: Platzhalter\, Termine noch nicht bestätigt (Rhythmus la
+ ut Regel: unregelmäßig). Bitte jeden Termin einzeln und vorläufig nach 
+ der Terminliste anlegen. (5 Termine 2027\, Einzeltermine)\nHintergrund: Pl
+ atzhalter: ca. 4–5×/Jahr\, 3 Std.\, extern – genaue Termine noch offe
+ n.\nErlaubte Wochentage: Mi\nPLATZHALTER: Termin noch nicht bestätigt\, m
+ it dem Sekretariat abstimmen.
+LOCATION:Innere Mission
+CATEGORIES:Gremium / Puffer,GFK2027
+X-GF-SERIE:vorstand-im
+X-GF-ID:ev511
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev583@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270211T090000
+DTEND;TZID=Europe/Berlin:20270211T120000
+SUMMARY:GVV DADuL
+DESCRIPTION:Reihe: Platzhalter\, Termine noch nicht bestätigt (Rhythmus la
+ ut Regel: 2-3x jährlich). Bitte jeden Termin einzeln und vorläufig nach 
+ der Terminliste anlegen. (2 Termine 2027\, Einzeltermine)\nHintergrund: Pl
+ atzhalter: Gesellschafterversammlung DADuL\, 2×/Jahr\, 3 Std.\, Termin no
+ ch offen.\nErlaubte Wochentage: Do\nPLATZHALTER: Termin noch nicht bestät
+ igt\, mit dem Sekretariat abstimmen.
+CATEGORIES:Gremium / Puffer,GFK2027
+X-GF-SERIE:gvv-dadul
+X-GF-ID:ev583
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev587@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270218T100000
+DTEND;TZID=Europe/Berlin:20270218T120000
+SUMMARY:AG DADuL (Back\, Kirchhoff)
+RRULE:FREQ=MONTHLY;INTERVAL=4;BYDAY=3TH;COUNT=3
+DESCRIPTION:SERIE (als Wiederholung angelegt\, 3 von 3 Terminen 2027): Plat
+ zhalter\, Termine noch nicht bestätigt (Rhythmus laut Regel: 2-3x jährli
+ ch). Bitte jeden Termin einzeln und vorläufig nach der Terminliste anlege
+ n.\nHintergrund: Platzhalter: 3×/Jahr\, 2 Std.\, Termin noch offen.\nErla
+ ubte Wochentage: Do\nPLATZHALTER: Termin noch nicht bestätigt\, mit dem S
+ ekretariat abstimmen.
+CATEGORIES:Gremium / Puffer,GFK2027
+X-GF-SERIE:ag-dadul
+X-GF-ID:ev587
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev537@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270225T113000
+DTEND;TZID=Europe/Berlin:20270225T133000
+SUMMARY:Hospitation vor Ort
+DESCRIPTION:Reihe: Steht immer am Tag der Steuerkreise\, direkt vor bzw. na
+ ch dem Steuerkreis-Block. Zusammen mit dem Steuerkreis anlegen (siehe Term
+ inliste). (14 Termine 2027\, Einzeltermine)\nHintergrund: Hospitationsbloc
+ ker\, 2 Std.\, direkt im Anschluss: der GF bleibt ggf. vor Ort und schaut 
+ sich um.\nRegel: Direkt im Anschluss an den Steuerkreis-Block: der GF blei
+ bt vor Ort und schaut sich um.
+LOCATION:Einrichtung (Vor-Ort)
+CATEGORIES:Fokuszeit,GFK2027
+X-GF-SERIE:sk-hospitation
+X-GF-ID:ev537
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev265@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270302T163000
+DTEND;TZID=Europe/Berlin:20270302T172000
+SUMMARY:JF Personal
+DESCRIPTION:Reihe: etwa alle 7 bis 8 Wochen\, jeweils Dienstag (Rhythmus la
+ ut Regel: alle 6-8 Wochen). Die Termine liegen wegen Urlaub\, Feiertag ode
+ r Klausur teils versetzt\, bitte nach der Terminliste anlegen. (7 Termine 
+ 2027\, Einzeltermine)\nHintergrund: Referat Personal\, 50 Min. – Teil 1 
+ von 3 des unteilbaren 75-Min.-Blocks (Regel 3).\nRegel: Regeln 2+3: Mala-T
+ eilslot im Block\, Block nicht trennbar.\nErlaubte Wochentage: Di\nBlock n
+ icht trennbar: 50 Min. Referat + 20 Min. Poolspringer Frau Mala + 5 Min. W
+ echselpuffer\nKommunikationsmatrix Nr. 3a „Jour fixe Referat Personal“
+ : kongruent.
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:jf-personal
+X-GF-ID:ev265
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev266@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270302T172000
+DTEND;TZID=Europe/Berlin:20270302T174000
+SUMMARY:JF Personal – Poolspringer-Slot Frau Mala
+DESCRIPTION:Reihe: etwa alle 7 bis 8 Wochen\, jeweils Dienstag (Rhythmus la
+ ut Regel: alle 6-8 Wochen). Die Termine liegen wegen Urlaub\, Feiertag ode
+ r Klausur teils versetzt\, bitte nach der Terminliste anlegen. (7 Termine 
+ 2027\, Einzeltermine)\nHintergrund: Teilslot für Frau Mala innerhalb JF P
+ ersonal\, 20 Min. – Teil 2 von 3 (Regel 2: kein eigener Termin).\nRegel:
+  Regeln 2+3: Mala-Teilslot im Block\, Block nicht trennbar.\nErlaubte Woch
+ entage: Di\nBlock nicht trennbar: 50 Min. Referat + 20 Min. Poolspringer F
+ rau Mala + 5 Min. Wechselpuffer\nKommunikationsmatrix Nr. 3a „Jour fixe 
+ Referat Personal“: kongruent.
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:jf-personal
+X-GF-ID:ev266
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev267@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270302T174000
+DTEND;TZID=Europe/Berlin:20270302T174500
+SUMMARY:JF Personal – Wechselpuffer
+DESCRIPTION:Reihe: etwa alle 7 bis 8 Wochen\, jeweils Dienstag (Rhythmus la
+ ut Regel: alle 6-8 Wochen). Die Termine liegen wegen Urlaub\, Feiertag ode
+ r Klausur teils versetzt\, bitte nach der Terminliste anlegen. (7 Termine 
+ 2027\, Einzeltermine)\nHintergrund: Wechselpuffer\, 5 Min. – Teil 3 von 
+ 3\, Block gesamt 75 Min.\nRegel: Regeln 2+3: Mala-Teilslot im Block\, Bloc
+ k nicht trennbar.\nErlaubte Wochentage: Di\nBlock nicht trennbar: 50 Min. 
+ Referat + 20 Min. Poolspringer Frau Mala + 5 Min. Wechselpuffer\nKommunika
+ tionsmatrix Nr. 3a „Jour fixe Referat Personal“: kongruent.
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:jf-personal
+X-GF-ID:ev267
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev521@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270303T170000
+DTEND;TZID=Europe/Berlin:20270303T183000
+SUMMARY:AG Wohlfahrt Bochum
+DESCRIPTION:Reihe: Platzhalter\, Termine noch nicht bestätigt (Rhythmus la
+ ut Regel: 8x jährlich). Bitte jeden Termin einzeln und vorläufig nach de
+ r Terminliste anlegen. (8 Termine 2027\, Einzeltermine)\nHintergrund: Plat
+ zhalter: 8×/Jahr\, ab 17 Uhr\, 90 Min.\, extern – genaue Termine noch o
+ ffen.\nRegel: 8× im Jahr\, ab 17 Uhr\, 90 Min.\nErlaubte Wochentage: Mi\n
+ PLATZHALTER: Termin noch nicht bestätigt\, mit dem Sekretariat abstimmen.
+LOCATION:extern
+CATEGORIES:Gremium / Puffer,GFK2027
+X-GF-SERIE:ag-wohlfahrt
+X-GF-ID:ev521
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev581@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270304T090000
+DTEND;TZID=Europe/Berlin:20270304T120000
+SUMMARY:AR/GV SBO
+DESCRIPTION:Reihe: Platzhalter\, Termine noch nicht bestätigt (Rhythmus la
+ ut Regel: 2-3x jährlich). Bitte jeden Termin einzeln und vorläufig nach 
+ der Terminliste anlegen. (2 Termine 2027\, Einzeltermine)\nHintergrund: Pl
+ atzhalter: 2×/Jahr (nicht quartalsweise)\, Termin noch offen.\nErlaubte W
+ ochentage: Do\nPLATZHALTER: Termin noch nicht bestätigt\, mit dem Sekreta
+ riat abstimmen.
+LOCATION:SBO Sommerdelle
+CATEGORIES:Gremium / Puffer,GFK2027
+X-GF-SERIE:ar-gv-sbo
+X-GF-ID:ev581
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev21@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270306T090000
+DTEND;TZID=Europe/Berlin:20270306T120000
+SUMMARY:Steuerungsgruppe UK DR
+DESCRIPTION:Reihe: kein festes Wochenmuster (Rhythmus laut Regel: quartalsw
+ eise): bitte jeden Termin einzeln nach der Terminliste anlegen (4 Termine 
+ 2027\, Einzeltermine)\nHintergrund: Quartalsweise. Bochum\, Westring 26\, 
+ Raum 209. Einladung von Sven Pernak.\nRegel: Quartalsweise\, Westring 26\,
+  Raum 209 (Einladung Sven Pernak).\nErlaubte Wochentage: Mo\, Mi\, Do
+LOCATION:Westring 26\, Raum 209
+CATEGORIES:Steuerkreis,GFK2027
+X-GF-SERIE:steuerungsgruppe-uk-dr
+X-GF-ID:ev21
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev17@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270308T130000
+DTEND;TZID=Europe/Berlin:20270308T140000
+SUMMARY:Steuerungsgruppe Digitalisierung DR
+DESCRIPTION:Einzeltermin der Reihe „Steuerungsgruppe Digitalisierung DR
+ “: verschoben bzw. außerhalb des Serienmusters (siehe Hintergrund).\nHi
+ ntergrund: Quartalsweise. Bochum\, Westring 26\, Raum 209. Einladung von J
+ ens Koch.\nRegel: Quartalsweise\, montags 13:00–14:00\, Westring 26\, Ra
+ um 209 (Einladung Jens Koch).\nErlaubte Wochentage: Mo
+LOCATION:Westring 26\, Raum 209
+CATEGORIES:Steuerkreis,GFK2027
+X-GF-SERIE:steuerungsgruppe-digitalisierung
+X-GF-ID:ev17
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev506@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270310T090000
+DTEND;TZID=Europe/Berlin:20270310T120000
+SUMMARY:IMK + ASA IM
+DESCRIPTION:Reihe: alle 28 Wochen\, jeweils Mittwoch (2 Termine 2027\, Einz
+ eltermine)\nHintergrund: Innere Mission Konferenz mit ASA IM (Innere Missi
+ on)\, 3 Std.\, extern. Nicht identisch mit dem ASA-Team-Termin.\nRegel: 6 
+ Sitzungen im Jahr\, davon 2 mit ASA IM. Nicht in den NRW-Schulferien.\nErl
+ aubte Wochentage: Mi
+LOCATION:Innere Mission
+CATEGORIES:Gremium / Puffer,GFK2027
+X-GF-SERIE:imk-asa-im
+X-GF-ID:ev506
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev590@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270311T090000
+DTEND;TZID=Europe/Berlin:20270311T110000
+SUMMARY:Leitungskonferenz ambulant
+DESCRIPTION:Reihe: Platzhalter\, Termine noch nicht bestätigt (Rhythmus la
+ ut Regel: offen). Bitte jeden Termin einzeln und vorläufig nach der Termi
+ nliste anlegen. (2 Termine 2027\, Einzeltermine)\nHintergrund: Platzhalter
+ : noch offen lt. Merino-Kesting – 2 Std.\, gemeinsamer Konferenzkopf mit
+  der Leitungskonferenz stationär\, getrennte Fachteile.\nErlaubte Wochent
+ age: Do\nKommunikationsmatrix Nr. 28 „Leitungskonferenz\, ambulant“: k
+ ongruent.\nPLATZHALTER: Termin noch nicht bestätigt\, mit dem Sekretariat
+  abstimmen.
+CATEGORIES:Gremium / Puffer,GFK2027
+X-GF-SERIE:lk-ambulant
+X-GF-ID:ev590
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev591@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270311T110000
+DTEND;TZID=Europe/Berlin:20270311T140000
+SUMMARY:Leitungskonferenz stationär
+DESCRIPTION:Reihe: Platzhalter\, Termine noch nicht bestätigt (Rhythmus la
+ ut Regel: offen). Bitte jeden Termin einzeln und vorläufig nach der Termi
+ nliste anlegen. (2 Termine 2027\, Einzeltermine)\nHintergrund: Platzhalter
+ : noch offen – 3 Std.\, gemeinsamer Konferenzkopf mit der Leitungskonfer
+ enz ambulant\, getrennte Fachteile.\nErlaubte Wochentage: Do\nKommunikatio
+ nsmatrix Nr. 6 „Leitungskonferenz\, stationär“: kongruent.\nPLATZHALT
+ ER: Termin noch nicht bestätigt\, mit dem Sekretariat abstimmen.
+CATEGORIES:Gremium / Puffer,GFK2027
+X-GF-SERIE:lk-stationaer
+X-GF-ID:ev591
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev592@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270311T140000
+DTEND;TZID=Europe/Berlin:20270311T160000
+SUMMARY:Hospitation nach Leitungskonferenz
+DESCRIPTION:Reihe: Steht immer am Tag der Leitungskonferenzen ambulant und 
+ stationär\, direkt im Anschluss. Zusammen mit diesen anlegen (siehe Termi
+ nliste). (2 Termine 2027\, Einzeltermine)\nHintergrund: Hospitationsblocke
+ r\, 2 Std.\, direkt im Anschluss an die Leitungskonferenzen ambulant und s
+ tationär.\nRegel: Hospitationsblocker\, 2 Std.\, direkt nach Leitungskonf
+ erenz ambulant und stationär.
+CATEGORIES:Fokuszeit,GFK2027
+X-GF-SERIE:lk-hospitation
+X-GF-ID:ev592
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev281@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270316T161500
+DTEND;TZID=Europe/Berlin:20270316T175500
+SUMMARY:JF Jahndorf
+DESCRIPTION:Reihe: etwa alle 7 bis 8 Wochen\, jeweils Dienstag (Rhythmus la
+ ut Regel: alle 8 Wochen). Die Termine liegen wegen Urlaub\, Feiertag oder 
+ Klausur teils versetzt\, bitte nach der Terminliste anlegen. (7 Termine 20
+ 27\, Einzeltermine)\nHintergrund: Regel 1: Turnus etwa alle 8 Wochen (nich
+ t monatlich)\, 100 Min. Träger: LeWo.\nRegel: Regel 1: etwa alle 8 Wochen
+  (nicht monatlich)\, 100 Min.\nErlaubte Wochentage: Di
+LOCATION:LeWo
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:jahndorf
+X-GF-ID:ev281
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev516@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270317T170000
+DTEND;TZID=Europe/Berlin:20270317T183000
+SUMMARY:Verwaltungsrat IM
+DESCRIPTION:Reihe: Platzhalter\, Termine noch nicht bestätigt (Rhythmus la
+ ut Regel: 4x jährlich). Bitte jeden Termin einzeln und vorläufig nach de
+ r Terminliste anlegen. (4 Termine 2027\, Einzeltermine)\nHintergrund: Plat
+ zhalter: 4×/Jahr\, mittwochs ab 17 Uhr\, 90 Min.\, extern – genaue Term
+ ine noch offen.\nRegel: 4× im Jahr\, mittwochs ab 17 Uhr\, 90 Min.\nErlau
+ bte Wochentage: Mi\nPLATZHALTER: Termin noch nicht bestätigt\, mit dem Se
+ kretariat abstimmen.
+LOCATION:Innere Mission
+CATEGORIES:Gremium / Puffer,GFK2027
+X-GF-SERIE:verwaltungsrat-im
+X-GF-ID:ev516
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev596@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270318T100000
+DTEND;TZID=Europe/Berlin:20270318T120000
+SUMMARY:ASA (Team-Termin)
+DESCRIPTION:Reihe: Platzhalter\, Termine noch nicht bestätigt (Rhythmus la
+ ut Regel: 2x jährlich). Bitte jeden Termin einzeln und vorläufig nach de
+ r Terminliste anlegen. (2 Termine 2027\, Einzeltermine)\nHintergrund: Plat
+ zhalter: Teamtermin\, 2 Std.\, 2× jährlich – Termin noch offen.\nRegel
+ : Platzhalter: Teamtermin\, 2 Std.\, 2× jährlich.\nPLATZHALTER: Termin n
+ och nicht bestätigt\, mit dem Sekretariat abstimmen.
+LOCATION:Teams
+CATEGORIES:Gremium / Puffer,GFK2027
+X-GF-SERIE:asa
+X-GF-ID:ev596
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev288@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270323T170000
+DTEND;TZID=Europe/Berlin:20270323T175000
+SUMMARY:JF QM & Regulatorik
+DESCRIPTION:Reihe: etwa alle 6 bis 8 Wochen\, jeweils Dienstag (Rhythmus la
+ ut Regel: alle 6-8 Wochen). Die Termine liegen wegen Urlaub\, Feiertag ode
+ r Klausur teils versetzt\, bitte nach der Terminliste anlegen. (7 Termine 
+ 2027\, Einzeltermine)\nHintergrund: Referat QM & Regulatorik\, alle 6–8 
+ Wochen\, 50 Min.\nErlaubte Wochentage: Di\nKommunikationsmatrix Nr. 3b „
+ Jour fixe Referat QM und Regulatorik“: kongruent.
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:jf-qm
+X-GF-ID:ev288
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev542@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270325T134500
+DTEND;TZID=Europe/Berlin:20270325T154500
+SUMMARY:Hospitation vor Ort
+DESCRIPTION:Reihe: Steht immer am Tag der Steuerkreise\, direkt vor bzw. na
+ ch dem Steuerkreis-Block. Zusammen mit dem Steuerkreis anlegen (siehe Term
+ inliste). (14 Termine 2027\, Einzeltermine)\nHintergrund: Hospitationsbloc
+ ker\, 2 Std.\, direkt im Anschluss: der GF bleibt ggf. vor Ort und schaut 
+ sich um.\nRegel: Direkt im Anschluss an den Steuerkreis-Block: der GF blei
+ bt vor Ort und schaut sich um.
+LOCATION:Einrichtung (Vor-Ort)
+CATEGORIES:Fokuszeit,GFK2027
+X-GF-SERIE:sk-hospitation
+X-GF-ID:ev542
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev9@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270408T090000
+DTEND;TZID=Europe/Berlin:20270408T170000
+SUMMARY:Klausur Strategie (Tag 1)
+DESCRIPTION:Reihe: Platzhalter\, Termine noch nicht bestätigt (Rhythmus la
+ ut Regel: halbjährlich). Bitte jeden Termin einzeln und vorläufig nach d
+ er Terminliste anlegen. (2 Termine 2027\, Einzeltermine)\nHintergrund: Pla
+ tzhalter: Halbjahrestakt\, Termin noch offen lt. Merino-Kesting.\nPLATZHAL
+ TER: Termin noch nicht bestätigt\, mit dem Sekretariat abstimmen.
+CATEGORIES:Klausur,GFK2027
+X-GF-SERIE:klausur-strategie
+X-GF-ID:ev9
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev10@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270409T090000
+DTEND;TZID=Europe/Berlin:20270409T130000
+SUMMARY:Klausur Strategie (Tag 2)
+DESCRIPTION:Reihe: Platzhalter\, Termine noch nicht bestätigt (Rhythmus la
+ ut Regel: halbjährlich). Bitte jeden Termin einzeln und vorläufig nach d
+ er Terminliste anlegen. (2 Termine 2027\, Einzeltermine)\nHintergrund: Pla
+ tzhalter: Tag 2 von 2.\nPLATZHALTER: Termin noch nicht bestätigt\, mit de
+ m Sekretariat abstimmen.
+CATEGORIES:Klausur,GFK2027
+X-GF-SERIE:klausur-strategie
+X-GF-ID:ev10
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev585@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270415T090000
+DTEND;TZID=Europe/Berlin:20270415T110000
+SUMMARY:GVV Pflege/DfM/Culina/MiR
+DESCRIPTION:Reihe: Platzhalter\, Termine noch nicht bestätigt (Rhythmus la
+ ut Regel: 2-3x jährlich). Bitte jeden Termin einzeln und vorläufig nach 
+ der Terminliste anlegen. (2 Termine 2027\, Einzeltermine)\nHintergrund: Pl
+ atzhalter: Gesellschafterversammlung Pflege/DfM/Culina/MiR\, 2×/Jahr\, Te
+ rmin noch offen.\nErlaubte Wochentage: Do\nPLATZHALTER: Termin noch nicht 
+ bestätigt\, mit dem Sekretariat abstimmen.
+CATEGORIES:Gremium / Puffer,GFK2027
+X-GF-SERIE:gvv-pflege
+X-GF-ID:ev585
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev307@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270420T163000
+DTEND;TZID=Europe/Berlin:20270420T172000
+SUMMARY:JF Personal
+DESCRIPTION:Reihe: etwa alle 7 bis 8 Wochen\, jeweils Dienstag (Rhythmus la
+ ut Regel: alle 6-8 Wochen). Die Termine liegen wegen Urlaub\, Feiertag ode
+ r Klausur teils versetzt\, bitte nach der Terminliste anlegen. (7 Termine 
+ 2027\, Einzeltermine)\nHintergrund: Referat Personal\, 50 Min. – Teil 1 
+ von 3 des unteilbaren 75-Min.-Blocks (Regel 3).\nRegel: Regeln 2+3: Mala-T
+ eilslot im Block\, Block nicht trennbar.\nErlaubte Wochentage: Di\nBlock n
+ icht trennbar: 50 Min. Referat + 20 Min. Poolspringer Frau Mala + 5 Min. W
+ echselpuffer\nKommunikationsmatrix Nr. 3a „Jour fixe Referat Personal“
+ : kongruent.
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:jf-personal
+X-GF-ID:ev307
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev308@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270420T172000
+DTEND;TZID=Europe/Berlin:20270420T174000
+SUMMARY:JF Personal – Poolspringer-Slot Frau Mala
+DESCRIPTION:Reihe: etwa alle 7 bis 8 Wochen\, jeweils Dienstag (Rhythmus la
+ ut Regel: alle 6-8 Wochen). Die Termine liegen wegen Urlaub\, Feiertag ode
+ r Klausur teils versetzt\, bitte nach der Terminliste anlegen. (7 Termine 
+ 2027\, Einzeltermine)\nHintergrund: Teilslot für Frau Mala innerhalb JF P
+ ersonal\, 20 Min. – Teil 2 von 3 (Regel 2: kein eigener Termin).\nRegel:
+  Regeln 2+3: Mala-Teilslot im Block\, Block nicht trennbar.\nErlaubte Woch
+ entage: Di\nBlock nicht trennbar: 50 Min. Referat + 20 Min. Poolspringer F
+ rau Mala + 5 Min. Wechselpuffer\nKommunikationsmatrix Nr. 3a „Jour fixe 
+ Referat Personal“: kongruent.
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:jf-personal
+X-GF-ID:ev308
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev309@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270420T174000
+DTEND;TZID=Europe/Berlin:20270420T174500
+SUMMARY:JF Personal – Wechselpuffer
+DESCRIPTION:Reihe: etwa alle 7 bis 8 Wochen\, jeweils Dienstag (Rhythmus la
+ ut Regel: alle 6-8 Wochen). Die Termine liegen wegen Urlaub\, Feiertag ode
+ r Klausur teils versetzt\, bitte nach der Terminliste anlegen. (7 Termine 
+ 2027\, Einzeltermine)\nHintergrund: Wechselpuffer\, 5 Min. – Teil 3 von 
+ 3\, Block gesamt 75 Min.\nRegel: Regeln 2+3: Mala-Teilslot im Block\, Bloc
+ k nicht trennbar.\nErlaubte Wochentage: Di\nBlock nicht trennbar: 50 Min. 
+ Referat + 20 Min. Poolspringer Frau Mala + 5 Min. Wechselpuffer\nKommunika
+ tionsmatrix Nr. 3a „Jour fixe Referat Personal“: kongruent.
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:jf-personal
+X-GF-ID:ev309
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev512@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270421T090000
+DTEND;TZID=Europe/Berlin:20270421T120000
+SUMMARY:Vorstandssitzung IM
+DESCRIPTION:Reihe: Platzhalter\, Termine noch nicht bestätigt (Rhythmus la
+ ut Regel: unregelmäßig). Bitte jeden Termin einzeln und vorläufig nach 
+ der Terminliste anlegen. (5 Termine 2027\, Einzeltermine)\nHintergrund: Pl
+ atzhalter: ca. 4–5×/Jahr\, 3 Std.\, extern – genaue Termine noch offe
+ n.\nErlaubte Wochentage: Mi\nPLATZHALTER: Termin noch nicht bestätigt\, m
+ it dem Sekretariat abstimmen.
+LOCATION:Innere Mission
+CATEGORIES:Gremium / Puffer,GFK2027
+X-GF-SERIE:vorstand-im
+X-GF-ID:ev512
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev547@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270422T113000
+DTEND;TZID=Europe/Berlin:20270422T133000
+SUMMARY:Hospitation vor Ort
+DESCRIPTION:Reihe: Steht immer am Tag der Steuerkreise\, direkt vor bzw. na
+ ch dem Steuerkreis-Block. Zusammen mit dem Steuerkreis anlegen (siehe Term
+ inliste). (14 Termine 2027\, Einzeltermine)\nHintergrund: Hospitationsbloc
+ ker\, 2 Std.\, direkt im Anschluss: der GF bleibt ggf. vor Ort und schaut 
+ sich um.\nRegel: Direkt im Anschluss an den Steuerkreis-Block: der GF blei
+ bt vor Ort und schaut sich um.
+LOCATION:Einrichtung (Vor-Ort)
+CATEGORIES:Fokuszeit,GFK2027
+X-GF-SERIE:sk-hospitation
+X-GF-ID:ev547
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev522@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270428T170000
+DTEND;TZID=Europe/Berlin:20270428T183000
+SUMMARY:AG Wohlfahrt Bochum
+DESCRIPTION:Reihe: Platzhalter\, Termine noch nicht bestätigt (Rhythmus la
+ ut Regel: 8x jährlich). Bitte jeden Termin einzeln und vorläufig nach de
+ r Terminliste anlegen. (8 Termine 2027\, Einzeltermine)\nHintergrund: Plat
+ zhalter: 8×/Jahr\, ab 17 Uhr\, 90 Min.\, extern – genaue Termine noch o
+ ffen.\nRegel: 8× im Jahr\, ab 17 Uhr\, 90 Min.\nErlaubte Wochentage: Mi\n
+ PLATZHALTER: Termin noch nicht bestätigt\, mit dem Sekretariat abstimmen.
+LOCATION:extern
+CATEGORIES:Gremium / Puffer,GFK2027
+X-GF-SERIE:ag-wohlfahrt
+X-GF-ID:ev522
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev602@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270429T090000
+DTEND;TZID=Europe/Berlin:20270429T093000
+SUMMARY:Anreise Steuerkreis-Tag
+DESCRIPTION:Einzeltermin der Reihe „Anreise Steuerkreis-Tag“: verschobe
+ n bzw. außerhalb des Serienmusters (siehe Hintergrund).\nHintergrund: Anr
+ eise zum Steuerkreis\, nur vor dem ersten Termin des Tages (kein Westring)
+ .\nRegel: Anreisepuffer nur vor dem ersten Steuerkreis des Tages (Steuerkr
+ eise finden nicht am Westring statt).
+LOCATION:unterwegs
+CATEGORIES:Fokuszeit,GFK2027
+X-GF-SERIE:sk-anreise
+X-GF-ID:ev602
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev603@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270429T093000
+DTEND;TZID=Europe/Berlin:20270429T113000
+SUMMARY:Steuerkreis Personal
+DESCRIPTION:Reihe: etwa alle 10 bis 15 Wochen\, jeweils Donnerstag (Rhythmu
+ s laut Regel: quartalsweise). Die Termine liegen wegen Urlaub\, Feiertag o
+ der Klausur teils versetzt\, bitte nach der Terminliste anlegen. (4 Termin
+ e 2027\, Einzeltermine)\nHintergrund: Quartalsweise\, 2 Std. – GF dabei\
+ , außer Haus.\nRegel: Quartalsweise\, 2 Std.\, zusammen mit dem Steuerkre
+ is Marketing & Vertrieb an einem Termintag (außer Haus).\nErlaubte Wochen
+ tage: Do\nKommunikationsmatrix Nr. 14 „Steuerkreis Personal“: abweiche
+ nd (Dauer: Matrix 3 Std.\, Kalender 2 Std.).
+LOCATION:Einrichtung (Vor-Ort)
+CATEGORIES:Steuerkreis,GFK2027
+X-GF-SERIE:sk-personal
+X-GF-ID:ev603
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev604@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270429T114500
+DTEND;TZID=Europe/Berlin:20270429T134500
+SUMMARY:Steuerkreis Marketing & Vertrieb
+DESCRIPTION:Reihe: etwa alle 10 bis 15 Wochen\, jeweils Donnerstag (Rhythmu
+ s laut Regel: quartalsweise). Die Termine liegen wegen Urlaub\, Feiertag o
+ der Klausur teils versetzt\, bitte nach der Terminliste anlegen. (4 Termin
+ e 2027\, Einzeltermine)\nHintergrund: Quartalsweise\, 2 Std. – direkt im
+  Anschluss (15 Min. Verabschieden)\, GF dabei.\nRegel: Quartalsweise\, 2 S
+ td.\, zusammen mit dem Steuerkreis Personal an einem Termintag (außer Hau
+ s).\nErlaubte Wochentage: Do\nKommunikationsmatrix Nr. 19 „Steuerkreis M
+ arketing und Vertrieb“: abweichend (Dauer: Matrix 3 Std.\, Kalender 2 St
+ d.).
+LOCATION:Einrichtung (Vor-Ort)
+CATEGORIES:Steuerkreis,GFK2027
+X-GF-SERIE:sk-mv
+X-GF-ID:ev604
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev605@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270429T134500
+DTEND;TZID=Europe/Berlin:20270429T154500
+SUMMARY:Hospitation vor Ort
+DESCRIPTION:Reihe: Steht immer am Tag der Steuerkreise\, direkt vor bzw. na
+ ch dem Steuerkreis-Block. Zusammen mit dem Steuerkreis anlegen (siehe Term
+ inliste). (14 Termine 2027\, Einzeltermine)\nHintergrund: Hospitationsbloc
+ ker\, 2 Std.\, direkt im Anschluss: der GF bleibt ggf. vor Ort und schaut 
+ sich um.\nRegel: Direkt im Anschluss an den Steuerkreis-Block: der GF blei
+ bt vor Ort und schaut sich um.
+LOCATION:Einrichtung (Vor-Ort)
+CATEGORIES:Fokuszeit,GFK2027
+X-GF-SERIE:sk-hospitation
+X-GF-ID:ev605
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev1@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270503T090000
+DTEND;TZID=Europe/Berlin:20270503T180000
+SUMMARY:Leistungsklausur Sozialwirtschaft (Tag 1)
+DESCRIPTION:Reihe: alle 27 Wochen\, jeweils Montag (2 Termine 2027\, Einzel
+ termine)\nHintergrund: 2-Tage-Block Mo+Di\, 1. von 2×/Jahr (Datum lt. Arb
+ eitsdatei 27.09.).\nRegel: Regel 4: nie in derselben ISO-Woche wie die GBL
+ -Klausur.\nErlaubte Wochentage: Mo\, Di\nNie in derselben Kalenderwoche wi
+ e: GBL-Klausur
+CATEGORIES:Klausur,GFK2027
+X-GF-SERIE:klausur-sw
+X-GF-ID:ev1
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev2@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270504T090000
+DTEND;TZID=Europe/Berlin:20270504T150000
+SUMMARY:Leistungsklausur Sozialwirtschaft (Tag 2)
+DESCRIPTION:Reihe: alle 27 Wochen\, jeweils Montag (2 Termine 2027\, Einzel
+ termine)\nHintergrund: Fortsetzung Dienstag.\nRegel: Regel 4: nie in derse
+ lben ISO-Woche wie die GBL-Klausur.\nErlaubte Wochentage: Mo\, Di\nNie in 
+ derselben Kalenderwoche wie: GBL-Klausur
+CATEGORIES:Klausur,GFK2027
+X-GF-SERIE:klausur-sw
+X-GF-ID:ev2
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev246@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+RECURRENCE-ID;TZID=Europe/Berlin:20270504T140000
+DTSTART;TZID=Europe/Berlin:20270504T151500
+DTEND;TZID=Europe/Berlin:20270504T160500
+SUMMARY:JF Frerich/Culina
+DESCRIPTION:Dieser Termin weicht in der Uhrzeit vom Serienmuster ab (Ausnah
+ me-Instanz der Serie).\nHintergrund: Monatlicher Jour fixe GBL / Tochterge
+ sellschaft Culina\, 50 Min. Di-Mittagsband (Takt: monatlich als Obergrenze
+ ).\nRegel: GBL-JF liegen auf dem Dienstag-Mittagsband.\nErlaubte Wochentag
+ e: Di\nKommunikationsmatrix Nr. 29 „JF Culina\, MiR\, DfM\, ApD“: zu k
+ lären (Dauer: Matrix je 1\,5 Std.\, Kalender 50 Min.\; Zuordnung unsicher
+ : DfM und ApD sind im Kalender nicht eindeutig zu finden).\nARBEITSANNAHME
+ : Slot oder Wochentag noch nicht bestätigt.
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:gbl-JF Frerich/Culina
+X-GF-ID:ev344
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev247@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+RECURRENCE-ID;TZID=Europe/Berlin:20270504T150000
+DTSTART;TZID=Europe/Berlin:20270504T161500
+DTEND;TZID=Europe/Berlin:20270504T170500
+SUMMARY:JF Wirtschaft & Finanzen
+DESCRIPTION:Dieser Termin weicht in der Uhrzeit vom Serienmuster ab (Ausnah
+ me-Instanz der Serie).\nHintergrund: Monatlicher Jour fixe Referat Wirtsch
+ aft & Finanzen\, 50 Min. Di-Mittagsband.\nErlaubte Wochentage: Di\nKommuni
+ kationsmatrix Nr. 3c „Jour fixe Wirtschaft und Finanzen“: kongruent.\n
+ ARBEITSANNAHME: Slot oder Wochentag noch nicht bestätigt.
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:referat-JF Wirtschaft & Finanzen
+X-GF-ID:ev345
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev203@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270510T140000
+DTEND;TZID=Europe/Berlin:20270510T160000
+SUMMARY:Leitungskonferenz Sozialwirtschaft
+DESCRIPTION:Einzeltermin der Reihe „Leitungskonferenz Sozialwirtschaft“
+ : verschoben bzw. außerhalb des Serienmusters (siehe Hintergrund).\nHinte
+ rgrund: Monatlicher Montag-Anker (Diakonie Ruhr)\, 1. Montag\, 2 Std. Vers
+ choben von Mo 03.05.2027 (Feiertag/Klausur).\nRegel: 1. Montag\, 2 Std. (e
+ hemals Betriebsleitungskonferenz).\nErlaubte Wochentage: Mo
+LOCATION:Westring 26
+CATEGORIES:Gremium / Puffer,GFK2027
+X-GF-SERIE:lk-sozialwirtschaft
+X-GF-ID:ev203
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev343@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270511T150000
+DTEND;TZID=Europe/Berlin:20270511T155000
+SUMMARY:JF Melzig
+DESCRIPTION:Einzeltermin der Reihe „JF GBL (Di-Mittagsband)“: verschobe
+ n bzw. außerhalb des Serienmusters (siehe Hintergrund).\nHintergrund: Mon
+ atlicher Jour fixe GBL\, 50 Min. Di-Mittagsband. Verschoben von Di 04.05.2
+ 027 (Klausur/Auslastung).\nRegel: GBL-JF liegen auf dem Dienstag-Mittagsba
+ nd.\nErlaubte Wochentage: Di\nKommunikationsmatrix Nr. 2 „Jour fixe GBL
+ “: kongruent.\nARBEITSANNAHME: Slot oder Wochentag noch nicht bestätigt
+ .
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:gbl-JF Melzig
+X-GF-ID:ev343
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev321@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270511T161500
+DTEND;TZID=Europe/Berlin:20270511T175500
+SUMMARY:JF Jahndorf
+DESCRIPTION:Reihe: etwa alle 7 bis 8 Wochen\, jeweils Dienstag (Rhythmus la
+ ut Regel: alle 8 Wochen). Die Termine liegen wegen Urlaub\, Feiertag oder 
+ Klausur teils versetzt\, bitte nach der Terminliste anlegen. (7 Termine 20
+ 27\, Einzeltermine)\nHintergrund: Regel 1: Turnus etwa alle 8 Wochen (nich
+ t monatlich)\, 100 Min. Träger: LeWo.\nRegel: Regel 1: etwa alle 8 Wochen
+  (nicht monatlich)\, 100 Min.\nErlaubte Wochentage: Di
+LOCATION:LeWo
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:jahndorf
+X-GF-ID:ev321
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev341@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270518T154500
+DTEND;TZID=Europe/Berlin:20270518T163500
+SUMMARY:JF Rojano-Marin
+DESCRIPTION:Einzeltermin der Reihe „JF Partner (Di)“: verschoben bzw. a
+ ußerhalb des Serienmusters (siehe Hintergrund).\nHintergrund: Monatlicher
+  Jour fixe\, 50 Min. Träger: Innere Mission. Slotzuordnung = Arbeitsannah
+ me. Verschoben von Di 04.05.2027 (Klausur/Auslastung).\nRegel: Dienstag = 
+ JF-Tag (Arbeitsannahme Slotverteilung).\nErlaubte Wochentage: Di\nARBEITSA
+ NNAHME: Slot oder Wochentag noch nicht bestätigt.
+LOCATION:Innere Mission
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:partner-JF Rojano-Marin
+X-GF-ID:ev341
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev328@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270518T170000
+DTEND;TZID=Europe/Berlin:20270518T175000
+SUMMARY:JF QM & Regulatorik
+DESCRIPTION:Reihe: etwa alle 6 bis 8 Wochen\, jeweils Dienstag (Rhythmus la
+ ut Regel: alle 6-8 Wochen). Die Termine liegen wegen Urlaub\, Feiertag ode
+ r Klausur teils versetzt\, bitte nach der Terminliste anlegen. (7 Termine 
+ 2027\, Einzeltermine)\nHintergrund: Referat QM & Regulatorik\, alle 6–8 
+ Wochen\, 50 Min.\nErlaubte Wochentage: Di\nKommunikationsmatrix Nr. 3b „
+ Jour fixe Referat QM und Regulatorik“: kongruent.
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:jf-qm
+X-GF-ID:ev328
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev534@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+RECURRENCE-ID;TZID=Europe/Berlin:20270520T160000
+DTSTART;TZID=Europe/Berlin:20270520T111500
+DTEND;TZID=Europe/Berlin:20270520T124500
+SUMMARY:Pufferslot Gremien
+DESCRIPTION:Dieser Termin weicht in der Uhrzeit vom Serienmuster ab (Ausnah
+ me-Instanz der Serie).\nHintergrund: Fester Schutzslot für kurzfristige G
+ remienbelange\, 3. Donnerstag\, 16:00–17:30.\nRegel: Schutzslot für kur
+ zfristige Gremienbelange.\nErlaubte Wochentage: Do
+CATEGORIES:Gremium / Puffer,GFK2027
+X-GF-SERIE:pufferslot
+X-GF-ID:ev550
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev14@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270520T130000
+DTEND;TZID=Europe/Berlin:20270520T160000
+SUMMARY:Steuerungsgruppe Personal
+DESCRIPTION:Reihe: kein festes Wochenmuster (Rhythmus laut Regel: quartalsw
+ eise): bitte jeden Termin einzeln nach der Terminliste anlegen (4 Termine 
+ 2027\, Einzeltermine)\nHintergrund: Quartalsweise. Bochum\, Westring 26\, 
+ Raum 209. Einladung von Sven Pernak.\nRegel: Quartalsweise\, Westring 26\,
+  Raum 209 (Einladung Sven Pernak).\nErlaubte Wochentage: Mo\, Do
+LOCATION:Westring 26\, Raum 209
+CATEGORIES:Steuerkreis,GFK2027
+X-GF-SERIE:steuerungsgruppe-personal
+X-GF-ID:ev14
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev533@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+RECURRENCE-ID;TZID=Europe/Berlin:20270520T140000
+DTSTART;TZID=Europe/Berlin:20270520T161500
+DTEND;TZID=Europe/Berlin:20270520T175500
+SUMMARY:JF MAV+BR SBO
+DESCRIPTION:Dieser Termin weicht in der Uhrzeit vom Serienmuster ab (Ausnah
+ me-Instanz der Serie).\nHintergrund: Alle 2 Monate\, 100 Min. plus 20 Min.
+  Puffer. Ersetzt Monatsgespräch SBO und Betriebsversammlung SBO (gestrich
+ en).\nRegel: 100 Min. plus 20 Min. Puffer. Ersetzt Monatsgespräch SBO und
+  Betriebsversammlung SBO (beide gestrichen).\nErlaubte Wochentage: Do\nDan
+ ach 20 Min. Puffer einplanen (kein Termin direkt im Anschluss).\nKommunika
+ tionsmatrix Nr. 30 „JF MAVen und BR“: abweichend (Dauer: Matrix 50 Min
+ .\, Kalender 100 Min.).
+LOCATION:SBO Sommerdelle
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:mav-br-sbo
+X-GF-ID:ev549
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev339@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270525T143000
+DTEND;TZID=Europe/Berlin:20270525T152000
+SUMMARY:JF Zittlau
+DESCRIPTION:Einzeltermin der Reihe „JF Partner (Di)“: verschoben bzw. a
+ ußerhalb des Serienmusters (siehe Hintergrund).\nHintergrund: Monatlicher
+  Jour fixe\, 50 Min. Träger: Innere Mission. Slotzuordnung = Arbeitsannah
+ me. Verschoben von Di 04.05.2027 (Klausur/Auslastung).\nRegel: Dienstag = 
+ JF-Tag (Arbeitsannahme Slotverteilung).\nErlaubte Wochentage: Di\nARBEITSA
+ NNAHME: Slot oder Wochentag noch nicht bestätigt.
+LOCATION:Innere Mission
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:partner-JF Zittlau
+X-GF-ID:ev339
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev340@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270525T153000
+DTEND;TZID=Europe/Berlin:20270525T162000
+SUMMARY:JF Konter
+DESCRIPTION:Einzeltermin der Reihe „JF Partner (Di)“: verschoben bzw. a
+ ußerhalb des Serienmusters (siehe Hintergrund).\nHintergrund: Monatlicher
+  Jour fixe\, 50 Min. Träger: Innere Mission. Slotzuordnung = Arbeitsannah
+ me. Verschoben von Di 04.05.2027 (Klausur/Auslastung).\nRegel: Dienstag = 
+ JF-Tag (Arbeitsannahme Slotverteilung).\nErlaubte Wochentage: Di\nARBEITSA
+ NNAHME: Slot oder Wochentag noch nicht bestätigt.
+LOCATION:Innere Mission
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:partner-JF Konter
+X-GF-ID:ev340
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev342@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270525T163000
+DTEND;TZID=Europe/Berlin:20270525T172000
+SUMMARY:JF Röper
+DESCRIPTION:Einzeltermin der Reihe „JF Partner (Di)“: verschoben bzw. a
+ ußerhalb des Serienmusters (siehe Hintergrund).\nHintergrund: Monatlicher
+  Jour fixe\, 50 Min. Träger: Innere Mission. Slotzuordnung = Arbeitsannah
+ me. Verschoben von Di 04.05.2027 (Klausur/Auslastung).\nRegel: Dienstag = 
+ JF-Tag (Arbeitsannahme Slotverteilung).\nErlaubte Wochentage: Di\nARBEITSA
+ NNAHME: Slot oder Wochentag noch nicht bestätigt.
+LOCATION:Innere Mission
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:partner-JF Röper
+X-GF-ID:ev342
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev22@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270602T130000
+DTEND;TZID=Europe/Berlin:20270602T160000
+SUMMARY:Steuerungsgruppe UK DR
+DESCRIPTION:Reihe: kein festes Wochenmuster (Rhythmus laut Regel: quartalsw
+ eise): bitte jeden Termin einzeln nach der Terminliste anlegen (4 Termine 
+ 2027\, Einzeltermine)\nHintergrund: Quartalsweise. Bochum\, Westring 26\, 
+ Raum 209. Einladung von Sven Pernak.\nRegel: Quartalsweise\, Westring 26\,
+  Raum 209 (Einladung Sven Pernak).\nErlaubte Wochentage: Mo\, Mi\, Do
+LOCATION:Westring 26\, Raum 209
+CATEGORIES:Steuerkreis,GFK2027
+X-GF-SERIE:steuerungsgruppe-uk-dr
+X-GF-ID:ev22
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev523@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270602T170000
+DTEND;TZID=Europe/Berlin:20270602T183000
+SUMMARY:AG Wohlfahrt Bochum
+DESCRIPTION:Reihe: Platzhalter\, Termine noch nicht bestätigt (Rhythmus la
+ ut Regel: 8x jährlich). Bitte jeden Termin einzeln und vorläufig nach de
+ r Terminliste anlegen. (8 Termine 2027\, Einzeltermine)\nHintergrund: Plat
+ zhalter: 8×/Jahr\, ab 17 Uhr\, 90 Min.\, extern – genaue Termine noch o
+ ffen.\nRegel: 8× im Jahr\, ab 17 Uhr\, 90 Min.\nErlaubte Wochentage: Mi\n
+ PLATZHALTER: Termin noch nicht bestätigt\, mit dem Sekretariat abstimmen.
+LOCATION:extern
+CATEGORIES:Gremium / Puffer,GFK2027
+X-GF-SERIE:ag-wohlfahrt
+X-GF-ID:ev523
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev18@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270607T130000
+DTEND;TZID=Europe/Berlin:20270607T140000
+SUMMARY:Steuerungsgruppe Digitalisierung DR
+RRULE:FREQ=MONTHLY;INTERVAL=3;BYDAY=1MO;COUNT=3
+DESCRIPTION:SERIE (als Wiederholung angelegt\, 3 von 4 Terminen 2027\, 1 we
+ itere als Einzeltermine): jeden 1. Montag im Monat\, alle 3 Monate (Mär\,
+  Jun\, Sep\, Dez)\nHintergrund: Quartalsweise. Bochum\, Westring 26\, Raum
+  209. Einladung von Jens Koch.\nRegel: Quartalsweise\, montags 13:00–14:
+ 00\, Westring 26\, Raum 209 (Einladung Jens Koch).\nErlaubte Wochentage: M
+ o
+LOCATION:Westring 26\, Raum 209
+CATEGORIES:Steuerkreis,GFK2027
+X-GF-SERIE:steuerungsgruppe-digitalisierung
+X-GF-ID:ev18
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev197@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+RECURRENCE-ID;TZID=Europe/Berlin:20270607T140000
+DTSTART;TZID=Europe/Berlin:20270607T141500
+DTEND;TZID=Europe/Berlin:20270607T161500
+SUMMARY:Leitungskonferenz Sozialwirtschaft
+DESCRIPTION:Dieser Termin weicht in der Uhrzeit vom Serienmuster ab (Ausnah
+ me-Instanz der Serie).\nHintergrund: Monatlicher Montag-Anker (Diakonie Ru
+ hr)\, 1. Montag\, 2 Std.\nRegel: 1. Montag\, 2 Std. (ehemals Betriebsleitu
+ ngskonferenz).\nErlaubte Wochentage: Mo
+LOCATION:Westring 26
+CATEGORIES:Gremium / Puffer,GFK2027
+X-GF-SERIE:lk-sozialwirtschaft
+X-GF-ID:ev205
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev354@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270608T163000
+DTEND;TZID=Europe/Berlin:20270608T172000
+SUMMARY:JF Personal
+DESCRIPTION:Reihe: etwa alle 7 bis 8 Wochen\, jeweils Dienstag (Rhythmus la
+ ut Regel: alle 6-8 Wochen). Die Termine liegen wegen Urlaub\, Feiertag ode
+ r Klausur teils versetzt\, bitte nach der Terminliste anlegen. (7 Termine 
+ 2027\, Einzeltermine)\nHintergrund: Referat Personal\, 50 Min. – Teil 1 
+ von 3 des unteilbaren 75-Min.-Blocks (Regel 3).\nRegel: Regeln 2+3: Mala-T
+ eilslot im Block\, Block nicht trennbar.\nErlaubte Wochentage: Di\nBlock n
+ icht trennbar: 50 Min. Referat + 20 Min. Poolspringer Frau Mala + 5 Min. W
+ echselpuffer\nKommunikationsmatrix Nr. 3a „Jour fixe Referat Personal“
+ : kongruent.
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:jf-personal
+X-GF-ID:ev354
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev355@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270608T172000
+DTEND;TZID=Europe/Berlin:20270608T174000
+SUMMARY:JF Personal – Poolspringer-Slot Frau Mala
+DESCRIPTION:Reihe: etwa alle 7 bis 8 Wochen\, jeweils Dienstag (Rhythmus la
+ ut Regel: alle 6-8 Wochen). Die Termine liegen wegen Urlaub\, Feiertag ode
+ r Klausur teils versetzt\, bitte nach der Terminliste anlegen. (7 Termine 
+ 2027\, Einzeltermine)\nHintergrund: Teilslot für Frau Mala innerhalb JF P
+ ersonal\, 20 Min. – Teil 2 von 3 (Regel 2: kein eigener Termin).\nRegel:
+  Regeln 2+3: Mala-Teilslot im Block\, Block nicht trennbar.\nErlaubte Woch
+ entage: Di\nBlock nicht trennbar: 50 Min. Referat + 20 Min. Poolspringer F
+ rau Mala + 5 Min. Wechselpuffer\nKommunikationsmatrix Nr. 3a „Jour fixe 
+ Referat Personal“: kongruent.
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:jf-personal
+X-GF-ID:ev355
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev356@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270608T174000
+DTEND;TZID=Europe/Berlin:20270608T174500
+SUMMARY:JF Personal – Wechselpuffer
+DESCRIPTION:Reihe: etwa alle 7 bis 8 Wochen\, jeweils Dienstag (Rhythmus la
+ ut Regel: alle 6-8 Wochen). Die Termine liegen wegen Urlaub\, Feiertag ode
+ r Klausur teils versetzt\, bitte nach der Terminliste anlegen. (7 Termine 
+ 2027\, Einzeltermine)\nHintergrund: Wechselpuffer\, 5 Min. – Teil 3 von 
+ 3\, Block gesamt 75 Min.\nRegel: Regeln 2+3: Mala-Teilslot im Block\, Bloc
+ k nicht trennbar.\nErlaubte Wochentage: Di\nBlock nicht trennbar: 50 Min. 
+ Referat + 20 Min. Poolspringer Frau Mala + 5 Min. Wechselpuffer\nKommunika
+ tionsmatrix Nr. 3a „Jour fixe Referat Personal“: kongruent.
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:jf-personal
+X-GF-ID:ev356
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev517@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270616T170000
+DTEND;TZID=Europe/Berlin:20270616T183000
+SUMMARY:Verwaltungsrat IM
+DESCRIPTION:Reihe: Platzhalter\, Termine noch nicht bestätigt (Rhythmus la
+ ut Regel: 4x jährlich). Bitte jeden Termin einzeln und vorläufig nach de
+ r Terminliste anlegen. (4 Termine 2027\, Einzeltermine)\nHintergrund: Plat
+ zhalter: 4×/Jahr\, mittwochs ab 17 Uhr\, 90 Min.\, extern – genaue Term
+ ine noch offen.\nRegel: 4× im Jahr\, mittwochs ab 17 Uhr\, 90 Min.\nErlau
+ bte Wochentage: Mi\nPLATZHALTER: Termin noch nicht bestätigt\, mit dem Se
+ kretariat abstimmen.
+LOCATION:Innere Mission
+CATEGORIES:Gremium / Puffer,GFK2027
+X-GF-SERIE:verwaltungsrat-im
+X-GF-ID:ev517
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev513@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270623T090000
+DTEND;TZID=Europe/Berlin:20270623T120000
+SUMMARY:Vorstandssitzung IM
+DESCRIPTION:Reihe: Platzhalter\, Termine noch nicht bestätigt (Rhythmus la
+ ut Regel: unregelmäßig). Bitte jeden Termin einzeln und vorläufig nach 
+ der Terminliste anlegen. (5 Termine 2027\, Einzeltermine)\nHintergrund: Pl
+ atzhalter: ca. 4–5×/Jahr\, 3 Std.\, extern – genaue Termine noch offe
+ n.\nErlaubte Wochentage: Mi\nPLATZHALTER: Termin noch nicht bestätigt\, m
+ it dem Sekretariat abstimmen.
+LOCATION:Innere Mission
+CATEGORIES:Gremium / Puffer,GFK2027
+X-GF-SERIE:vorstand-im
+X-GF-ID:ev513
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev553@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270624T113000
+DTEND;TZID=Europe/Berlin:20270624T133000
+SUMMARY:Hospitation vor Ort
+DESCRIPTION:Reihe: Steht immer am Tag der Steuerkreise\, direkt vor bzw. na
+ ch dem Steuerkreis-Block. Zusammen mit dem Steuerkreis anlegen (siehe Term
+ inliste). (14 Termine 2027\, Einzeltermine)\nHintergrund: Hospitationsbloc
+ ker\, 2 Std.\, direkt im Anschluss: der GF bleibt ggf. vor Ort und schaut 
+ sich um.\nRegel: Direkt im Anschluss an den Steuerkreis-Block: der GF blei
+ bt vor Ort und schaut sich um.
+LOCATION:Einrichtung (Vor-Ort)
+CATEGORIES:Fokuszeit,GFK2027
+X-GF-SERIE:sk-hospitation
+X-GF-ID:ev553
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev524@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270630T170000
+DTEND;TZID=Europe/Berlin:20270630T183000
+SUMMARY:AG Wohlfahrt Bochum
+DESCRIPTION:Reihe: Platzhalter\, Termine noch nicht bestätigt (Rhythmus la
+ ut Regel: 8x jährlich). Bitte jeden Termin einzeln und vorläufig nach de
+ r Terminliste anlegen. (8 Termine 2027\, Einzeltermine)\nHintergrund: Plat
+ zhalter: 8×/Jahr\, ab 17 Uhr\, 90 Min.\, extern – genaue Termine noch o
+ ffen.\nRegel: 8× im Jahr\, ab 17 Uhr\, 90 Min.\nErlaubte Wochentage: Mi\n
+ PLATZHALTER: Termin noch nicht bestätigt\, mit dem Sekretariat abstimmen.
+LOCATION:extern
+CATEGORIES:Gremium / Puffer,GFK2027
+X-GF-SERIE:ag-wohlfahrt
+X-GF-ID:ev524
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev373@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270706T161500
+DTEND;TZID=Europe/Berlin:20270706T175500
+SUMMARY:JF Jahndorf
+DESCRIPTION:Reihe: etwa alle 7 bis 8 Wochen\, jeweils Dienstag (Rhythmus la
+ ut Regel: alle 8 Wochen). Die Termine liegen wegen Urlaub\, Feiertag oder 
+ Klausur teils versetzt\, bitte nach der Terminliste anlegen. (7 Termine 20
+ 27\, Einzeltermine)\nHintergrund: Regel 1: Turnus etwa alle 8 Wochen (nich
+ t monatlich)\, 100 Min. Träger: LeWo.\nRegel: Regel 1: etwa alle 8 Wochen
+  (nicht monatlich)\, 100 Min.\nErlaubte Wochentage: Di
+LOCATION:LeWo
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:jahndorf
+X-GF-ID:ev373
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev606@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270708T090000
+DTEND;TZID=Europe/Berlin:20270708T093000
+SUMMARY:Anreise Steuerkreis-Tag
+DESCRIPTION:Einzeltermin der Reihe „Anreise Steuerkreis-Tag“: verschobe
+ n bzw. außerhalb des Serienmusters (siehe Hintergrund).\nHintergrund: Anr
+ eise zum Steuerkreis\, nur vor dem ersten Termin des Tages (kein Westring)
+ .\nRegel: Anreisepuffer nur vor dem ersten Steuerkreis des Tages (Steuerkr
+ eise finden nicht am Westring statt).
+LOCATION:unterwegs
+CATEGORIES:Fokuszeit,GFK2027
+X-GF-SERIE:sk-anreise
+X-GF-ID:ev606
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev607@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270708T093000
+DTEND;TZID=Europe/Berlin:20270708T113000
+SUMMARY:Steuerkreis Personal
+DESCRIPTION:Reihe: etwa alle 10 bis 15 Wochen\, jeweils Donnerstag (Rhythmu
+ s laut Regel: quartalsweise). Die Termine liegen wegen Urlaub\, Feiertag o
+ der Klausur teils versetzt\, bitte nach der Terminliste anlegen. (4 Termin
+ e 2027\, Einzeltermine)\nHintergrund: Quartalsweise\, 2 Std. – GF dabei\
+ , außer Haus.\nRegel: Quartalsweise\, 2 Std.\, zusammen mit dem Steuerkre
+ is Marketing & Vertrieb an einem Termintag (außer Haus).\nErlaubte Wochen
+ tage: Do\nKommunikationsmatrix Nr. 14 „Steuerkreis Personal“: abweiche
+ nd (Dauer: Matrix 3 Std.\, Kalender 2 Std.).
+LOCATION:Einrichtung (Vor-Ort)
+CATEGORIES:Steuerkreis,GFK2027
+X-GF-SERIE:sk-personal
+X-GF-ID:ev607
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev608@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270708T114500
+DTEND;TZID=Europe/Berlin:20270708T134500
+SUMMARY:Steuerkreis Marketing & Vertrieb
+DESCRIPTION:Reihe: etwa alle 10 bis 15 Wochen\, jeweils Donnerstag (Rhythmu
+ s laut Regel: quartalsweise). Die Termine liegen wegen Urlaub\, Feiertag o
+ der Klausur teils versetzt\, bitte nach der Terminliste anlegen. (4 Termin
+ e 2027\, Einzeltermine)\nHintergrund: Quartalsweise\, 2 Std. – direkt im
+  Anschluss (15 Min. Verabschieden)\, GF dabei.\nRegel: Quartalsweise\, 2 S
+ td.\, zusammen mit dem Steuerkreis Personal an einem Termintag (außer Hau
+ s).\nErlaubte Wochentage: Do\nKommunikationsmatrix Nr. 19 „Steuerkreis M
+ arketing und Vertrieb“: abweichend (Dauer: Matrix 3 Std.\, Kalender 2 St
+ d.).
+LOCATION:Einrichtung (Vor-Ort)
+CATEGORIES:Steuerkreis,GFK2027
+X-GF-SERIE:sk-mv
+X-GF-ID:ev608
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev609@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270708T134500
+DTEND;TZID=Europe/Berlin:20270708T154500
+SUMMARY:Hospitation vor Ort
+DESCRIPTION:Reihe: Steht immer am Tag der Steuerkreise\, direkt vor bzw. na
+ ch dem Steuerkreis-Block. Zusammen mit dem Steuerkreis anlegen (siehe Term
+ inliste). (14 Termine 2027\, Einzeltermine)\nHintergrund: Hospitationsbloc
+ ker\, 2 Std.\, direkt im Anschluss: der GF bleibt ggf. vor Ort und schaut 
+ sich um.\nRegel: Direkt im Anschluss an den Steuerkreis-Block: der GF blei
+ bt vor Ort und schaut sich um.
+LOCATION:Einrichtung (Vor-Ort)
+CATEGORIES:Fokuszeit,GFK2027
+X-GF-SERIE:sk-hospitation
+X-GF-ID:ev609
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev381@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270713T170000
+DTEND;TZID=Europe/Berlin:20270713T175000
+SUMMARY:JF QM & Regulatorik
+DESCRIPTION:Reihe: etwa alle 6 bis 8 Wochen\, jeweils Dienstag (Rhythmus la
+ ut Regel: alle 6-8 Wochen). Die Termine liegen wegen Urlaub\, Feiertag ode
+ r Klausur teils versetzt\, bitte nach der Terminliste anlegen. (7 Termine 
+ 2027\, Einzeltermine)\nHintergrund: Referat QM & Regulatorik\, alle 6–8 
+ Wochen\, 50 Min.\nErlaubte Wochentage: Di\nKommunikationsmatrix Nr. 3b „
+ Jour fixe Referat QM und Regulatorik“: kongruent.
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:jf-qm
+X-GF-ID:ev381
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev558@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270722T134500
+DTEND;TZID=Europe/Berlin:20270722T154500
+SUMMARY:Hospitation vor Ort
+DESCRIPTION:Reihe: Steht immer am Tag der Steuerkreise\, direkt vor bzw. na
+ ch dem Steuerkreis-Block. Zusammen mit dem Steuerkreis anlegen (siehe Term
+ inliste). (14 Termine 2027\, Einzeltermine)\nHintergrund: Hospitationsbloc
+ ker\, 2 Std.\, direkt im Anschluss: der GF bleibt ggf. vor Ort und schaut 
+ sich um.\nRegel: Direkt im Anschluss an den Steuerkreis-Block: der GF blei
+ bt vor Ort und schaut sich um.
+LOCATION:Einrichtung (Vor-Ort)
+CATEGORIES:Fokuszeit,GFK2027
+X-GF-SERIE:sk-hospitation
+X-GF-ID:ev558
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev395@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270803T163000
+DTEND;TZID=Europe/Berlin:20270803T172000
+SUMMARY:JF Personal
+DESCRIPTION:Reihe: etwa alle 7 bis 8 Wochen\, jeweils Dienstag (Rhythmus la
+ ut Regel: alle 6-8 Wochen). Die Termine liegen wegen Urlaub\, Feiertag ode
+ r Klausur teils versetzt\, bitte nach der Terminliste anlegen. (7 Termine 
+ 2027\, Einzeltermine)\nHintergrund: Referat Personal\, 50 Min. – Teil 1 
+ von 3 des unteilbaren 75-Min.-Blocks (Regel 3).\nRegel: Regeln 2+3: Mala-T
+ eilslot im Block\, Block nicht trennbar.\nErlaubte Wochentage: Di\nBlock n
+ icht trennbar: 50 Min. Referat + 20 Min. Poolspringer Frau Mala + 5 Min. W
+ echselpuffer\nKommunikationsmatrix Nr. 3a „Jour fixe Referat Personal“
+ : kongruent.
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:jf-personal
+X-GF-ID:ev395
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev396@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270803T172000
+DTEND;TZID=Europe/Berlin:20270803T174000
+SUMMARY:JF Personal – Poolspringer-Slot Frau Mala
+DESCRIPTION:Reihe: etwa alle 7 bis 8 Wochen\, jeweils Dienstag (Rhythmus la
+ ut Regel: alle 6-8 Wochen). Die Termine liegen wegen Urlaub\, Feiertag ode
+ r Klausur teils versetzt\, bitte nach der Terminliste anlegen. (7 Termine 
+ 2027\, Einzeltermine)\nHintergrund: Teilslot für Frau Mala innerhalb JF P
+ ersonal\, 20 Min. – Teil 2 von 3 (Regel 2: kein eigener Termin).\nRegel:
+  Regeln 2+3: Mala-Teilslot im Block\, Block nicht trennbar.\nErlaubte Woch
+ entage: Di\nBlock nicht trennbar: 50 Min. Referat + 20 Min. Poolspringer F
+ rau Mala + 5 Min. Wechselpuffer\nKommunikationsmatrix Nr. 3a „Jour fixe 
+ Referat Personal“: kongruent.
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:jf-personal
+X-GF-ID:ev396
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev397@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270803T174000
+DTEND;TZID=Europe/Berlin:20270803T174500
+SUMMARY:JF Personal – Wechselpuffer
+DESCRIPTION:Reihe: etwa alle 7 bis 8 Wochen\, jeweils Dienstag (Rhythmus la
+ ut Regel: alle 6-8 Wochen). Die Termine liegen wegen Urlaub\, Feiertag ode
+ r Klausur teils versetzt\, bitte nach der Terminliste anlegen. (7 Termine 
+ 2027\, Einzeltermine)\nHintergrund: Wechselpuffer\, 5 Min. – Teil 3 von 
+ 3\, Block gesamt 75 Min.\nRegel: Regeln 2+3: Mala-Teilslot im Block\, Bloc
+ k nicht trennbar.\nErlaubte Wochentage: Di\nBlock nicht trennbar: 50 Min. 
+ Referat + 20 Min. Poolspringer Frau Mala + 5 Min. Wechselpuffer\nKommunika
+ tionsmatrix Nr. 3a „Jour fixe Referat Personal“: kongruent.
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:jf-personal
+X-GF-ID:ev397
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev15@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270819T140000
+DTEND;TZID=Europe/Berlin:20270819T170000
+SUMMARY:Steuerungsgruppe Personal
+DESCRIPTION:Reihe: kein festes Wochenmuster (Rhythmus laut Regel: quartalsw
+ eise): bitte jeden Termin einzeln nach der Terminliste anlegen (4 Termine 
+ 2027\, Einzeltermine)\nHintergrund: Quartalsweise. Bochum\, Westring 26\, 
+ Raum 209. Einladung von Sven Pernak.\nRegel: Quartalsweise\, Westring 26\,
+  Raum 209 (Einladung Sven Pernak).\nErlaubte Wochentage: Mo\, Do
+LOCATION:Westring 26\, Raum 209
+CATEGORIES:Steuerkreis,GFK2027
+X-GF-SERIE:steuerungsgruppe-personal
+X-GF-ID:ev15
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev563@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270826T113000
+DTEND;TZID=Europe/Berlin:20270826T133000
+SUMMARY:Hospitation vor Ort
+DESCRIPTION:Reihe: Steht immer am Tag der Steuerkreise\, direkt vor bzw. na
+ ch dem Steuerkreis-Block. Zusammen mit dem Steuerkreis anlegen (siehe Term
+ inliste). (14 Termine 2027\, Einzeltermine)\nHintergrund: Hospitationsbloc
+ ker\, 2 Std.\, direkt im Anschluss: der GF bleibt ggf. vor Ort und schaut 
+ sich um.\nRegel: Direkt im Anschluss an den Steuerkreis-Block: der GF blei
+ bt vor Ort und schaut sich um.
+LOCATION:Einrichtung (Vor-Ort)
+CATEGORIES:Fokuszeit,GFK2027
+X-GF-SERIE:sk-hospitation
+X-GF-ID:ev563
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev409@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270831T161500
+DTEND;TZID=Europe/Berlin:20270831T175500
+SUMMARY:JF Jahndorf
+DESCRIPTION:Reihe: etwa alle 7 bis 8 Wochen\, jeweils Dienstag (Rhythmus la
+ ut Regel: alle 8 Wochen). Die Termine liegen wegen Urlaub\, Feiertag oder 
+ Klausur teils versetzt\, bitte nach der Terminliste anlegen. (7 Termine 20
+ 27\, Einzeltermine)\nHintergrund: Regel 1: Turnus etwa alle 8 Wochen (nich
+ t monatlich)\, 100 Min. Träger: LeWo.\nRegel: Regel 1: etwa alle 8 Wochen
+  (nicht monatlich)\, 100 Min.\nErlaubte Wochentage: Di
+LOCATION:LeWo
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:jahndorf
+X-GF-ID:ev409
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev597@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270902T100000
+DTEND;TZID=Europe/Berlin:20270902T120000
+SUMMARY:ASA (Team-Termin)
+DESCRIPTION:Reihe: Platzhalter\, Termine noch nicht bestätigt (Rhythmus la
+ ut Regel: 2x jährlich). Bitte jeden Termin einzeln und vorläufig nach de
+ r Terminliste anlegen. (2 Termine 2027\, Einzeltermine)\nHintergrund: Plat
+ zhalter: Teamtermin\, 2 Std.\, 2× jährlich – Termin noch offen.\nRegel
+ : Platzhalter: Teamtermin\, 2 Std.\, 2× jährlich.\nPLATZHALTER: Termin n
+ och nicht bestätigt\, mit dem Sekretariat abstimmen.
+LOCATION:Teams
+CATEGORIES:Gremium / Puffer,GFK2027
+X-GF-SERIE:asa
+X-GF-ID:ev597
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev197@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+RECURRENCE-ID;TZID=Europe/Berlin:20270906T140000
+DTSTART;TZID=Europe/Berlin:20270906T141500
+DTEND;TZID=Europe/Berlin:20270906T161500
+SUMMARY:Leitungskonferenz Sozialwirtschaft
+DESCRIPTION:Dieser Termin weicht in der Uhrzeit vom Serienmuster ab (Ausnah
+ me-Instanz der Serie).\nHintergrund: Monatlicher Montag-Anker (Diakonie Ru
+ hr)\, 1. Montag\, 2 Std.\nRegel: 1. Montag\, 2 Std. (ehemals Betriebsleitu
+ ngskonferenz).\nErlaubte Wochentage: Mo
+LOCATION:Westring 26
+CATEGORIES:Gremium / Puffer,GFK2027
+X-GF-SERIE:lk-sozialwirtschaft
+X-GF-ID:ev211
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev411@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270907T170000
+DTEND;TZID=Europe/Berlin:20270907T175000
+SUMMARY:JF QM & Regulatorik
+DESCRIPTION:Reihe: etwa alle 6 bis 8 Wochen\, jeweils Dienstag (Rhythmus la
+ ut Regel: alle 6-8 Wochen). Die Termine liegen wegen Urlaub\, Feiertag ode
+ r Klausur teils versetzt\, bitte nach der Terminliste anlegen. (7 Termine 
+ 2027\, Einzeltermine)\nHintergrund: Referat QM & Regulatorik\, alle 6–8 
+ Wochen\, 50 Min.\nErlaubte Wochentage: Di\nKommunikationsmatrix Nr. 3b „
+ Jour fixe Referat QM und Regulatorik“: kongruent.
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:jf-qm
+X-GF-ID:ev411
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev514@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270908T090000
+DTEND;TZID=Europe/Berlin:20270908T120000
+SUMMARY:Vorstandssitzung IM
+DESCRIPTION:Reihe: Platzhalter\, Termine noch nicht bestätigt (Rhythmus la
+ ut Regel: unregelmäßig). Bitte jeden Termin einzeln und vorläufig nach 
+ der Terminliste anlegen. (5 Termine 2027\, Einzeltermine)\nHintergrund: Pl
+ atzhalter: ca. 4–5×/Jahr\, 3 Std.\, extern – genaue Termine noch offe
+ n.\nErlaubte Wochentage: Mi\nPLATZHALTER: Termin noch nicht bestätigt\, m
+ it dem Sekretariat abstimmen.
+LOCATION:Innere Mission
+CATEGORIES:Gremium / Puffer,GFK2027
+X-GF-SERIE:vorstand-im
+X-GF-ID:ev514
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev593@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270909T090000
+DTEND;TZID=Europe/Berlin:20270909T110000
+SUMMARY:Leitungskonferenz ambulant
+DESCRIPTION:Reihe: Platzhalter\, Termine noch nicht bestätigt (Rhythmus la
+ ut Regel: offen). Bitte jeden Termin einzeln und vorläufig nach der Termi
+ nliste anlegen. (2 Termine 2027\, Einzeltermine)\nHintergrund: Platzhalter
+ : noch offen lt. Merino-Kesting – 2 Std.\, gemeinsamer Konferenzkopf mit
+  der Leitungskonferenz stationär\, getrennte Fachteile.\nErlaubte Wochent
+ age: Do\nKommunikationsmatrix Nr. 28 „Leitungskonferenz\, ambulant“: k
+ ongruent.\nPLATZHALTER: Termin noch nicht bestätigt\, mit dem Sekretariat
+  abstimmen.
+CATEGORIES:Gremium / Puffer,GFK2027
+X-GF-SERIE:lk-ambulant
+X-GF-ID:ev593
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev594@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270909T110000
+DTEND;TZID=Europe/Berlin:20270909T140000
+SUMMARY:Leitungskonferenz stationär
+DESCRIPTION:Reihe: Platzhalter\, Termine noch nicht bestätigt (Rhythmus la
+ ut Regel: offen). Bitte jeden Termin einzeln und vorläufig nach der Termi
+ nliste anlegen. (2 Termine 2027\, Einzeltermine)\nHintergrund: Platzhalter
+ : noch offen – 3 Std.\, gemeinsamer Konferenzkopf mit der Leitungskonfer
+ enz ambulant\, getrennte Fachteile.\nErlaubte Wochentage: Do\nKommunikatio
+ nsmatrix Nr. 6 „Leitungskonferenz\, stationär“: kongruent.\nPLATZHALT
+ ER: Termin noch nicht bestätigt\, mit dem Sekretariat abstimmen.
+CATEGORIES:Gremium / Puffer,GFK2027
+X-GF-SERIE:lk-stationaer
+X-GF-ID:ev594
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev595@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270909T140000
+DTEND;TZID=Europe/Berlin:20270909T160000
+SUMMARY:Hospitation nach Leitungskonferenz
+DESCRIPTION:Reihe: Steht immer am Tag der Leitungskonferenzen ambulant und 
+ stationär\, direkt im Anschluss. Zusammen mit diesen anlegen (siehe Termi
+ nliste). (2 Termine 2027\, Einzeltermine)\nHintergrund: Hospitationsblocke
+ r\, 2 Std.\, direkt im Anschluss an die Leitungskonferenzen ambulant und s
+ tationär.\nRegel: Hospitationsblocker\, 2 Std.\, direkt nach Leitungskonf
+ erenz ambulant und stationär.
+CATEGORIES:Fokuszeit,GFK2027
+X-GF-SERIE:lk-hospitation
+X-GF-ID:ev595
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev23@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270913T100000
+DTEND;TZID=Europe/Berlin:20270913T130000
+SUMMARY:Steuerungsgruppe UK DR
+DESCRIPTION:Reihe: kein festes Wochenmuster (Rhythmus laut Regel: quartalsw
+ eise): bitte jeden Termin einzeln nach der Terminliste anlegen (4 Termine 
+ 2027\, Einzeltermine)\nHintergrund: Quartalsweise. Bochum\, Westring 26\, 
+ Raum 209. Einladung von Sven Pernak.\nRegel: Quartalsweise\, Westring 26\,
+  Raum 209 (Einladung Sven Pernak).\nErlaubte Wochentage: Mo\, Mi\, Do
+LOCATION:Westring 26\, Raum 209
+CATEGORIES:Steuerkreis,GFK2027
+X-GF-SERIE:steuerungsgruppe-uk-dr
+X-GF-ID:ev23
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev528@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270915T100000
+DTEND;TZID=Europe/Berlin:20270915T113000
+SUMMARY:AG-FW Stadt Bochum
+DESCRIPTION:Reihe: Einzeltermin\, keine Wiederholung\nHintergrund: Platzhal
+ ter: unregelmäßig\, extern – Termin noch offen.\nErlaubte Wochentage: 
+ Mi\nPLATZHALTER: Termin noch nicht bestätigt\, mit dem Sekretariat abstim
+ men.
+LOCATION:Stadt Bochum
+CATEGORIES:Gremium / Puffer,GFK2027
+X-GF-SERIE:ag-fw
+X-GF-ID:ev528
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev582@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270916T090000
+DTEND;TZID=Europe/Berlin:20270916T120000
+SUMMARY:AR/GV SBO
+DESCRIPTION:Reihe: Platzhalter\, Termine noch nicht bestätigt (Rhythmus la
+ ut Regel: 2-3x jährlich). Bitte jeden Termin einzeln und vorläufig nach 
+ der Terminliste anlegen. (2 Termine 2027\, Einzeltermine)\nHintergrund: Pl
+ atzhalter: 2×/Jahr (nicht quartalsweise)\, Termin noch offen.\nErlaubte W
+ ochentage: Do\nPLATZHALTER: Termin noch nicht bestätigt\, mit dem Sekreta
+ riat abstimmen.
+LOCATION:SBO Sommerdelle
+CATEGORIES:Gremium / Puffer,GFK2027
+X-GF-SERIE:ar-gv-sbo
+X-GF-ID:ev582
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev425@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270921T163000
+DTEND;TZID=Europe/Berlin:20270921T172000
+SUMMARY:JF Personal
+DESCRIPTION:Reihe: etwa alle 7 bis 8 Wochen\, jeweils Dienstag (Rhythmus la
+ ut Regel: alle 6-8 Wochen). Die Termine liegen wegen Urlaub\, Feiertag ode
+ r Klausur teils versetzt\, bitte nach der Terminliste anlegen. (7 Termine 
+ 2027\, Einzeltermine)\nHintergrund: Referat Personal\, 50 Min. – Teil 1 
+ von 3 des unteilbaren 75-Min.-Blocks (Regel 3).\nRegel: Regeln 2+3: Mala-T
+ eilslot im Block\, Block nicht trennbar.\nErlaubte Wochentage: Di\nBlock n
+ icht trennbar: 50 Min. Referat + 20 Min. Poolspringer Frau Mala + 5 Min. W
+ echselpuffer\nKommunikationsmatrix Nr. 3a „Jour fixe Referat Personal“
+ : kongruent.
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:jf-personal
+X-GF-ID:ev425
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev426@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270921T172000
+DTEND;TZID=Europe/Berlin:20270921T174000
+SUMMARY:JF Personal – Poolspringer-Slot Frau Mala
+DESCRIPTION:Reihe: etwa alle 7 bis 8 Wochen\, jeweils Dienstag (Rhythmus la
+ ut Regel: alle 6-8 Wochen). Die Termine liegen wegen Urlaub\, Feiertag ode
+ r Klausur teils versetzt\, bitte nach der Terminliste anlegen. (7 Termine 
+ 2027\, Einzeltermine)\nHintergrund: Teilslot für Frau Mala innerhalb JF P
+ ersonal\, 20 Min. – Teil 2 von 3 (Regel 2: kein eigener Termin).\nRegel:
+  Regeln 2+3: Mala-Teilslot im Block\, Block nicht trennbar.\nErlaubte Woch
+ entage: Di\nBlock nicht trennbar: 50 Min. Referat + 20 Min. Poolspringer F
+ rau Mala + 5 Min. Wechselpuffer\nKommunikationsmatrix Nr. 3a „Jour fixe 
+ Referat Personal“: kongruent.
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:jf-personal
+X-GF-ID:ev426
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev427@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270921T174000
+DTEND;TZID=Europe/Berlin:20270921T174500
+SUMMARY:JF Personal – Wechselpuffer
+DESCRIPTION:Reihe: etwa alle 7 bis 8 Wochen\, jeweils Dienstag (Rhythmus la
+ ut Regel: alle 6-8 Wochen). Die Termine liegen wegen Urlaub\, Feiertag ode
+ r Klausur teils versetzt\, bitte nach der Terminliste anlegen. (7 Termine 
+ 2027\, Einzeltermine)\nHintergrund: Wechselpuffer\, 5 Min. – Teil 3 von 
+ 3\, Block gesamt 75 Min.\nRegel: Regeln 2+3: Mala-Teilslot im Block\, Bloc
+ k nicht trennbar.\nErlaubte Wochentage: Di\nBlock nicht trennbar: 50 Min. 
+ Referat + 20 Min. Poolspringer Frau Mala + 5 Min. Wechselpuffer\nKommunika
+ tionsmatrix Nr. 3a „Jour fixe Referat Personal“: kongruent.
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:jf-personal
+X-GF-ID:ev427
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev509@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270922T090000
+DTEND;TZID=Europe/Berlin:20270922T120000
+SUMMARY:IMK + ASA IM
+DESCRIPTION:Reihe: alle 28 Wochen\, jeweils Mittwoch (2 Termine 2027\, Einz
+ eltermine)\nHintergrund: Innere Mission Konferenz mit ASA IM (Innere Missi
+ on)\, 3 Std.\, extern. Nicht identisch mit dem ASA-Team-Termin.\nRegel: 6 
+ Sitzungen im Jahr\, davon 2 mit ASA IM. Nicht in den NRW-Schulferien.\nErl
+ aubte Wochentage: Mi
+LOCATION:Innere Mission
+CATEGORIES:Gremium / Puffer,GFK2027
+X-GF-SERIE:imk-asa-im
+X-GF-ID:ev509
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev567@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270923T134500
+DTEND;TZID=Europe/Berlin:20270923T154500
+SUMMARY:Hospitation vor Ort
+DESCRIPTION:Reihe: Steht immer am Tag der Steuerkreise\, direkt vor bzw. na
+ ch dem Steuerkreis-Block. Zusammen mit dem Steuerkreis anlegen (siehe Term
+ inliste). (14 Termine 2027\, Einzeltermine)\nHintergrund: Hospitationsbloc
+ ker\, 2 Std.\, direkt im Anschluss: der GF bleibt ggf. vor Ort und schaut 
+ sich um.\nRegel: Direkt im Anschluss an den Steuerkreis-Block: der GF blei
+ bt vor Ort und schaut sich um.
+LOCATION:Einrichtung (Vor-Ort)
+CATEGORIES:Fokuszeit,GFK2027
+X-GF-SERIE:sk-hospitation
+X-GF-ID:ev567
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev525@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270929T170000
+DTEND;TZID=Europe/Berlin:20270929T183000
+SUMMARY:AG Wohlfahrt Bochum
+DESCRIPTION:Reihe: Platzhalter\, Termine noch nicht bestätigt (Rhythmus la
+ ut Regel: 8x jährlich). Bitte jeden Termin einzeln und vorläufig nach de
+ r Terminliste anlegen. (8 Termine 2027\, Einzeltermine)\nHintergrund: Plat
+ zhalter: 8×/Jahr\, ab 17 Uhr\, 90 Min.\, extern – genaue Termine noch o
+ ffen.\nRegel: 8× im Jahr\, ab 17 Uhr\, 90 Min.\nErlaubte Wochentage: Mi\n
+ PLATZHALTER: Termin noch nicht bestätigt\, mit dem Sekretariat abstimmen.
+LOCATION:extern
+CATEGORIES:Gremium / Puffer,GFK2027
+X-GF-SERIE:ag-wohlfahrt
+X-GF-ID:ev525
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev11@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20270930T090000
+DTEND;TZID=Europe/Berlin:20270930T170000
+SUMMARY:Klausur Strategie (Tag 1)
+DESCRIPTION:Reihe: Platzhalter\, Termine noch nicht bestätigt (Rhythmus la
+ ut Regel: halbjährlich). Bitte jeden Termin einzeln und vorläufig nach d
+ er Terminliste anlegen. (2 Termine 2027\, Einzeltermine)\nHintergrund: Pla
+ tzhalter: Halbjahrestakt\, 2. Termin\, noch offen.\nPLATZHALTER: Termin no
+ ch nicht bestätigt\, mit dem Sekretariat abstimmen.
+CATEGORIES:Klausur,GFK2027
+X-GF-SERIE:klausur-strategie
+X-GF-ID:ev11
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev12@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20271001T090000
+DTEND;TZID=Europe/Berlin:20271001T130000
+SUMMARY:Klausur Strategie (Tag 2)
+DESCRIPTION:Reihe: Platzhalter\, Termine noch nicht bestätigt (Rhythmus la
+ ut Regel: halbjährlich). Bitte jeden Termin einzeln und vorläufig nach d
+ er Terminliste anlegen. (2 Termine 2027\, Einzeltermine)\nHintergrund: Pla
+ tzhalter: Tag 2 von 2.\nPLATZHALTER: Termin noch nicht bestätigt\, mit de
+ m Sekretariat abstimmen.
+CATEGORIES:Klausur,GFK2027
+X-GF-SERIE:klausur-strategie
+X-GF-ID:ev12
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev610@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20271007T090000
+DTEND;TZID=Europe/Berlin:20271007T093000
+SUMMARY:Anreise Steuerkreis-Tag
+DESCRIPTION:Einzeltermin der Reihe „Anreise Steuerkreis-Tag“: verschobe
+ n bzw. außerhalb des Serienmusters (siehe Hintergrund).\nHintergrund: Anr
+ eise zum Steuerkreis\, nur vor dem ersten Termin des Tages (kein Westring)
+ .\nRegel: Anreisepuffer nur vor dem ersten Steuerkreis des Tages (Steuerkr
+ eise finden nicht am Westring statt).
+LOCATION:unterwegs
+CATEGORIES:Fokuszeit,GFK2027
+X-GF-SERIE:sk-anreise
+X-GF-ID:ev610
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev611@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20271007T093000
+DTEND;TZID=Europe/Berlin:20271007T113000
+SUMMARY:Steuerkreis Personal
+DESCRIPTION:Reihe: etwa alle 10 bis 15 Wochen\, jeweils Donnerstag (Rhythmu
+ s laut Regel: quartalsweise). Die Termine liegen wegen Urlaub\, Feiertag o
+ der Klausur teils versetzt\, bitte nach der Terminliste anlegen. (4 Termin
+ e 2027\, Einzeltermine)\nHintergrund: Quartalsweise\, 2 Std. – GF dabei\
+ , außer Haus.\nRegel: Quartalsweise\, 2 Std.\, zusammen mit dem Steuerkre
+ is Marketing & Vertrieb an einem Termintag (außer Haus).\nErlaubte Wochen
+ tage: Do\nKommunikationsmatrix Nr. 14 „Steuerkreis Personal“: abweiche
+ nd (Dauer: Matrix 3 Std.\, Kalender 2 Std.).
+LOCATION:Einrichtung (Vor-Ort)
+CATEGORIES:Steuerkreis,GFK2027
+X-GF-SERIE:sk-personal
+X-GF-ID:ev611
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev612@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20271007T114500
+DTEND;TZID=Europe/Berlin:20271007T134500
+SUMMARY:Steuerkreis Marketing & Vertrieb
+DESCRIPTION:Reihe: etwa alle 10 bis 15 Wochen\, jeweils Donnerstag (Rhythmu
+ s laut Regel: quartalsweise). Die Termine liegen wegen Urlaub\, Feiertag o
+ der Klausur teils versetzt\, bitte nach der Terminliste anlegen. (4 Termin
+ e 2027\, Einzeltermine)\nHintergrund: Quartalsweise\, 2 Std. – direkt im
+  Anschluss (15 Min. Verabschieden)\, GF dabei.\nRegel: Quartalsweise\, 2 S
+ td.\, zusammen mit dem Steuerkreis Personal an einem Termintag (außer Hau
+ s).\nErlaubte Wochentage: Do\nKommunikationsmatrix Nr. 19 „Steuerkreis M
+ arketing und Vertrieb“: abweichend (Dauer: Matrix 3 Std.\, Kalender 2 St
+ d.).
+LOCATION:Einrichtung (Vor-Ort)
+CATEGORIES:Steuerkreis,GFK2027
+X-GF-SERIE:sk-mv
+X-GF-ID:ev612
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev613@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20271007T134500
+DTEND;TZID=Europe/Berlin:20271007T154500
+SUMMARY:Hospitation vor Ort
+DESCRIPTION:Reihe: Steht immer am Tag der Steuerkreise\, direkt vor bzw. na
+ ch dem Steuerkreis-Block. Zusammen mit dem Steuerkreis anlegen (siehe Term
+ inliste). (14 Termine 2027\, Einzeltermine)\nHintergrund: Hospitationsbloc
+ ker\, 2 Std.\, direkt im Anschluss: der GF bleibt ggf. vor Ort und schaut 
+ sich um.\nRegel: Direkt im Anschluss an den Steuerkreis-Block: der GF blei
+ bt vor Ort und schaut sich um.
+LOCATION:Einrichtung (Vor-Ort)
+CATEGORIES:Fokuszeit,GFK2027
+X-GF-SERIE:sk-hospitation
+X-GF-ID:ev613
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev458@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20271012T150000
+DTEND;TZID=Europe/Berlin:20271012T163000
+SUMMARY:JF A³-Team
+DESCRIPTION:Einzeltermin der Reihe „JF A³-Team“: verschoben bzw. auße
+ rhalb des Serienmusters (siehe Hintergrund).\nHintergrund: Strategie & Con
+ trolling\, 90 Min. monatlich (Leitung Merino-Kesting)\, Dienstagnachmittag
+ . Verschoben von Di 19.10.2027 (Klausur/Auslastung).\nRegel: 90 Min.\, abw
+ eichend von der 50-Min.-Norm.\nErlaubte Wochentage: Di\nKommunikationsmatr
+ ix Nr. 4 „Jour fixe A³-Team“: kongruent.
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:jf-a3
+X-GF-ID:ev458
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev518@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20271013T170000
+DTEND;TZID=Europe/Berlin:20271013T183000
+SUMMARY:Verwaltungsrat IM
+DESCRIPTION:Reihe: Platzhalter\, Termine noch nicht bestätigt (Rhythmus la
+ ut Regel: 4x jährlich). Bitte jeden Termin einzeln und vorläufig nach de
+ r Terminliste anlegen. (4 Termine 2027\, Einzeltermine)\nHintergrund: Plat
+ zhalter: 4×/Jahr\, mittwochs ab 17 Uhr\, 90 Min.\, extern – genaue Term
+ ine noch offen.\nRegel: 4× im Jahr\, mittwochs ab 17 Uhr\, 90 Min.\nErlau
+ bte Wochentage: Mi\nPLATZHALTER: Termin noch nicht bestätigt\, mit dem Se
+ kretariat abstimmen.
+LOCATION:Innere Mission
+CATEGORIES:Gremium / Puffer,GFK2027
+X-GF-SERIE:verwaltungsrat-im
+X-GF-ID:ev518
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev452@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20271019T150000
+DTEND;TZID=Europe/Berlin:20271019T164000
+SUMMARY:JF Jahndorf
+DESCRIPTION:Reihe: etwa alle 7 bis 8 Wochen\, jeweils Dienstag (Rhythmus la
+ ut Regel: alle 8 Wochen). Die Termine liegen wegen Urlaub\, Feiertag oder 
+ Klausur teils versetzt\, bitte nach der Terminliste anlegen. (7 Termine 20
+ 27\, Einzeltermine)\nHintergrund: Regel 1: Turnus etwa alle 8 Wochen (nich
+ t monatlich)\, 100 Min. Träger: LeWo.\nRegel: Regel 1: etwa alle 8 Wochen
+  (nicht monatlich)\, 100 Min.\nErlaubte Wochentage: Di
+LOCATION:LeWo
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:jahndorf
+X-GF-ID:ev452
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev451@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20271019T170000
+DTEND;TZID=Europe/Berlin:20271019T175000
+SUMMARY:JF QM & Regulatorik
+DESCRIPTION:Reihe: etwa alle 6 bis 8 Wochen\, jeweils Dienstag (Rhythmus la
+ ut Regel: alle 6-8 Wochen). Die Termine liegen wegen Urlaub\, Feiertag ode
+ r Klausur teils versetzt\, bitte nach der Terminliste anlegen. (7 Termine 
+ 2027\, Einzeltermine)\nHintergrund: Referat QM & Regulatorik\, alle 6–8 
+ Wochen\, 50 Min.\nErlaubte Wochentage: Di\nKommunikationsmatrix Nr. 3b „
+ Jour fixe Referat QM und Regulatorik“: kongruent.
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:jf-qm
+X-GF-ID:ev451
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev526@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20271020T170000
+DTEND;TZID=Europe/Berlin:20271020T183000
+SUMMARY:AG Wohlfahrt Bochum
+DESCRIPTION:Reihe: Platzhalter\, Termine noch nicht bestätigt (Rhythmus la
+ ut Regel: 8x jährlich). Bitte jeden Termin einzeln und vorläufig nach de
+ r Terminliste anlegen. (8 Termine 2027\, Einzeltermine)\nHintergrund: Plat
+ zhalter: 8×/Jahr\, ab 17 Uhr\, 90 Min.\, extern – genaue Termine noch o
+ ffen.\nRegel: 8× im Jahr\, ab 17 Uhr\, 90 Min.\nErlaubte Wochentage: Mi\n
+ PLATZHALTER: Termin noch nicht bestätigt\, mit dem Sekretariat abstimmen.
+LOCATION:extern
+CATEGORIES:Gremium / Puffer,GFK2027
+X-GF-SERIE:ag-wohlfahrt
+X-GF-ID:ev526
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev3@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20271108T090000
+DTEND;TZID=Europe/Berlin:20271108T180000
+SUMMARY:Leistungsklausur Sozialwirtschaft (Tag 1)
+DESCRIPTION:Reihe: alle 27 Wochen\, jeweils Montag (2 Termine 2027\, Einzel
+ termine)\nHintergrund: 2-Tage-Block Mo+Di\, 2. von 2×/Jahr – KW 45\, ei
+ ne Woche vor der GBL-Klausur (KW 46).\nRegel: Regel 4: nie in derselben IS
+ O-Woche wie die GBL-Klausur.\nErlaubte Wochentage: Mo\, Di\nNie in derselb
+ en Kalenderwoche wie: GBL-Klausur
+CATEGORIES:Klausur,GFK2027
+X-GF-SERIE:klausur-sw
+X-GF-ID:ev3
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev4@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20271109T090000
+DTEND;TZID=Europe/Berlin:20271109T150000
+SUMMARY:Leistungsklausur Sozialwirtschaft (Tag 2)
+DESCRIPTION:Reihe: alle 27 Wochen\, jeweils Montag (2 Termine 2027\, Einzel
+ termine)\nHintergrund: Fortsetzung Dienstag.\nRegel: Regel 4: nie in derse
+ lben ISO-Woche wie die GBL-Klausur.\nErlaubte Wochentage: Mo\, Di\nNie in 
+ derselben Kalenderwoche wie: GBL-Klausur
+CATEGORIES:Klausur,GFK2027
+X-GF-SERIE:klausur-sw
+X-GF-ID:ev4
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev586@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20271111T090000
+DTEND;TZID=Europe/Berlin:20271111T110000
+SUMMARY:GVV Pflege/DfM/Culina/MiR
+DESCRIPTION:Reihe: Platzhalter\, Termine noch nicht bestätigt (Rhythmus la
+ ut Regel: 2-3x jährlich). Bitte jeden Termin einzeln und vorläufig nach 
+ der Terminliste anlegen. (2 Termine 2027\, Einzeltermine)\nHintergrund: Pl
+ atzhalter: Gesellschafterversammlung Pflege/DfM/Culina/MiR\, 2×/Jahr\, Te
+ rmin noch offen.\nErlaubte Wochentage: Do\nPLATZHALTER: Termin noch nicht 
+ bestätigt\, mit dem Sekretariat abstimmen.
+CATEGORIES:Gremium / Puffer,GFK2027
+X-GF-SERIE:gvv-pflege
+X-GF-ID:ev586
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev575@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20271111T140000
+DTEND;TZID=Europe/Berlin:20271111T154000
+SUMMARY:JF MAV+BR SBO
+DESCRIPTION:Einzeltermin der Reihe „JF MAV+BR SBO“: verschoben bzw. au
+ ßerhalb des Serienmusters (siehe Hintergrund).\nHintergrund: Alle 2 Monat
+ e\, 100 Min. plus 20 Min. Puffer. Ersetzt Monatsgespräch SBO und Betriebs
+ versammlung SBO (gestrichen). Verschoben von Do 18.11.2027 (Feiertag/Klaus
+ ur).\nRegel: 100 Min. plus 20 Min. Puffer. Ersetzt Monatsgespräch SBO und
+  Betriebsversammlung SBO (beide gestrichen).\nErlaubte Wochentage: Do\nDan
+ ach 20 Min. Puffer einplanen (kein Termin direkt im Anschluss).\nKommunika
+ tionsmatrix Nr. 30 „JF MAVen und BR“: abweichend (Dauer: Matrix 50 Min
+ .\, Kalender 100 Min.).
+LOCATION:SBO Sommerdelle
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:mav-br-sbo
+X-GF-ID:ev575
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev576@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20271111T160000
+DTEND;TZID=Europe/Berlin:20271111T173000
+SUMMARY:Pufferslot Gremien
+DESCRIPTION:Einzeltermin der Reihe „Pufferslot Gremien“: verschoben bzw
+ . außerhalb des Serienmusters (siehe Hintergrund).\nHintergrund: Fester S
+ chutzslot für kurzfristige Gremienbelange\, 3. Donnerstag\, 16:00–17:30
+ . Verschoben von Do 18.11.2027 (Feiertag/Klausur).\nRegel: Schutzslot für
+  kurzfristige Gremienbelange.\nErlaubte Wochentage: Do
+CATEGORIES:Gremium / Puffer,GFK2027
+X-GF-SERIE:pufferslot
+X-GF-ID:ev576
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev460@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20271116T163000
+DTEND;TZID=Europe/Berlin:20271116T172000
+SUMMARY:JF Personal
+DESCRIPTION:Reihe: etwa alle 7 bis 8 Wochen\, jeweils Dienstag (Rhythmus la
+ ut Regel: alle 6-8 Wochen). Die Termine liegen wegen Urlaub\, Feiertag ode
+ r Klausur teils versetzt\, bitte nach der Terminliste anlegen. (7 Termine 
+ 2027\, Einzeltermine)\nHintergrund: Referat Personal\, 50 Min. – Teil 1 
+ von 3 des unteilbaren 75-Min.-Blocks (Regel 3).\nRegel: Regeln 2+3: Mala-T
+ eilslot im Block\, Block nicht trennbar.\nErlaubte Wochentage: Di\nBlock n
+ icht trennbar: 50 Min. Referat + 20 Min. Poolspringer Frau Mala + 5 Min. W
+ echselpuffer\nKommunikationsmatrix Nr. 3a „Jour fixe Referat Personal“
+ : kongruent.
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:jf-personal
+X-GF-ID:ev460
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev461@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20271116T172000
+DTEND;TZID=Europe/Berlin:20271116T174000
+SUMMARY:JF Personal – Poolspringer-Slot Frau Mala
+DESCRIPTION:Reihe: etwa alle 7 bis 8 Wochen\, jeweils Dienstag (Rhythmus la
+ ut Regel: alle 6-8 Wochen). Die Termine liegen wegen Urlaub\, Feiertag ode
+ r Klausur teils versetzt\, bitte nach der Terminliste anlegen. (7 Termine 
+ 2027\, Einzeltermine)\nHintergrund: Teilslot für Frau Mala innerhalb JF P
+ ersonal\, 20 Min. – Teil 2 von 3 (Regel 2: kein eigener Termin).\nRegel:
+  Regeln 2+3: Mala-Teilslot im Block\, Block nicht trennbar.\nErlaubte Woch
+ entage: Di\nBlock nicht trennbar: 50 Min. Referat + 20 Min. Poolspringer F
+ rau Mala + 5 Min. Wechselpuffer\nKommunikationsmatrix Nr. 3a „Jour fixe 
+ Referat Personal“: kongruent.
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:jf-personal
+X-GF-ID:ev461
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev462@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20271116T174000
+DTEND;TZID=Europe/Berlin:20271116T174500
+SUMMARY:JF Personal – Wechselpuffer
+DESCRIPTION:Reihe: etwa alle 7 bis 8 Wochen\, jeweils Dienstag (Rhythmus la
+ ut Regel: alle 6-8 Wochen). Die Termine liegen wegen Urlaub\, Feiertag ode
+ r Klausur teils versetzt\, bitte nach der Terminliste anlegen. (7 Termine 
+ 2027\, Einzeltermine)\nHintergrund: Wechselpuffer\, 5 Min. – Teil 3 von 
+ 3\, Block gesamt 75 Min.\nRegel: Regeln 2+3: Mala-Teilslot im Block\, Bloc
+ k nicht trennbar.\nErlaubte Wochentage: Di\nBlock nicht trennbar: 50 Min. 
+ Referat + 20 Min. Poolspringer Frau Mala + 5 Min. Wechselpuffer\nKommunika
+ tionsmatrix Nr. 3a „Jour fixe Referat Personal“: kongruent.
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:jf-personal
+X-GF-ID:ev462
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev5@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20271118T090000
+DTEND;TZID=Europe/Berlin:20271118T180000
+SUMMARY:GBL-Klausur (Tag 1)
+DESCRIPTION:Reihe: Einzeltermin\, keine Wiederholung\nHintergrund: Jährlic
+ h im November\, 1\,5 Tage Do–Fr. Regel 4: nicht mit der Leistungsklausur
+  Sozialwirtschaft gekoppelt.\nRegel: Regel 4: nie in derselben ISO-Woche w
+ ie die Leistungsklausur Sozialwirtschaft.\nErlaubte Wochentage: Do\, Fr\nN
+ ie in derselben Kalenderwoche wie: Leistungsklausur Sozialwirtschaft\nKomm
+ unikationsmatrix Nr. 7 „GBL-Klausurtagung“: kongruent.
+CATEGORIES:Klausur,GFK2027
+X-GF-SERIE:gbl-klausur
+X-GF-ID:ev5
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev6@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20271119T090000
+DTEND;TZID=Europe/Berlin:20271119T130000
+SUMMARY:GBL-Klausur (Tag 2)
+DESCRIPTION:Reihe: Einzeltermin\, keine Wiederholung\nHintergrund: Fortsetz
+ ung bis Freitagmittag.\nRegel: Regel 4: nie in derselben ISO-Woche wie die
+  Leistungsklausur Sozialwirtschaft.\nErlaubte Wochentage: Do\, Fr\nNie in 
+ derselben Kalenderwoche wie: Leistungsklausur Sozialwirtschaft\nKommunikat
+ ionsmatrix Nr. 7 „GBL-Klausurtagung“: kongruent.
+CATEGORIES:Klausur,GFK2027
+X-GF-SERIE:gbl-klausur
+X-GF-ID:ev6
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev16@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20271122T130000
+DTEND;TZID=Europe/Berlin:20271122T160000
+SUMMARY:Steuerungsgruppe Personal
+DESCRIPTION:Reihe: kein festes Wochenmuster (Rhythmus laut Regel: quartalsw
+ eise): bitte jeden Termin einzeln nach der Terminliste anlegen (4 Termine 
+ 2027\, Einzeltermine)\nHintergrund: Quartalsweise. Bochum\, Westring 26\, 
+ Raum 209. Einladung von Sven Pernak.\nRegel: Quartalsweise\, Westring 26\,
+  Raum 209 (Einladung Sven Pernak).\nErlaubte Wochentage: Mo\, Do
+LOCATION:Westring 26\, Raum 209
+CATEGORIES:Steuerkreis,GFK2027
+X-GF-SERIE:steuerungsgruppe-personal
+X-GF-ID:ev16
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev515@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20271124T090000
+DTEND;TZID=Europe/Berlin:20271124T120000
+SUMMARY:Vorstandssitzung IM
+DESCRIPTION:Reihe: Platzhalter\, Termine noch nicht bestätigt (Rhythmus la
+ ut Regel: unregelmäßig). Bitte jeden Termin einzeln und vorläufig nach 
+ der Terminliste anlegen. (5 Termine 2027\, Einzeltermine)\nHintergrund: Pl
+ atzhalter: ca. 4–5×/Jahr\, 3 Std.\, extern – genaue Termine noch offe
+ n.\nErlaubte Wochentage: Mi\nPLATZHALTER: Termin noch nicht bestätigt\, m
+ it dem Sekretariat abstimmen.
+LOCATION:Innere Mission
+CATEGORIES:Gremium / Puffer,GFK2027
+X-GF-SERIE:vorstand-im
+X-GF-ID:ev515
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev574@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20271125T134500
+DTEND;TZID=Europe/Berlin:20271125T154500
+SUMMARY:Hospitation vor Ort
+DESCRIPTION:Reihe: Steht immer am Tag der Steuerkreise\, direkt vor bzw. na
+ ch dem Steuerkreis-Block. Zusammen mit dem Steuerkreis anlegen (siehe Term
+ inliste). (14 Termine 2027\, Einzeltermine)\nHintergrund: Hospitationsbloc
+ ker\, 2 Std.\, direkt im Anschluss: der GF bleibt ggf. vor Ort und schaut 
+ sich um.\nRegel: Direkt im Anschluss an den Steuerkreis-Block: der GF blei
+ bt vor Ort und schaut sich um.
+LOCATION:Einrichtung (Vor-Ort)
+CATEGORIES:Fokuszeit,GFK2027
+X-GF-SERIE:sk-hospitation
+X-GF-ID:ev574
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev473@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20271130T090000
+DTEND;TZID=Europe/Berlin:20271130T095000
+SUMMARY:JF Weisang
+DESCRIPTION:Einzeltermin der Reihe „JF Partner (Di)“: verschoben bzw. a
+ ußerhalb des Serienmusters (siehe Hintergrund).\nHintergrund: Monatlicher
+  Jour fixe\, 50 Min. Träger: Innere Mission. Slotzuordnung = Arbeitsannah
+ me. Verschoben von Di 09.11.2027 (Klausur/Auslastung).\nRegel: Dienstag = 
+ JF-Tag (Arbeitsannahme Slotverteilung).\nErlaubte Wochentage: Di\nARBEITSA
+ NNAHME: Slot oder Wochentag noch nicht bestätigt.
+LOCATION:Innere Mission
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:partner-JF Weisang
+X-GF-ID:ev473
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev474@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20271130T100000
+DTEND;TZID=Europe/Berlin:20271130T105000
+SUMMARY:JF Pernak
+DESCRIPTION:Einzeltermin der Reihe „JF Partner (Di)“: verschoben bzw. a
+ ußerhalb des Serienmusters (siehe Hintergrund).\nHintergrund: Monatlicher
+  Jour fixe\, 50 Min. Träger: Innere Mission. Slotzuordnung = Arbeitsannah
+ me. Verschoben von Di 09.11.2027 (Klausur/Auslastung).\nRegel: Dienstag = 
+ JF-Tag (Arbeitsannahme Slotverteilung).\nErlaubte Wochentage: Di\nARBEITSA
+ NNAHME: Slot oder Wochentag noch nicht bestätigt.
+LOCATION:Innere Mission
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:partner-JF Pernak
+X-GF-ID:ev474
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev475@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20271130T110000
+DTEND;TZID=Europe/Berlin:20271130T115000
+SUMMARY:JF MAV IM
+DESCRIPTION:Einzeltermin der Reihe „JF Partner (Di)“: verschoben bzw. a
+ ußerhalb des Serienmusters (siehe Hintergrund).\nHintergrund: Monatlicher
+  Jour fixe\, 50 Min. Träger: Innere Mission. Slotzuordnung = Arbeitsannah
+ me. Verschoben von Di 09.11.2027 (Klausur/Auslastung).\nRegel: Dienstag = 
+ JF-Tag (Arbeitsannahme Slotverteilung).\nErlaubte Wochentage: Di\nARBEITSA
+ NNAHME: Slot oder Wochentag noch nicht bestätigt.
+LOCATION:Innere Mission
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:partner-JF MAV IM
+X-GF-ID:ev475
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev476@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20271130T120000
+DTEND;TZID=Europe/Berlin:20271130T125000
+SUMMARY:JF Möller/Hagenbrock
+DESCRIPTION:Einzeltermin der Reihe „JF Partner (Di)“: verschoben bzw. a
+ ußerhalb des Serienmusters (siehe Hintergrund).\nHintergrund: Monatlicher
+  Jour fixe\, 50 Min. Träger: Innere Mission. Slotzuordnung = Arbeitsannah
+ me. Verschoben von Di 09.11.2027 (Klausur/Auslastung).\nRegel: Dienstag = 
+ JF-Tag (Arbeitsannahme Slotverteilung).\nErlaubte Wochentage: Di\nARBEITSA
+ NNAHME: Slot oder Wochentag noch nicht bestätigt.
+LOCATION:Innere Mission
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:partner-JF Möller/Hagenbrock
+X-GF-ID:ev476
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev477@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20271130T130000
+DTEND;TZID=Europe/Berlin:20271130T135000
+SUMMARY:JF Moreira
+DESCRIPTION:Einzeltermin der Reihe „JF GBL (Di-Mittagsband)“: verschobe
+ n bzw. außerhalb des Serienmusters (siehe Hintergrund).\nHintergrund: Mon
+ atlicher Jour fixe GBL\, 50 Min. Di-Mittagsband. Verschoben von Di 09.11.2
+ 027 (Klausur/Auslastung).\nRegel: GBL-JF liegen auf dem Dienstag-Mittagsba
+ nd.\nErlaubte Wochentage: Di\nKommunikationsmatrix Nr. 2 „Jour fixe GBL
+ “: kongruent.\nARBEITSANNAHME: Slot oder Wochentag noch nicht bestätigt
+ .
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:gbl-JF Moreira
+X-GF-ID:ev477
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev478@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20271130T140000
+DTEND;TZID=Europe/Berlin:20271130T145000
+SUMMARY:JF Marketing & Vertrieb
+DESCRIPTION:Einzeltermin der Reihe „JF Referat (Di-Mittagsband)“: versc
+ hoben bzw. außerhalb des Serienmusters (siehe Hintergrund).\nHintergrund:
+  Monatlicher Jour fixe Referat Marketing & Vertrieb\, 50 Min. Di-Mittagsba
+ nd. Verschoben von Di 09.11.2027 (Klausur/Auslastung).\nErlaubte Wochentag
+ e: Di\nKommunikationsmatrix Nr. 3d „Jour fixe Referat Marketing und Vert
+ rieb“: kongruent.\nARBEITSANNAHME: Slot oder Wochentag noch nicht bestä
+ tigt.
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:referat-JF Marketing & Vertrieb
+X-GF-ID:ev478
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev527@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20271201T170000
+DTEND;TZID=Europe/Berlin:20271201T183000
+SUMMARY:AG Wohlfahrt Bochum
+DESCRIPTION:Reihe: Platzhalter\, Termine noch nicht bestätigt (Rhythmus la
+ ut Regel: 8x jährlich). Bitte jeden Termin einzeln und vorläufig nach de
+ r Terminliste anlegen. (8 Termine 2027\, Einzeltermine)\nHintergrund: Plat
+ zhalter: 8×/Jahr\, ab 17 Uhr\, 90 Min.\, extern – genaue Termine noch o
+ ffen.\nRegel: 8× im Jahr\, ab 17 Uhr\, 90 Min.\nErlaubte Wochentage: Mi\n
+ PLATZHALTER: Termin noch nicht bestätigt\, mit dem Sekretariat abstimmen.
+LOCATION:extern
+CATEGORIES:Gremium / Puffer,GFK2027
+X-GF-SERIE:ag-wohlfahrt
+X-GF-ID:ev527
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev197@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+RECURRENCE-ID;TZID=Europe/Berlin:20271206T140000
+DTSTART;TZID=Europe/Berlin:20271206T141500
+DTEND;TZID=Europe/Berlin:20271206T161500
+SUMMARY:Leitungskonferenz Sozialwirtschaft
+DESCRIPTION:Dieser Termin weicht in der Uhrzeit vom Serienmuster ab (Ausnah
+ me-Instanz der Serie).\nHintergrund: Monatlicher Montag-Anker (Diakonie Ru
+ hr)\, 1. Montag\, 2 Std.\nRegel: 1. Montag\, 2 Std. (ehemals Betriebsleitu
+ ngskonferenz).\nErlaubte Wochentage: Mo
+LOCATION:Westring 26
+CATEGORIES:Gremium / Puffer,GFK2027
+X-GF-SERIE:lk-sozialwirtschaft
+X-GF-ID:ev217
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev480@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20271207T170000
+DTEND;TZID=Europe/Berlin:20271207T175000
+SUMMARY:JF QM & Regulatorik
+DESCRIPTION:Reihe: etwa alle 6 bis 8 Wochen\, jeweils Dienstag (Rhythmus la
+ ut Regel: alle 6-8 Wochen). Die Termine liegen wegen Urlaub\, Feiertag ode
+ r Klausur teils versetzt\, bitte nach der Terminliste anlegen. (7 Termine 
+ 2027\, Einzeltermine)\nHintergrund: Referat QM & Regulatorik\, alle 6–8 
+ Wochen\, 50 Min.\nErlaubte Wochentage: Di\nKommunikationsmatrix Nr. 3b „
+ Jour fixe Referat QM und Regulatorik“: kongruent.
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:jf-qm
+X-GF-ID:ev480
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev519@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20271208T170000
+DTEND;TZID=Europe/Berlin:20271208T183000
+SUMMARY:Verwaltungsrat IM
+DESCRIPTION:Reihe: Platzhalter\, Termine noch nicht bestätigt (Rhythmus la
+ ut Regel: 4x jährlich). Bitte jeden Termin einzeln und vorläufig nach de
+ r Terminliste anlegen. (4 Termine 2027\, Einzeltermine)\nHintergrund: Plat
+ zhalter: 4×/Jahr\, mittwochs ab 17 Uhr\, 90 Min.\, extern – genaue Term
+ ine noch offen.\nRegel: 4× im Jahr\, mittwochs ab 17 Uhr\, 90 Min.\nErlau
+ bte Wochentage: Mi\nPLATZHALTER: Termin noch nicht bestätigt\, mit dem Se
+ kretariat abstimmen.
+LOCATION:Innere Mission
+CATEGORIES:Gremium / Puffer,GFK2027
+X-GF-SERIE:verwaltungsrat-im
+X-GF-ID:ev519
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev584@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20271209T090000
+DTEND;TZID=Europe/Berlin:20271209T120000
+SUMMARY:GVV DADuL
+DESCRIPTION:Reihe: Platzhalter\, Termine noch nicht bestätigt (Rhythmus la
+ ut Regel: 2-3x jährlich). Bitte jeden Termin einzeln und vorläufig nach 
+ der Terminliste anlegen. (2 Termine 2027\, Einzeltermine)\nHintergrund: Pl
+ atzhalter: Gesellschafterversammlung DADuL\, 2×/Jahr\, 3 Std.\, Termin no
+ ch offen.\nErlaubte Wochentage: Do\nPLATZHALTER: Termin noch nicht bestät
+ igt\, mit dem Sekretariat abstimmen.
+CATEGORIES:Gremium / Puffer,GFK2027
+X-GF-SERIE:gvv-dadul
+X-GF-ID:ev584
+STATUS:TENTATIVE
+END:VEVENT
+BEGIN:VEVENT
+UID:ev488@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20271214T161500
+DTEND;TZID=Europe/Berlin:20271214T175500
+SUMMARY:JF Jahndorf
+DESCRIPTION:Reihe: etwa alle 7 bis 8 Wochen\, jeweils Dienstag (Rhythmus la
+ ut Regel: alle 8 Wochen). Die Termine liegen wegen Urlaub\, Feiertag oder 
+ Klausur teils versetzt\, bitte nach der Terminliste anlegen. (7 Termine 20
+ 27\, Einzeltermine)\nHintergrund: Regel 1: Turnus etwa alle 8 Wochen (nich
+ t monatlich)\, 100 Min. Träger: LeWo.\nRegel: Regel 1: etwa alle 8 Wochen
+  (nicht monatlich)\, 100 Min.\nErlaubte Wochentage: Di
+LOCATION:LeWo
+CATEGORIES:JF,GFK2027
+X-GF-SERIE:jahndorf
+X-GF-ID:ev488
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev24@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20271216T090000
+DTEND;TZID=Europe/Berlin:20271216T120000
+SUMMARY:Steuerungsgruppe UK DR
+DESCRIPTION:Reihe: kein festes Wochenmuster (Rhythmus laut Regel: quartalsw
+ eise): bitte jeden Termin einzeln nach der Terminliste anlegen (4 Termine 
+ 2027\, Einzeltermine)\nHintergrund: Quartalsweise. Bochum\, Westring 26\, 
+ Raum 209. Einladung von Sven Pernak.\nRegel: Quartalsweise\, Westring 26\,
+  Raum 209 (Einladung Sven Pernak).\nErlaubte Wochentage: Mo\, Mi\, Do
+LOCATION:Westring 26\, Raum 209
+CATEGORIES:Steuerkreis,GFK2027
+X-GF-SERIE:steuerungsgruppe-uk-dr
+X-GF-ID:ev24
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ev579@gf-jahreskalender-2027
+DTSTAMP:20261023T184449Z
+DTSTART;TZID=Europe/Berlin:20271223T113000
+DTEND;TZID=Europe/Berlin:20271223T133000
+SUMMARY:Hospitation vor Ort
+DESCRIPTION:Reihe: Steht immer am Tag der Steuerkreise\, direkt vor bzw. na
+ ch dem Steuerkreis-Block. Zusammen mit dem Steuerkreis anlegen (siehe Term
+ inliste). (14 Termine 2027\, Einzeltermine)\nHintergrund: Hospitationsbloc
+ ker\, 2 Std.\, direkt im Anschluss: der GF bleibt ggf. vor Ort und schaut 
+ sich um.\nRegel: Direkt im Anschluss an den Steuerkreis-Block: der GF blei
+ bt vor Ort und schaut sich um.
+LOCATION:Einrichtung (Vor-Ort)
+CATEGORIES:Fokuszeit,GFK2027
+X-GF-SERIE:sk-hospitation
+X-GF-ID:ev579
+STATUS:CONFIRMED
+END:VEVENT
+END:VCALENDAR

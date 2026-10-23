@@ -272,7 +272,7 @@ function eq(a, b, msg) { if (JSON.stringify(a) !== JSON.stringify(b)) throw new 
       var part2 = G.eventsData()[day].filter(function(e) { return e.blockKey === bk && e.title.indexOf("Poolspringer") > 0; })[0];
       G.moveEvent(day, part2.uid, day, "00:30", { clampGrid: true });
       var now = G.eventsData()[day].filter(function(e) { return e.blockKey === bk; }).sort(function(a, b) { return a.start < b.start ? -1 : 1; });
-      var v = G.checkPlausibility(day).filter(function(x) { return x.ev.blockKey === bk && !x.ok; }).length;
+      var v = G.checkPlausibility(day).filter(function(x) { return x.ev.blockKey === bk && x.messages.some(function(m) { return m.indexOf("Überschneidung") !== 0; }); }).length;   // Block-Regeln (nicht trennbar, Dauer, Zeit); Überschneidungen mit anderen Terminen zählen hier nicht
       return { teile: now.length, zeiten: now.map(function(e) { return e.time; }), verstoesse: v };
     });
     eq(r.teile, 3, "Teile"); eq(r.verstoesse, 0, "Block bleibt regelkonform");
@@ -561,7 +561,7 @@ function eq(a, b, msg) { if (JSON.stringify(a) !== JSON.stringify(b)) throw new 
   await test("ICS: Export über die Schaltfläche bietet die Wahl mit/ohne Platzhalter", async function(p) {
     await p.click("#btnIcs");
     var labels = await p.evaluate(function() { return Array.prototype.map.call(document.querySelectorAll("#dlgFooter .btn"), function(b) { return b.textContent; }); });
-    eq(labels, ["Abbrechen", "Ohne Platzhalter", "Mit Platzhaltern"], "Auswahl");
+    eq(labels, ["Abbrechen", "Ohne Platzhalter", "Mit Platzhaltern", "Assistenzversion (mit Serienanleitung)", "Outlook-Version (Serien als Wiederholung)"], "Auswahl");
     await p.click("#dlgFooter .btn.cyan");
     await p.waitForSelector("#dlgArea", { state: "visible" });
     ok((await p.inputValue("#dlgArea")).indexOf("BEGIN:VCALENDAR") === 0, "ICS-Text fehlt im Dialog");
@@ -801,6 +801,30 @@ function eq(a, b, msg) { if (JSON.stringify(a) !== JSON.stringify(b)) throw new 
       return { vorher: before.indexOf("After Work") < 0 || before.indexOf("nicht gewünscht (2)") >= 0, nachher: after.indexOf("Von Fritsch nicht gewünscht (3)") >= 0 && after.indexOf("9 After Work") >= 0, saved: saved["9"], csvZeilen: csv.length, kopf: csv[0].indexOf("Entscheidung Fritsch") > 0 };
     });
     eq(r, { vorher: true, nachher: true, saved: "nein", csvZeilen: 1 + 43 + 23, kopf: true }, "Entscheidung");
+  });
+
+  // ---------- ICS-Assistenzversion ----------
+  await test("ICS Assistenzversion: alle Termine, Serienanleitung nur im ersten Termin je Reihe, Kurznotizen in den weiteren, gültig gefaltet", async function(p) {
+    var r = await p.evaluate(function() {
+      var G = window.GFKAL, plain = G.buildICS(true), a = G.buildICS(true, true), idx = G.icsAssistIndex(G.allEventsFlat());
+      var series = Object.keys(idx).filter(function(k) { return !idx[k].single; }).length;
+      var unfold = a.text.replace(/\r\n /g, ""), ev = unfold.split("BEGIN:VEVENT").slice(1);
+      var lead = ev.filter(function(b) { return b.indexOf("SERIENANLEITUNG") >= 0; }), kurz = ev.filter(function(b) { return b.indexOf("DESCRIPTION:Reihe: ") >= 0; });
+      var wa = lead.filter(function(b) { return b.indexOf("SUMMARY:Wirtschaftsausschuss SBO") >= 0; })[0] || "";
+      var lines = a.text.split("\r\n"), long = lines.filter(function(l) { return new TextEncoder().encode(l).length > 75; }).length;
+      return { n: a.count === plain.count, series: series > 50, leadGleich: lead.length === series, kategorie: (unfold.match(/CATEGORIES:[^\r\n]*Serienstart/g) || []).length === series, kurz: kurz.length > 400,
+        wa: wa.indexOf("jeden 4. Dienstag im Monat") >= 0 && wa.indexOf("Danach 30 Min. Puffer") >= 0 && wa.indexOf("Kommunikationsmatrix Nr. 33") >= 0, lang: long === 0, ende: a.text.indexOf("END:VCALENDAR") > 0 };
+    });
+    eq(r, { n: true, series: true, leadGleich: true, kategorie: true, kurz: true, wa: true, lang: true, ende: true }, "ICS Assistenz");
+  });
+  await test("ICS Assistenzversion: Serienmuster aus den Terminen (wöchentlich Mittwoch mit Ausnahmen, 4. Dienstag, quartalsweise)", async function(p) {
+    var r = await p.evaluate(function() {
+      var G = window.GFKAL, idx = G.icsAssistIndex(G.allEventsFlat());
+      return { wg: idx["wochengespraech-ohne-gf"].pattern.text, wgExc: idx["wochengespraech-ohne-gf"].pattern.exc.length >= 1, sk: idx["sk-personal"].pattern.text, fokus: idx["fokuszeit-mo"].pattern.text, einzel: Object.keys(idx).some(function(k) { return idx[k].single; }) };
+    });
+    ok(r.wg === "wöchentlich, jeden Mittwoch" && r.wgExc, "Wochengespräch: " + JSON.stringify(r));
+    ok(r.sk.indexOf("quartalsweise") >= 0, "Steuerkreis Personal: " + r.sk);
+    ok(r.fokus.indexOf("wöchentlich, jeden Montag") === 0, "Fokus: " + r.fokus);
   });
 
   await browser.close();

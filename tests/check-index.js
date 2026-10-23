@@ -272,7 +272,7 @@ function eq(a, b, msg) { if (JSON.stringify(a) !== JSON.stringify(b)) throw new 
       var part2 = G.eventsData()[day].filter(function(e) { return e.blockKey === bk && e.title.indexOf("Poolspringer") > 0; })[0];
       G.moveEvent(day, part2.uid, day, "00:30", { clampGrid: true });
       var now = G.eventsData()[day].filter(function(e) { return e.blockKey === bk; }).sort(function(a, b) { return a.start < b.start ? -1 : 1; });
-      var v = G.checkPlausibility(day).filter(function(x) { return x.ev.blockKey === bk && !x.ok; }).length;
+      var v = G.checkPlausibility(day).filter(function(x) { return x.ev.blockKey === bk && x.messages.some(function(m) { return m.indexOf("Überschneidung") !== 0; }); }).length;   // Block-Regeln (nicht trennbar, Dauer, Zeit); Überschneidungen mit anderen Terminen zählen hier nicht
       return { teile: now.length, zeiten: now.map(function(e) { return e.time; }), verstoesse: v };
     });
     eq(r.teile, 3, "Teile"); eq(r.verstoesse, 0, "Block bleibt regelkonform");
@@ -561,7 +561,7 @@ function eq(a, b, msg) { if (JSON.stringify(a) !== JSON.stringify(b)) throw new 
   await test("ICS: Export über die Schaltfläche bietet die Wahl mit/ohne Platzhalter", async function(p) {
     await p.click("#btnIcs");
     var labels = await p.evaluate(function() { return Array.prototype.map.call(document.querySelectorAll("#dlgFooter .btn"), function(b) { return b.textContent; }); });
-    eq(labels, ["Abbrechen", "Ohne Platzhalter", "Mit Platzhaltern", "Assistenzversion (mit Serienanleitung)"], "Auswahl");
+    eq(labels, ["Abbrechen", "Ohne Platzhalter", "Mit Platzhaltern", "Assistenzversion (mit Serienanleitung)", "Outlook-Version (Serien als Wiederholung)"], "Auswahl");
     await p.click("#dlgFooter .btn.cyan");
     await p.waitForSelector("#dlgArea", { state: "visible" });
     ok((await p.inputValue("#dlgArea")).indexOf("BEGIN:VCALENDAR") === 0, "ICS-Text fehlt im Dialog");

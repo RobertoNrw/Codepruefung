@@ -920,19 +920,19 @@
         i = order[oi];
         k = tuesdays[i];
         var nth = i + 1;
-        // Intervalltermine (6–8 Wochen, 7-Wochen-Takt)
+        // Intervalltermine (6–8 Wochen, 7-Wochen-Takt) zuerst, aber am Tagesende, damit die monatlichen Formate jeden Monat dieselbe Uhrzeit behalten
         if (personalDates.indexOf(k) >= 0) {
           var bk = "jf-personal-" + k;
           // Slot für den ganzen 75-Min.-Block suchen, Teil 2 und 3 schließen rechnerisch an Teil 1 an
-          var p1 = addEvent(k, "JF Personal", "JF", fromMin(findSlot(k, "09:00", rPersonal.totalDuration, {})), rPersonal.blockParts[0], "Referat Personal, 50 Min. – Teil 1 von 3 des unteilbaren 75-Min.-Blocks (Regel 3).", rPersonal, { blockKey: bk, seriesId: "jf-personal" });
+          var p1 = addEvent(k, "JF Personal", "JF", fromMin(findSlot(k, "16:30", rPersonal.totalDuration, {})), rPersonal.blockParts[0], "Referat Personal, 50 Min. – Teil 1 von 3 des unteilbaren 75-Min.-Blocks (Regel 3).", rPersonal, { blockKey: bk, seriesId: "jf-personal" });
           var p2 = addEvent(k, "JF Personal – Poolspringer-Slot Frau Mala", "JF", fromMin(toMin(p1.start) + 50), 20, "Teilslot für Frau Mala innerhalb JF Personal, 20 Min. – Teil 2 von 3 (Regel 2: kein eigener Termin).", rPersonal, { blockKey: bk, seriesId: "jf-personal" });
           addEvent(k, "JF Personal – Wechselpuffer", "JF", fromMin(toMin(p2.start) + 20), 5, "Wechselpuffer, 5 Min. – Teil 3 von 3, Block gesamt 75 Min.", rPersonal, { blockKey: bk, seriesId: "jf-personal" });
         }
         if (qmDates.indexOf(k) >= 0) {
-          placeOnDay(k, "JF QM & Regulatorik", "JF", "09:00", 50, "Referat QM & Regulatorik, alle 6–8 Wochen, 50 Min.", rQM, { seriesId: "jf-qm" });
+          placeOnDay(k, "JF QM & Regulatorik", "JF", "17:00", 50, "Referat QM & Regulatorik, alle 6–8 Wochen, 50 Min.", rQM, { seriesId: "jf-qm" });
         }
         if (jahndorfDates.indexOf(k) >= 0) {
-          placeOnDay(k, "JF Jahndorf", "JF", "09:00", 100, "Regel 1: Turnus etwa alle 8 Wochen (nicht monatlich), 100 Min. Träger: LeWo.", rJahndorf, { seriesId: "jahndorf", ort: "LeWo" });
+          placeOnDay(k, "JF Jahndorf", "JF", "16:15", 100, "Regel 1: Turnus etwa alle 8 Wochen (nicht monatlich), 100 Min. Träger: LeWo.", rJahndorf, { seriesId: "jahndorf", ort: "LeWo" });
         }
         var g = tueGroups[nth];
         if (g) {
@@ -2425,23 +2425,89 @@
     if (e.placeholder) lines.push("PLATZHALTER: Termin noch nicht bestätigt.");
     return lines;
   }
+
+  // ---- ICS-Outlook-Version: regelmäßige Reihen als echte Serie (RRULE + EXDATE), alles andere als Einzeltermine ----
+  var ICS_BYDAY = ["SU", "MO", "TU", "WE", "TH", "FR", "SA"];
+  function gcd(a, b) { return b ? gcd(b, a % b) : a; }
+  // Bildet eine Reihe als Wiederholung ab: Mustertermine (gleicher Wochentag, gleiche n-te Woche bzw. Wochenraster, gleiche Uhrzeit) werden zur Serie,
+  // abweichende Uhrzeit wird zur Ausnahme-Instanz (RECURRENCE-ID), verschobene Tage werden Einzeltermine. Gibt null zurück, wenn zu wenig zum Muster passt.
+  function icsRecurrence(info) {
+    var list = info.list, n = list.length;
+    if (info.single || n < 3 || info.clusters.some(function(c) { return c.length > 1; })) return null;
+    var dates = list.map(function(x) { return x.dateKey; });
+    if (dates.some(function(k, i) { return i && k === dates[i - 1]; })) return null;
+    var wdc = {}, nthc = {};
+    list.forEach(function(x) { var d = parseDateKey(x.dateKey); wdc[d.getDay()] = (wdc[d.getDay()] || 0) + 1; var q = Math.ceil(d.getDate() / 7); nthc[q] = (nthc[q] || 0) + 1; });
+    var wd = topKey(wdc), nth = topKey(nthc), onWd = list.filter(function(x) { return parseDateKey(x.dateKey).getDay() === wd; });
+    var gaps = onWd.slice(1).map(function(x, i) { return daysBetween(x.dateKey, onWd[i].dateKey); });
+    var weekly = gaps.length && gaps.every(function(g) { return g % 7 === 0; }) && gaps.filter(function(g) { return g === 7; }).length / gaps.length >= 0.5;
+    if (!weekly && nth > 4) return null;
+    var grid = onWd.filter(function(x) { return weekly || Math.ceil(parseDateKey(x.dateKey).getDate() / 7) === nth; });
+    var kc = {}; grid.forEach(function(x) { var k = x.ev.start + "|" + x.ev.duration; kc[k] = (kc[k] || 0) + 1; });
+    var baseKey = null; for (var kk in kc) if (baseKey === null || kc[kk] > kc[baseKey]) baseKey = kk;
+    var master = grid.filter(function(x) { return x.ev.start + "|" + x.ev.duration === baseKey; })[0];
+    if (!master || kc[baseKey] / n < 0.6) return null;
+    var ser = grid.filter(function(x) { return x.dateKey >= master.dateKey; }), have = {};
+    ser.forEach(function(x) { have[x.dateKey] = x; });
+    var ex = [], cnt = 0, last = ser[ser.length - 1].dateKey, rrule;
+    if (weekly) {
+      for (var c = parseDateKey(master.dateKey); dateToKey(c) <= last; c = addDays(c, 7)) { cnt++; if (!have[dateToKey(c)]) ex.push(dateToKey(c)); }
+      rrule = "FREQ=WEEKLY;BYDAY=" + ICS_BYDAY[wd];
+    } else {
+      var months = ser.map(function(x) { return parseDateKey(x.dateKey).getMonth(); });
+      if (months.some(function(m, i) { return i && m <= months[i - 1]; })) return null;
+      var k = months.slice(1).reduce(function(g, m, i) { return gcd(g, m - months[i]); }, 0) || 1;
+      for (var m = months[0]; m <= months[months.length - 1]; m += k) {
+        cnt++;
+        var nd = getNthWeekdayOfMonth(YEAR, m, wd, nth), key = nd ? dateToKey(nd) : null;
+        if (key && !have[key]) ex.push(key);
+      }
+      rrule = "FREQ=MONTHLY;INTERVAL=" + k + ";BYDAY=" + nth + ICS_BYDAY[wd];
+    }
+    var role = {}, overrides = 0;
+    list.forEach(function(x) { role[x.ev.uid] = "single"; });
+    ser.forEach(function(x) { var same = x.ev.start + "|" + x.ev.duration === baseKey; role[x.ev.uid] = x === master ? "master" : same ? "series" : "override"; if (!same && x !== master) overrides++; });
+    return { rrule: rrule, count: cnt, ex: ex, role: role, masterUid: master.ev.uid, masterStart: toMin(master.ev.start), inSeries: ser.length, overrides: overrides, singles: n - ser.length };
+  }
+  function icsOutlookNote(x, info, rec) {
+    var e = x.ev, lines = [], mx = matrixInfo(e);
+    var role = rec ? rec.role[e.uid] : "single";
+    if (rec && role === "master") {
+      lines.push("SERIE (als Wiederholung angelegt, " + rec.inSeries + " von " + info.list.length + " Terminen 2027" + (rec.singles ? ", " + rec.singles + " weitere als Einzeltermine" : "") + "): " + info.pattern.text);
+      if (rec.ex.length) lines.push("Entfällt in der Serie (Urlaub, Feiertag, Klausur oder verschoben): " + rec.ex.map(icsShortDate).join(", "));
+    } else if (rec && role === "override") lines.push("Dieser Termin weicht in der Uhrzeit vom Serienmuster ab (Ausnahme-Instanz der Serie).");
+    else if (rec) lines.push("Einzeltermin der Reihe „" + ((e.rule && e.rule.label) || e.title) + "“: verschoben bzw. außerhalb des Serienmusters (siehe Hintergrund).");
+    else if (!info.single) lines.push("Reihe: " + info.pattern.text + (info.clusters.length > 1 ? " (" + info.clusters.length + " Termine 2027, Einzeltermine)" : ""));
+    if (e.desc) lines.push("Hintergrund: " + e.desc);
+    icsRuleLines(e.rule).forEach(function(l) { lines.push(l); });
+    if (mx) lines.push("Kommunikationsmatrix Nr. " + mx.entry.nr + " „" + mx.entry.titel + "“: " + MATRIX_STATUS[mx.status].label + (mx.diffs.length ? " (" + mx.diffs.join("; ") + ")" : "") + ".");
+    if (e.placeholder) lines.push("PLATZHALTER: Termin noch nicht bestätigt, mit dem Sekretariat abstimmen.");
+    if (e.assumption) lines.push("ARBEITSANNAHME: Slot oder Wochentag noch nicht bestätigt.");
+    return lines;
+  }
   function buildICS(includePlaceholders, assist) {
     var n = new Date();
     var stamp = n.getUTCFullYear() + pad2(n.getUTCMonth() + 1) + pad2(n.getUTCDate()) + "T" + pad2(n.getUTCHours()) + pad2(n.getUTCMinutes()) + pad2(n.getUTCSeconds()) + "Z";
     var flat = allEventsFlat().filter(function(x) { return includePlaceholders || !x.ev.placeholder; }).sort(function(a, b) {
       return a.dateKey < b.dateKey ? -1 : a.dateKey > b.dateKey ? 1 : (toMin(a.ev.start) - toMin(b.ev.start)) || (a.ev.uid < b.ev.uid ? -1 : 1);
     });
-    var aidx = assist ? icsAssistIndex(flat) : null;
+    var aidx = assist ? icsAssistIndex(flat) : null, outlook = assist === "outlook", emitted = 0;
+    if (outlook) Object.keys(aidx).forEach(function(id) { aidx[id].rec = icsRecurrence(aidx[id]); });
     var L = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Diakonie Ruhr//GF Jahreskalender " + YEAR + "//DE", "CALSCALE:GREGORIAN", "METHOD:PUBLISH",
-      "X-WR-CALNAME:GF Jahreskalender " + YEAR + (assist ? " (Assistenz)" : ""), "X-WR-TIMEZONE:Europe/Berlin"]
-      .concat(assist ? ["X-WR-CALDESC:" + icsEscape("Assistenzversion: Der erste Termin jeder Reihe (Kategorie Serienstart) enthält die vollständige Serienanleitung mit Muster, Regeln und Hintergrund. Die weiteren Termine tragen nur eine Kurznotiz. Urlaub und Feiertage entfallen ohne Ersatztermin.")] : []).concat([
+      "X-WR-CALNAME:GF Jahreskalender " + YEAR + (outlook ? " (Outlook)" : assist ? " (Assistenz)" : ""), "X-WR-TIMEZONE:Europe/Berlin"]
+      .concat(outlook ? ["X-WR-CALDESC:" + icsEscape("Outlook-Version: Regelmäßige Reihen sind als echte Serie (Wiederholung mit Ausnahmen) angelegt, alle anderen Termine als Einzeltermine. Alle Termine tragen die Kategorie GFK2027, damit man sie gezielt wiederfinden oder löschen kann. Importieren Sie zuerst in einen Test-Kalender.")] : assist ? ["X-WR-CALDESC:" + icsEscape("Assistenzversion: Der erste Termin jeder Reihe (Kategorie Serienstart) enthält die vollständige Serienanleitung mit Muster, Regeln und Hintergrund. Die weiteren Termine tragen nur eine Kurznotiz. Urlaub und Feiertage entfallen ohne Ersatztermin.")] : []).concat([
       "BEGIN:VTIMEZONE", "TZID:Europe/Berlin",
       "BEGIN:STANDARD", "DTSTART:19701025T030000", "TZOFFSETFROM:+0200", "TZOFFSETTO:+0100", "TZNAME:CET", "RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU", "END:STANDARD",
       "BEGIN:DAYLIGHT", "DTSTART:19700329T020000", "TZOFFSETFROM:+0100", "TZOFFSETTO:+0200", "TZNAME:CEST", "RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=-1SU", "END:DAYLIGHT",
       "END:VTIMEZONE"]);
     flat.forEach(function(x) {
-      var e = x.ev, st = toMin(e.start), descParts = [], ainfo = null;
-      if (assist) {
+      var e = x.ev, st = toMin(e.start), descParts = [], ainfo = null, rec = null;
+      if (outlook) {
+        ainfo = aidx[e.seriesId || ("einzel-" + e.uid)]; rec = ainfo.rec;
+        var role = rec ? rec.role[e.uid] : "single";
+        if (role === "series") return;
+        descParts = icsOutlookNote(x, ainfo, rec);
+      } else if (assist) {
         ainfo = aidx[e.seriesId || ("einzel-" + e.uid)];
         descParts = icsAssistNote(x, ainfo);
       } else {
@@ -2450,30 +2516,39 @@
         if (e.placeholder) descParts.push("Platzhalter – Termin unbestätigt.");
         if (e.assumption) descParts.push("Arbeitsannahme – Slot nicht bestätigt.");
       }
-      L.push("BEGIN:VEVENT", "UID:" + e.uid + "@gf-jahreskalender-" + YEAR, "DTSTAMP:" + stamp,
-        "DTSTART;TZID=Europe/Berlin:" + icsLocal(x.dateKey, st), "DTEND;TZID=Europe/Berlin:" + icsLocal(x.dateKey, st + e.duration),
+      var uidOwner = (rec && role === "override") ? rec.masterUid : e.uid;
+      L.push("BEGIN:VEVENT", "UID:" + uidOwner + "@gf-jahreskalender-" + YEAR, "DTSTAMP:" + stamp);
+      if (rec && role === "override") L.push("RECURRENCE-ID;TZID=Europe/Berlin:" + icsLocal(x.dateKey, rec.masterStart));
+      L.push("DTSTART;TZID=Europe/Berlin:" + icsLocal(x.dateKey, st), "DTEND;TZID=Europe/Berlin:" + icsLocal(x.dateKey, st + e.duration),
         "SUMMARY:" + icsEscape(e.title));
+      emitted++;
+      if (rec && role === "master") {
+        L.push("RRULE:" + rec.rrule + ";COUNT=" + rec.count);
+        if (rec.ex.length) L.push("EXDATE;TZID=Europe/Berlin:" + rec.ex.map(function(k) { return icsLocal(k, st); }).join(","));
+      }
       if (descParts.length) L.push("DESCRIPTION:" + icsEscape(descParts.join("\n")));
       if (e.ort) L.push("LOCATION:" + icsEscape(e.ort));
       var cats = [typeLabels[e.type] || e.type];
-      if (assist && ainfo && !ainfo.single && e.uid === ainfo.lead) cats.push("Serienstart");
+      if (outlook) cats.push("GFK2027");
+      else if (assist && ainfo && !ainfo.single && e.uid === ainfo.lead) cats.push("Serienstart");
       L.push("CATEGORIES:" + cats.map(icsEscape).join(","));
       if (assist && ainfo && !ainfo.single) L.push("X-GF-SERIE:" + icsEscape(e.seriesId));
+      if (outlook) L.push("X-GF-ID:" + icsEscape(e.uid));
       L.push("STATUS:" + ((e.placeholder || e.assumption) ? "TENTATIVE" : "CONFIRMED"), "END:VEVENT");
     });
     L.push("END:VCALENDAR");
-    return { text: L.map(icsFold).join("\r\n") + "\r\n", count: flat.length };
+    return { text: L.map(icsFold).join("\r\n") + "\r\n", count: outlook ? emitted : flat.length, termine: flat.length };
   }
   function exportICS(includePlaceholders, assist) {
     var r = buildICS(includePlaceholders, assist);
-    var name = "jahreskalender-2027-fritsch" + (assist ? "-assistenz" : "") + "-" + nowISO().substr(0, 10) + ".ics";
+    var name = "jahreskalender-2027-fritsch" + (assist === "outlook" ? "-outlook" : assist ? "-assistenz" : "") + "-" + nowISO().substr(0, 10) + ".ics";
     downloadText(name, r.text, "text/calendar");
     showDialog({ title: "Export ICS – " + r.count + " Termine", text: "Die Datei „" + name + "“ wurde zum Download angeboten (Zeitzone Europe/Berlin, " + (includePlaceholders ? "inklusive" : "ohne") + " unbestätigte Platzhalter). Falls der Browser keinen Download zulässt: Inhalt kopieren und als .ics-Datei speichern.", textarea: r.text, buttons: [{ label: "Schließen" }, copyButton("In Zwischenablage kopieren")] });
-    logChange("Export ICS erstellt (" + r.count + " Termine" + (includePlaceholders ? ", mit Platzhaltern" : ", ohne Platzhalter") + (assist ? ", Assistenzversion mit Serienanleitung" : "") + ")");
+    logChange("Export ICS erstellt (" + r.count + " Termine" + (includePlaceholders ? ", mit Platzhaltern" : ", ohne Platzhalter") + (assist === "outlook" ? ", Outlook-Version mit Serien als Wiederholung" : assist ? ", Assistenzversion mit Serienanleitung" : "") + ")");
   }
   function askICS() {
     showDialog({ title: "Export ICS", text: "Welche Termine sollen in die Kalenderdatei?\nBestätigte Termine und Arbeitsannahmen sind immer enthalten. Unbestätigte Platzhalter lassen sich auslassen. Die Assistenzversion enthält alle Termine mit Serienanleitung im ersten Termin jeder Reihe und Kurznotizen in den weiteren.",
-      buttons: [{ label: "Abbrechen" }, { label: "Ohne Platzhalter", primary: true, onClick: function() { setTimeout(function() { exportICS(false); }, 0); } }, { label: "Mit Platzhaltern", onClick: function() { setTimeout(function() { exportICS(true); }, 0); } }, { label: "Assistenzversion (mit Serienanleitung)", onClick: function() { setTimeout(function() { exportICS(true, true); }, 0); } }] });
+      buttons: [{ label: "Abbrechen" }, { label: "Ohne Platzhalter", primary: true, onClick: function() { setTimeout(function() { exportICS(false); }, 0); } }, { label: "Mit Platzhaltern", onClick: function() { setTimeout(function() { exportICS(true); }, 0); } }, { label: "Assistenzversion (mit Serienanleitung)", onClick: function() { setTimeout(function() { exportICS(true, true); }, 0); } }, { label: "Outlook-Version (Serien als Wiederholung)", onClick: function() { setTimeout(function() { exportICS(true, "outlook"); }, 0); } }] });
   }
 
   // ================= Formatliste (aus Serien und Regeln erzeugt) =================
@@ -2937,7 +3012,7 @@
     openFocus: openFocus, openForm: openForm, saveForm: saveForm, deleteEvent: deleteEvent, moveEvent: moveEvent, swapEventTimes: swapEventTimes,
     serialize: serialize, deserialize: deserialize, validateData: validateData, afterChange: afterChange, addEvent: addEvent, buildInitialData: buildInitialData,
     undo: undo, undoDepth: function() { return undoStack.length; }, snapshot: snapshot, setFilter: setFilter, passesFilter: passesFilter,
-    buildICS: buildICS, icsAssistIndex: icsAssistIndex, buildFormatList: buildFormatList, matrixCompute: matrixCompute, matrixCsv: matrixCsv, findSlot: findSlot, placeOnDay: placeOnDay, importJSON: importJSON
+    buildICS: buildICS, icsAssistIndex: icsAssistIndex, icsRecurrence: icsRecurrence, buildFormatList: buildFormatList, matrixCompute: matrixCompute, matrixCsv: matrixCsv, findSlot: findSlot, placeOnDay: placeOnDay, importJSON: importJSON
   };
 })();
 </script>

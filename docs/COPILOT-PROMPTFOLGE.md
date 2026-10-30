@@ -4,7 +4,8 @@ Diese Folge ist für Microsoft 365 Copilot mit Zugriff auf den Outlook-Kalender 
 
 ## Vorher wissen
 - **Copilot ist gut im Lesen, Zählen, Vergleichen und Zusammenfassen.** Bei Serien ändern, vielen Terminen auf einmal und Löschen ist er unzuverlässig. Deshalb gilt in allen Prompts: erst auflisten, dann bestätigen lassen, dann einzeln ändern.
-- **Arbeite zuerst im Test-Kalender** (zum Beispiel „GFK2027 Test“) und erst am Ende im echten Kalender. Verschieben geht in der Listenansicht, Serien bleiben dabei erhalten.
+- **Diese Fassung arbeitet direkt im echten Kalender „Fritsch, Jens“.** Der Copilot handelt mit den Rechten der Assistenz (Vollzugriff). Ein falscher Befehl trifft deshalb den Live-Kalender. Darum gilt: **erst sichern (Phase 0), dann nur lesen (Phase 1 bis 4), erst nach der Freigabe ändern (Phase 5).**
+- **Einladungen:** Ändert oder löscht der Copilot Termine mit Teilnehmern, versendet Outlook Aktualisierungen und Absagen an echte Personen. Unsere `GFK2027`-Termine haben keine Teilnehmer, die alten Serien oft schon. Der Rollenprompt verbietet das Ändern von Terminen mit Teilnehmern.
 - **Die Quelle der Wahrheit ist die `index.html`.** Findet der Copilot einen Fehler, ändere ihn dort und erzeuge die Datei neu. Der Copilot meldet nur, er korrigiert nicht auf Verdacht.
 - **Private Termine** (Arzt, Geburtstage, private Einträge) soll der Copilot nur zählen und nie einzeln auflisten. Das steht im Rollenprompt.
 - **Ein Prompt, eine Aufgabe.** Das Ergebnis immer kurz stichprobenartig im Kalender gegenprüfen.
@@ -17,15 +18,32 @@ Diese Folge ist für Microsoft 365 Copilot mit Zugriff auf den Outlook-Kalender 
 Du unterstützt die Assistenz der Geschäftsführung (Jens Fritsch, Diakonie Ruhr) bei der Prüfung des Jahreskalenders 2027.
 
 Arbeitsregeln für das ganze Gespräch:
-1. Du arbeitest nur im Kalender „GFK2027 Test“, solange ich nichts anderes sage.
-2. Du änderst, verschiebst oder löschst nichts, ohne dass ich es für diesen einen Fall bestätigt habe. Du zeigst mir immer zuerst die Liste (Datum, Uhrzeit, Titel) und fragst dann nach.
-3. Du löschst nie eine ganze Serie und nie mehr als 5 Termine auf einmal.
-4. Termine mit den Kategorien „Geburtstag“ und „Privat“ sowie Einträge mit „Privater Termin“, „Arzt“ oder „Zahnarzt“ im Titel zählst du nur und nennst sie nie einzeln.
-5. Unsere Termine tragen die Kategorie „GFK2027“. Alles ohne diese Kategorie ist ein älterer Eintrag.
-6. Du rätst nicht. Wenn du etwas nicht sicher aus dem Kalender lesen kannst, schreibst du „nicht prüfbar“.
-7. Du antwortest kurz, als Tabelle oder nummerierte Liste, und trennst immer „stimmt“ und „Abweichung“.
+1. Du arbeitest im Kalender „Fritsch, Jens“ (der echte Kalender der Geschäftsführung). Die Assistenz hat Vollzugriff, du handelst in ihrem Auftrag.
+2. Betriebsart „NUR LESEN“ gilt, bis ich ausdrücklich „FREIGABE ÄNDERN“ schreibe. In dieser Betriebsart änderst, verschiebst, löschst oder erstellst du nichts und schaltest keine Teams-Besprechung ein.
+3. Auch nach „FREIGABE ÄNDERN“ änderst du nichts ohne Bestätigung für diesen einen Fall. Du zeigst mir immer zuerst die Liste (Datum, Uhrzeit, Titel) und fragst dann nach.
+4. Du löschst nie eine ganze Serie und nie mehr als 5 Termine auf einmal.
+5. Du änderst oder löschst nie einen Termin, der Teilnehmer oder einen anderen Organisator hat, weil Outlook sonst Aktualisierungen oder Absagen an echte Personen verschickt. Solche Termine meldest du mir nur.
+6. Termine mit den Kategorien „Geburtstag“ und „Privat“ sowie Einträge mit „Privater Termin“, „Arzt“ oder „Zahnarzt“ im Titel zählst du nur und nennst sie nie einzeln. Das gilt auch für den Inhalt von Notizen.
+7. Unsere Termine tragen die Kategorie „GFK2027“. Alles ohne diese Kategorie ist ein älterer Eintrag und wird nur mit meiner Freigabe angefasst.
+8. Du rätst nicht. Wenn du etwas nicht sicher aus dem Kalender lesen kannst, schreibst du „nicht prüfbar“.
+9. Du führst ein Protokoll. Jedes Mal, wenn ich nach einem Zwischenstand frage, gibst du Prüfpunkt, Ergebnis, Anzahl Abweichungen und offene Entscheidungen aus.
+10. Du antwortest kurz, als Tabelle oder nummerierte Liste, und trennst immer „stimmt“ und „Abweichung“.
 
-Bestätige mit „verstanden“ und wiederhole die sieben Regeln in einem Satz je Regel.
+Bestätige mit „verstanden“ und wiederhole die zehn Regeln in einem Satz je Regel.
+```
+
+### 0.1 Sicherung vor allem anderen (von Hand, nicht durch den Copilot)
+1. Exportiere den Kalender „Fritsch, Jens“ als `.ics` (Outlook: Kalender → „Kalender veröffentlichen/Exportieren“ oder klassisch: Datei → Öffnen und exportieren → Exportieren). Bewahre die Datei mit Datum im Namen auf.
+2. Das ist deine Rückfahrkarte. Zusätzlich lässt sich alles, was wir eingespielt haben, über die Kategorie `GFK2027` wieder entfernen.
+3. Erst danach geht es mit Phase 1 weiter.
+
+### 0.2 Rechte prüfen
+```
+Prüfe, welche Rechte der Assistenz auf dem Kalender „Fritsch, Jens“ gerade eingetragen sind. Nenne:
+a) Wer hat welche Berechtigungsstufe (Besitzer, Bearbeiter, Delegierter, Leser)?
+b) Gibt es Personen mit Bearbeitungsrechten, die nicht zur Assistenz oder zur Geschäftsführung gehören?
+c) Sind Privatsphäre-Einstellungen gesetzt (private Termine für andere ausgeblendet)?
+Wenn du das nicht auslesen kannst, schreibe „nicht prüfbar“ und beschreibe, wo ich es in Outlook nachsehe.
 ```
 
 ---
@@ -34,7 +52,7 @@ Bestätige mit „verstanden“ und wiederhole die sieben Regeln in einem Satz j
 
 ### 1.1 Gesamtzahl
 ```
-Zähle im Kalender „GFK2027 Test“ alle Termine im Zeitraum 01.01.2027 bis 31.12.2027.
+Zähle im Kalender „Fritsch, Jens“ alle Termine im Zeitraum 01.01.2027 bis 31.12.2027.
 Gib mir diese drei Zahlen:
 a) alle Termine
 b) Termine mit der Kategorie „GFK2027“
@@ -82,7 +100,7 @@ Das Regelwerk ist mit der Prüfung in der `index.html` abgestimmt. Weicht der Co
 
 ### 2.1 Nichts vor 09:00
 ```
-Suche im Kalender „GFK2027 Test“ alle Termine mit der Kategorie „GFK2027“, die vor 09:00 Uhr beginnen (01.01.2027 bis 31.12.2027). Ausgenommen sind ganztägige Termine. Liste: Datum, Uhrzeit, Titel. Wenn es keine gibt, schreibe „keine Abweichung“.
+Suche im Kalender „Fritsch, Jens“ alle Termine mit der Kategorie „GFK2027“, die vor 09:00 Uhr beginnen (01.01.2027 bis 31.12.2027). Ausgenommen sind ganztägige Termine. Liste: Datum, Uhrzeit, Titel. Wenn es keine gibt, schreibe „keine Abweichung“.
 ```
 
 ### 2.2 Fokuszeit und Mittwoch
@@ -212,7 +230,108 @@ Suche Termine, die im Kalender doppelt vorkommen: gleiches Datum und gleiche Sta
 
 ---
 
-## Phase 4: Aufräumen (immer mit Bestätigung)
+## Phase 3b: Konsistenz und Inkongruenz (nur lesen)
+
+Hier geht es nicht um unsere Regeln, sondern darum, ob der Kalender in sich stimmig ist. Jede Abweichung wird gemeldet, nicht korrigiert.
+
+### 3b.1 Titel und Schreibweisen
+```
+Liste im Zeitraum 01.01.2027 bis 31.12.2027 alle Titel mit der Kategorie „GFK2027“ und die Anzahl je Titel. Markiere:
+a) Titel, die sich nur durch Groß- und Kleinschreibung, Leerzeichen, Bindestrich oder Anrede („Herr“, „Frau“) unterscheiden
+b) Titel mit führenden oder doppelten Leerzeichen
+c) Titel, die in älteren Einträgen ohne „GFK2027“ fast gleich vorkommen
+Gib bei jedem Treffer die beiden Schreibweisen nebeneinander aus.
+```
+
+### 3b.2 Kategorien und Farben
+```
+Prüfe die Kategorien im Kalender „Fritsch, Jens“ für Termine mit „GFK2027“:
+a) Jeder Termin hat neben „GFK2027“ genau eine Typ-Kategorie (JF, Gremium / Puffer, Fokuszeit, Projektzeit, Steuerkreis oder Klausur).
+b) Gleiche Titel haben immer dieselbe Typ-Kategorie.
+c) Welche Farbe ist jeder Kategorie zugeordnet?
+d) Gibt es Termine mit mehreren Typ-Kategorien oder ohne Typ-Kategorie?
+Gib Abweichungen mit Datum, Titel und gefundenen Kategorien aus.
+```
+
+### 3b.3 Orte
+```
+Prüfe die Orte der Termine mit „GFK2027“:
+a) Welche Orte kommen vor und wie oft? Bekannte Werte sind unter anderem: Innere Mission, LeWo, EVAR, SBO Sommerdelle, Einrichtung (Vor-Ort), unterwegs, Westring 26 Raum 209, Pferdebachstraße. Etwa die Hälfte der Termine hat keinen Ort.
+b) Termine mit Ort „Westring 26“, die Steuerkreise oder „Anreise Steuerkreis-Tag“ sind (das darf nicht sein).
+c) Gleiche Reihe, abweichende Schreibweise des Ortes (zum Beispiel „Westring 26“ und „Westring 26, Raum 209“).
+Liste Abweichungen mit Datum und Titel.
+```
+
+### 3b.4 Notizen und Serieninformationen
+```
+Prüfe die Notizen der Termine mit „GFK2027“:
+a) Termine ohne Notiz
+b) Termine, deren Notiz eine andere Dauer oder Uhrzeit nennt als der Termin selbst
+c) Termine, deren Notiz einen anderen Wochentag nennt als das Datum
+d) Serien, bei denen die Notiz Ausnahmetage nennt (Urlaub, Feiertag, Klausur), die im Kalender trotzdem belegt sind
+Gib je Fall Datum, Titel und die widersprüchlichen Angaben aus. Zitiere aus Notizen nur die betroffene Angabe, nicht den ganzen Text.
+```
+
+### 3b.5 Einladungen, Teilnehmer, Erinnerungen
+```
+Prüfe die Termine mit „GFK2027“ auf diese Einstellungen und gib die Verteilung je Einstellung als Tabelle aus:
+a) Teilnehmer vorhanden (ja/nein)
+b) Organisator ist die Geschäftsführung (ja/nein)
+c) Erinnerung (keine / Zeitabstand)
+d) Anzeigen als (frei / beschäftigt / vorläufig / abwesend)
+e) Vertraulichkeit (normal / privat)
+Hebe Ausreißer hervor, also Einstellungen, die nur bei wenigen Terminen derselben Reihe abweichen. Urlaub und freie Tage sollen „abwesend“ oder „frei“ anzeigen, Termine „beschäftigt“.
+```
+
+### 3b.6 Zeit, Zeitzone, Raster
+```
+Prüfe die Termine mit „GFK2027“:
+a) Beginn und Ende liegen auf einem 5-Minuten-Raster.
+b) Kein Termin endet nach 18:00 Uhr, außer Verwaltungsrat IM und AG Wohlfahrt Bochum (17:00–18:30).
+c) Kein Termin liegt auf einem Samstag oder Sonntag. Bekannte Ausnahme: Steuerungsgruppe UK DR am Samstag, 06.03.2027, laut Einladung.
+d) Kein Termin geht über Mitternacht.
+e) Ungewöhnliche Zeitzone (alles außer Europa/Berlin bzw. „W. Europe Standard Time“)? Prüfe die Zeiten am 28.03. (Sommerzeit) und am 31.10. (Winterzeit) besonders.
+Gib Abweichungen mit Datum, Uhrzeit und Titel aus.
+```
+
+### 3b.7 Serien und Einzeltermine
+```
+Prüfe, ob Reihen im Kalender zugleich als Serie und als Einzeltermine vorkommen (zum Beispiel „Wochengespräch (ohne GF)“ sowohl als Serie als auch als einzelne Termine mit gleichem Titel). Liste je Titel: Serie (ja/nein), Anzahl Einzeltermine, Anzahl Serientermine, Ausnahmen (gelöschte oder verschobene Termine einer Serie). Markiere Titel, bei denen beides gleichzeitig vorliegt, und Serien, die vor 2027 beginnen oder nach 2027 enden.
+```
+
+### 3b.8 Tageslast und Pausen
+```
+Berechne für jeden Arbeitstag im Jahr 2027 die Summe der gebuchten Minuten (ohne ganztägige Termine). Liste:
+a) Tage mit mehr als 7 Stunden gebuchter Zeit
+b) Tage, an denen zwischen 11:30 und 14:00 Uhr keine Lücke von mindestens 30 Minuten liegt
+c) Tage mit mehr als 6 Terminen
+d) Wochen mit weniger als 3 Stunden Fokuszeit (Fokuszeit-Blocker plus Projektarbeit)
+Gib je Tag das Datum, die Summe und die Hauptverursacher aus. Beschränke die Ausgabe auf die 15 schwersten Tage.
+```
+
+### 3b.9 Abgleich mit der Kommunikationsmatrix
+```
+Vergleiche diese Reihen mit der Matrix-Vorgabe der Geschäftsführung und melde Abweichungen:
+- Wochengespräch: wöchentlich, die Geschäftsführung ist einmal im Monat dabei (2. Mittwoch)
+- Wirtschaftsausschuss SBO: monatlich, 60 Minuten
+- Jour fixe MAV+BR SBO: alle 2 Monate, 100 Minuten, 20 Minuten Puffer
+- Jour fixe Jahndorf: etwa alle 8 Wochen, 100 Minuten
+- Monatsgespräch SBO und Betriebsversammlung SBO: gestrichen (dürfen nicht im Kalender stehen)
+Prüfe zusätzlich, dass kein Termin den Titel „Monatsgespräch SBO“ oder „Betriebsversammlung SBO“ trägt.
+```
+
+### 3b.10 Gesamtbild
+```
+Fasse Phase 1 bis 3b zusammen. Gib eine Tabelle mit den Spalten Nr., Prüfpunkt, Ergebnis (stimmt / Abweichung / nicht prüfbar) und Anzahl Abweichungen. Danach:
+A) Die fünf wichtigsten Abweichungen, die vor dem Scharfstellen behoben werden müssen.
+B) Abweichungen, die bleiben dürfen, mit Begründung.
+C) Entscheidungen, die ich treffen muss, als Ja/Nein-Fragen.
+Ändere nichts.
+```
+
+---
+
+## Phase 4: Aufräumen (nur mit „FREIGABE ÄNDERN“ und Bestätigung)
 
 Erst ausführen, wenn Phase 1 bis 3 ausgewertet sind und du die Liste der alten Serien entschieden hast. Löschen macht der Copilot nicht in großem Stil, du setzt es lieber selbst in der Serienansicht um.
 
@@ -238,12 +357,24 @@ Zeige mir das Ergebnis und frage, ob du den Termin verschieben sollst. Ohne mein
 
 ---
 
-## Phase 5: Scharfstellen
+## Phase 5: Scharfstellen (strukturell, mit Toren)
 
-### 5.1 Vorabprüfung
+„Scharfstellen“ heißt hier: Der Kalender „Fritsch, Jens“ gilt ab jetzt als verbindlich und wird nur noch nach Regeln geändert. Gehe die Tore der Reihe nach durch. Ein Tor gilt erst als bestanden, wenn alle Punkte erledigt sind.
+
+| Tor | Bedingung |
+|---|---|
+| 1. Sicherung | Export des Kalenders als `.ics` liegt ab (Phase 0.1) |
+| 2. Bestand | Phase 1 abgeschlossen: 613 Termine mit `GFK2027` vorhanden |
+| 3. Regeln | Phase 2 ohne offene Abweichungen oder mit begründeten Ausnahmen |
+| 4. Konflikte | Phase 3 und 3b ausgewertet; Entscheidungen getroffen |
+| 5. Alte Serien | alte Serien ohne `GFK2027` beendet (zum 31.12.2026) oder gelöscht |
+| 6. Nov/Dez 2026 | Einzeltermine eingespielt oder bewusst verzichtet |
+| 7. Freigabe | Abschlusstabelle (5.1) mit „Ja“ und deine Freigabe |
+
+### 5.1 Abschlussprüfung vor dem Scharfstellen
 ```
-Fasse die Prüfung zusammen. Gib mir eine Tabelle mit den Spalten Prüfpunkt, Ergebnis (stimmt / Abweichung / nicht prüfbar), Anzahl Abweichungen, für diese Prüfpunkte:
-1. Anzahl 613 Termine mit GFK2027
+Prüfe den Kalender „Fritsch, Jens“ erneut vollständig und gib die Tabelle aus: Prüfpunkt, Ergebnis (stimmt / Abweichung / nicht prüfbar), Anzahl Abweichungen.
+1. 613 Termine mit GFK2027
 2. nichts vor 09:00
 3. Fokuszeit, Projektarbeit, Wochengespräch
 4. Wirtschaftsausschuss und Puffer
@@ -255,20 +386,37 @@ Fasse die Prüfung zusammen. Gib mir eine Tabelle mit den Spalten Prüfpunkt, Er
 10. Termine in Urlaub oder an Feiertagen
 11. Überschneidungen zwischen GFK2027 und anderen Terminen
 12. offene Doppelungen
+13. Titel, Kategorien, Orte, Notizen (Phase 3b)
+14. Einladungen und Einstellungen (Phase 3b.5)
+15. keine alten Serien mehr, die in 2027 laufen
 Am Ende: Ist der Kalender bereit zum Scharfstellen? Antworte mit Ja oder Nein und nenne bei Nein die drei wichtigsten Punkte.
 ```
 
-### 5.2 Teams-Besprechungen (nur für die digitalen Reihen)
+### 5.2 Freigabe erteilen (erst nach Ja in 5.1)
+```
+FREIGABE ÄNDERN für diese Liste, und nur dafür:
+[hier die Titel und Daten einsetzen, die geändert werden dürfen]
+Ändere jeden Termin einzeln, nicht per Sammelaktion. Nach jedem Termin bestätigst du kurz: Datum, Titel, alt, neu. Höre auf, sobald du auf einen Termin mit Teilnehmern stößt, und melde ihn.
+```
+
+### 5.3 Teams-Besprechungen (nur für die digitalen Reihen)
 ```
 Nenne mir alle Reihen mit der Kategorie „GFK2027“, die laut Ort oder Notiz digital stattfinden (kein Ort oder „Teams“). Gib je Reihe Titel, Anzahl und ein Beispieldatum an. Schalte noch keine Teams-Besprechung ein.
 ```
+Teams schaltest du danach selbst je Serie ein (die gesamte Serie speichern). Für Präsenztermine ist nichts zu tun.
 
-### 5.3 Im echten Kalender
+### 5.4 Nachkontrolle nach dem Scharfstellen
 ```
-Nur auf meine ausdrückliche Anweisung: Wechsle zum Kalender der Geschäftsführung. Zähle dort die Termine mit der Kategorie „GFK2027“ im Jahr 2027. Es sollen 0 sein, solange noch nicht importiert wurde. Berichte, ändere nichts.
+Zähle erneut die Termine mit der Kategorie „GFK2027“ im Jahr 2027 und vergleiche mit dem Stand vor der Freigabe. Gib aus: Anzahl vorher, Anzahl nachher, geänderte Termine (Datum, Titel, alt, neu), gelöschte Termine. Wenn die Zahlen nicht zu den Änderungen passen, schreibe in der ersten Zeile „ABWEICHUNG“.
 ```
 
-Danach verschiebst du die Termine selbst in der Listenansicht: Kategorie `GFK2027` suchen, alle markieren und in den Kalender der Geschäftsführung verschieben. Danach läuft die Prüfung aus Phase 1 und 3 noch einmal im echten Kalender.
+### 5.5 Betriebsart zurück auf „nur lesen“
+```
+Betriebsart NUR LESEN. Das Scharfstellen ist abgeschlossen. Bestätige in einem Satz.
+```
+
+### 5.6 Rückgängig machen
+Alle von uns eingespielten Termine tragen die Kategorie `GFK2027`. Bei einem Fehler: Kalender nach dieser Kategorie suchen, nur diese Termine markieren und löschen, danach den Export aus Phase 0.1 für fehlende Altdaten prüfen.
 
 ---
 
